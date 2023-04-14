@@ -1,4 +1,6 @@
 #pragma once
+#include <memory>
+#include "../Fream/FreamMng.h"
 
 #define lpApplication Application::GetInstance()
 
@@ -19,5 +21,9 @@ private:
 	~Application();
 	// ƒVƒXƒeƒ€‰Šú‰»
 	bool SysInit();
+
+	bool Init();
+
+	std::unique_ptr<FreamMng> freamMng_;
 };
 

@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Class\Fream\FreamMng.cpp" />
     <ClCompile Include="Class\System\Application.cpp" />
+    <ClCompile Include="Class\System\ImguiImageStb.cpp" />
     <ClCompile Include="imGui\imgui.cpp" />
     <ClCompile Include="imGui\ImGuiFileDialog.cpp" />
     <ClCompile Include="imGui\imgui_demo.cpp" />
@@ -36,6 +37,7 @@
   <ItemGroup>
     <ClInclude Include="Class\Fream\FreamMng.h" />
     <ClInclude Include="Class\System\Application.h" />
+    <ClInclude Include="Class\System\ImguiImageStb.h" />
     <ClInclude Include="imGui\imconfig.h" />
     <ClInclude Include="imGui\imgui.h" />
     <ClInclude Include="imGui\ImGuiFileDialog.h" />

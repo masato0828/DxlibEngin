@@ -57,6 +57,9 @@
     <ClCompile Include="imGui\ImGuiFileDialog.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="Class\System\ImguiImageStb.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class\System\Application.h">
@@ -103,6 +106,9 @@
     </ClInclude>
     <ClInclude Include="imGui\stb_image.h">
       <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\System\ImguiImageStb.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

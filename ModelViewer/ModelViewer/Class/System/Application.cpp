@@ -22,8 +22,14 @@ Application::~Application()
 
 bool Application::Run()
 {
-	// 初期化
+	// システムの初期化
 	if (!SysInit())
+	{
+		return false;
+	}
+
+	// 各クラス＆各変数初期化
+	if (!Init())
 	{
 		return false;
 	}
@@ -31,11 +37,19 @@ bool Application::Run()
 	// メインループ
 	while (!ProcessMessage() && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 	{
+		// 更新
+		freamMng_->Update();
+
 		SetDrawScreen(DX_SCREEN_BACK);
 		RefreshDxLibDirect3DSetting();
 		ClearDrawScreen();
 		ScreenFlip();
+
+		// 描画
+		freamMng_->Render();
 	}
+
+	freamMng_->ShutDown();
 
 	// Dxlibの終了
 	DxLib_End();
@@ -59,7 +73,7 @@ bool Application::SysInit()
 	// Direct3Dのバージョン
 	SetUseDirect3DVersion(DX_DIRECT3D_11);
 	// ウィンドウプロシージャルの設定
-	//SetHookWinProc(WndProc);
+	SetHookWinProc(WndProc);
 	// ウィンドウを表示するかどうか
 	SetWindowVisibleFlag(false);
 	// アプリが非アクティブ状態でも処理を実行するかどうかを設定する( TRUE:実行する  FALSE:停止する( デフォルト ) )
@@ -69,6 +83,13 @@ bool Application::SysInit()
 	{
 		return false;
 	}
+
+	return true;
+}
+
+bool Application::Init()
+{
+	freamMng_ = std::make_unique<FreamMng>();
 
 	return true;
 }
