@@ -43,6 +43,9 @@ bool Application::Run()
 		SetDrawScreen(DX_SCREEN_BACK);
 		RefreshDxLibDirect3DSetting();
 		ClearDrawScreen();
+
+		freamMng_->Draw();
+
 		ScreenFlip();
 
 		// •`‰æ

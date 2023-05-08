@@ -24,6 +24,13 @@ void FreamMng::Init()
 	ImGui_ImplDX11_Init(
 		(ID3D11Device*)GetUseDirect3D11Device(),
 		(ID3D11DeviceContext*)GetUseDirect3D11DeviceContext());
+
+    sceneView_ = std::make_unique<Fream_SceneView>();
+    dokingArea_ = std::make_unique<Fream_DokingArea>();
+    stage_ = std::make_unique<Fream_Stage>();
+    camera_ = std::make_unique<Fream_Camera>();
+
+    optionWindowFlg_ = false;
 }
 
 void FreamMng::Update()
@@ -65,88 +72,47 @@ void FreamMng::Update()
         if (ImGui::Begin("model view", &m_show, window_flags))
         {
             // メニューバーの作成
+            CreateMenuBer();
 
             // ウィンドウの終了
             ImGui::End();
         }
+        Inspector();
+
+        dokingArea_->Create();
     }
     else
     {
         std::exit(0);
     }
 
-    // 画像サイズ
-    static int my_image_width = 0;
-    static int my_image_height = 0;
-    // シェーダ情報の作成
-    static ID3D11ShaderResourceView* my_shaderData = NULL;
-    // 画像の読み込み
-    bool ret = LoadBackGroundTextureFromFile(&my_shaderData, &my_image_width, &my_image_height);
+    stage_->Update();
+    auto mousePoint = mousePoint_.Create({
+        sceneView_->GetDefaultImageSize(),
+        sceneView_->GetImageLeftUpCornor(),
+        sceneView_->GetImageRightDownCornor() });
+    camera_->Update(mousePoint);
 
-    //GetMousePoint(&mouseX, &mouseY);
-
-    // ウィンドウの表示
-    if (ImGui::Begin("scene"))
-    {
-        auto sizeX = ImGui::GetWindowSize().x;
-        auto sizeY = ImGui::GetWindowSize().y;
-
-        // 横割合
-        auto x = ImGui::GetWindowSize().x / my_image_width;
-        // 縦割合
-        auto y = ImGui::GetWindowSize().y / my_image_height;
-
-
-        // 係数
-        auto factor = (std::min)(x, y);
-
-        if (factor == 0)
-        {
-            ImGui::End();
-            return;
-        }
-
-        ImGui::Image(
-            // 画像情報
-            (void*)my_shaderData,
-            // 画像サイズを割合で変える
-            ImVec2{ my_image_width * factor, my_image_height * factor },
-            // UV1
-            ImVec2{ 0,0 },
-            // UV2
-            ImVec2{ 1,1 },
-            // 描画カラー
-            ImVec4{ 1,1,1,1 },
-            // 枠のカラー
-            ImVec4{ 0,0,0,0 });
-
-        // シーンビューのマウスの位置を計算
-        //sceneViewMousePoint_ = SceneMouseCreate(factor);
-
-       // ImGui::Begin("mouseDebug");
-       // ImGui::Text("sceneViewMousePoint = {%f:%f}", sceneViewMousePoint_.x_, sceneViewMousePoint_.y_);
-       // ImGui::End();
-
-       // sceneViewMousePoint_.x_ *= my_image_width;
-       // sceneViewMousePoint_.y_ *= my_image_height;
-        //imageSize_ = { static_cast<float>(my_image_width * factor),static_cast<float>(my_image_height * factor) };
-
-        // シーンビューのサイズ
-        /*sceneViewSize_ = {
-            ImGui::GetWindowDrawList()->VtxBuffer[0].pos.x + my_image_width * factor,
-             ImGui::GetWindowDrawList()->VtxBuffer[0].pos.y + my_image_height * factor };*/
-
-        // ウィンドウの終了
-        ImGui::End();
-    }
-
+    if (optionWindowFlg_) { OptionWindow(); };
+   
+    // シーンビューの作成
+    sceneView_->Create();
 
 	// デモウィンドウ
 	ImGui::ShowDemoWindow();
 }
 
+void FreamMng::Draw()
+{
+    camera_->Set();
+    stage_->Draw();
+    DrawMousePoint();
+}
+
 void FreamMng::Render()
 {
+    
+
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	//// Update and Render additional Platform Windows
@@ -194,7 +160,151 @@ void FreamMng::Style()
 	{
 		//　ウィンドウの丸み
 		style.WindowRounding = 1.0f;
+
+        style.WindowRounding = 12.0f;
+        style.ChildRounding = 12.0f;
+        style.FrameRounding = 12.0f;
+        style.PopupRounding = 12.0f;
+        style.ScrollbarRounding = 12.0f;
+        style.GrabRounding = 12.0f;
+        style.LogSliderDeadzone = 12.0f;
+        style.TabRounding = 12.0f;
+
 		// 指定ウィンドウ（ここでは背景）の変更
 		style.Colors[ImGuiCol_WindowBg].w = 0.5f;
 	}
+
+    ImGui::StyleColorsClassic();
+}
+
+void FreamMng::Inspector()
+{
+    ImGui::Begin("Inspector");
+    ImGui::End();
+}
+
+
+void FreamMng::DrawMousePoint()
+{
+    //DrawCircleAA(sceneViewMousePoint_.x_, sceneViewMousePoint_.y_,10,100,0xff0000);
+
+    auto mousePoint = mousePoint_.Create({
+        sceneView_->GetDefaultImageSize(),
+        sceneView_->GetImageLeftUpCornor(),
+        sceneView_->GetImageRightDownCornor() });
+
+    DrawCircleAA(
+        mousePoint.x_,
+        mousePoint.y_,
+        10, 100, 0xff0000);
+}
+
+void FreamMng::CreateMenuBer()
+{
+    static bool open = false;
+    // メニューバーの作成
+    if (ImGui::BeginMenuBar())
+    {
+        // メニュー1
+        if (ImGui::BeginMenu("File"))
+        {
+            // メニューの中身
+            if (ImGui::MenuItem("new data"))
+            {
+                // 
+                {
+                    auto id = MessageBoxA(NULL, "Do you want to save the current data?", "SAVE", MB_OKCANCEL);
+                    if (id == IDOK)
+                    {
+                        // 全初期化
+                    }
+                }
+            }
+            // メニューの中身
+            if (ImGui::BeginMenu("add model"))
+            {
+                ImGui::EndMenu();
+            };
+            if (ImGui::BeginMenu("model data"))
+            {
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenu();
+        }
+        // メニュー2
+        if (ImGui::BeginMenu("System")) {
+
+#ifndef IMGUI_DISABLE_DEBUG_TOOLS
+            const bool has_debug_tools = true;
+#else
+            const bool has_debug_tools = false;
+#endif
+            ImGui::MenuItem("Option", NULL, &optionWindowFlg_, has_debug_tools);
+            //ImGui::MenuItem("Debug Log", NULL, &show_app_debug_log, has_debug_tools);
+            //ImGui::MenuItem("Stack Tool", NULL, &show_app_stack_tool, has_debug_tools);
+            //ImGui::MenuItem("Style Editor", NULL, &show_app_style_editor);
+            //ImGui::MenuItem("About Dear ImGui", NULL, &show_app_about);
+            //ImGui::EndMenu();
+
+            
+
+            ImGui::EndMenu();
+        };
+        // メニュー3
+        if (ImGui::BeginMenu("View")) { ImGui::EndMenu(); };
+        // メニュー4
+        if (ImGui::BeginMenu("Project")) { ImGui::EndMenu(); };
+        // メニュー5
+        if (ImGui::BeginMenu("Desktop")) { ImGui::EndMenu(); };
+        // メニュー6
+        if (ImGui::BeginMenu("Help")) { ImGui::EndMenu(); };
+
+        // メニューバーの終了
+        ImGui::EndMenuBar();
+    }
+
+    if (open)
+    {
+        ImGui::Begin("single export");/*
+        if (ImGui::Button("export"))
+        {
+            auto fileName = FilePathErase()(
+                FileSeve(nullptr, "json", "jsonファイル(*.json)\0 * .json\0")
+                );
+            std::ofstream writing_file;
+            writing_file.open(fileName, std::ios::out);
+            fModel_->SingleE(writing_file);
+            writing_file.close();
+
+
+            open = false;
+        }*/
+
+
+        ImGui::End();
+
+
+    }
+}
+
+void FreamMng::OptionWindow()
+{
+    ImGui::Begin("Option");
+    if (ImGui::BeginTabBar("##tabs", ImGuiTabBarFlags_None))
+    {
+        if (ImGui::BeginTabItem("Stage"))
+        {
+            stage_->Custom();
+            ImGui::EndTabItem();
+        }
+        if (ImGui::BeginTabItem("Camera"))
+        {
+            camera_->Custom();
+            ImGui::EndTabItem();
+        }
+        
+        ImGui::EndTabBar();
+    }
+    
+    ImGui::End();
 }

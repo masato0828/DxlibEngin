@@ -19,7 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Class\Common\Geometry.cpp" />
+    <ClCompile Include="Class\Common\ImGuiMyCustom.cpp" />
+    <ClCompile Include="Class\Common\Shader3D.cpp" />
+    <ClCompile Include="Class\Common\Utility.cpp" />
+    <ClCompile Include="Class\Fream\FreamBase.cpp" />
     <ClCompile Include="Class\Fream\FreamMng.cpp" />
+    <ClCompile Include="Class\Fream\Fream_Camera.cpp" />
+    <ClCompile Include="Class\Fream\Fream_DokingArea.cpp" />
+    <ClCompile Include="Class\Fream\Fream_SceneView.cpp" />
+    <ClCompile Include="Class\Fream\Fream_Stage.cpp" />
+    <ClCompile Include="Class\Fream\MousePointCreate.cpp" />
     <ClCompile Include="Class\System\Application.cpp" />
     <ClCompile Include="Class\System\ImguiImageStb.cpp" />
     <ClCompile Include="imGui\imgui.cpp" />
@@ -35,7 +45,19 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Class\Common\FileDialog.h" />
+    <ClInclude Include="Class\Common\Geometry.h" />
+    <ClInclude Include="Class\Common\ImGuiMyCustom.h" />
+    <ClInclude Include="Class\Common\Shader3D.h" />
+    <ClInclude Include="Class\Common\Utility.h" />
+    <ClInclude Include="Class\Common\Vector2.h" />
+    <ClInclude Include="Class\Fream\FreamBase.h" />
     <ClInclude Include="Class\Fream\FreamMng.h" />
+    <ClInclude Include="Class\Fream\Fream_Camera.h" />
+    <ClInclude Include="Class\Fream\Fream_DokingArea.h" />
+    <ClInclude Include="Class\Fream\Fream_SceneView.h" />
+    <ClInclude Include="Class\Fream\Fream_Stage.h" />
+    <ClInclude Include="Class\Fream\MousePointCreate.h" />
     <ClInclude Include="Class\System\Application.h" />
     <ClInclude Include="Class\System\ImguiImageStb.h" />
     <ClInclude Include="imGui\imconfig.h" />
