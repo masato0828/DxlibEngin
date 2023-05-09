@@ -44,20 +44,41 @@ void Fream_Camera::Init()
 
 	moveSpeed_ = 5.0f;
 	moveSpeedBoost_ = 2;
+
+	mouseMove_ = false;
+	cnt_ = 0;
 }
 
 void Fream_Camera::Update()
 {
 }
 
-void Fream_Camera::Update(Vector2Flt mousePoint)
+void Fream_Camera::Update(Vector2Flt mousePoint, Vector2Flt windowSize, Vector2Flt correctLeftTop, float factor)
 {
+	windowHlfeSize_ = { windowSize.x_,windowSize.y_ };
+	correctWindowLeftTop_ = {correctLeftTop.x_,correctLeftTop.y_ };
+
 	// 移動
 	Move();
+	if (mouseMove_)
+	{
+		cnt_++;
+		MouseMove(mousePoint,factor);
+		if (CheckHitKey(KEY_INPUT_SPACE))
+		{
+			mouseMove_ = false;
+		}
+	}
+	else
+	{
+		// キーボードカメラ角度変更
+		//Angle();
+		cnt_ = 0;
 
-	// マウスのボタンを押しながらマウス操作
-
-	PushMouseMove(mousePoint);
+		// マウスのボタンを押しながらマウス操作
+		PushMouseMove(mousePoint);
+	}
+	
 
 	//MouseMove();
 
@@ -67,6 +88,8 @@ void Fream_Camera::Update(Vector2Flt mousePoint)
 
 	// 拡大（要修正）
 	pos_.z_ += mauseHWheel_ * 30;
+
+	
 }
 
 void Fream_Camera::Angle()
@@ -145,29 +168,13 @@ void Fream_Camera::Move()
 
 void Fream_Camera::Custom()
 {
-	static bool mouseMove = false;
-	static int cnt = 0;
+	
 
 	//ImGui::Begin("CameraInfo", NULL, ImGuiWindowFlags_NoCollapse);
-	if (ImGui::Checkbox("camera move", &mouseMove))
+	if (ImGui::Checkbox("camera move", &mouseMove_))
 	{
 
 		//SetMousePoint(lpFreamMng.GetSceneViewSize().x_ - lpFreamMng.GetImageSize().x_, lpFreamMng.GetSceneViewSize().y_ - lpFreamMng.GetImageSize().x_ / 2);
-	}
-	if (mouseMove)
-	{
-		cnt++;
-		MouseMove();
-		if (CheckHitKey(KEY_INPUT_SPACE))
-		{
-			mouseMove = false;
-		}
-	}
-	else
-	{
-		// キーボードカメラ角度変更
-		//Angle();
-		cnt = 0;
 	}
 	ImGui::SliderFloat("sens", &sens_, 0.0f, 8.0f);
 	ImGui::SliderFloat("move speed", &moveSpeed_, 1.0f, 20.0f);
@@ -175,11 +182,29 @@ void Fream_Camera::Custom()
 	ImGui::DragFloat3("pos", &pos_);
 	ImGui::DragFloat3("rot", &rot_, Deg2Rad(1.0f));
 
+	ImGui::Text("%f,%f", windowHlfeSize_.x_,windowHlfeSize_.y_);
+	
+	ImGui::Text("ma = %f:%f",ma_.x_,ma_.y_);
+	ImGui::Text("mb = %f:%f",mb_.x_,mb_.y_);
+	ImGui::Text("mc = %f:%f",mc_.x_,mc_.y_);
+	ImGui::Text("mouseX&Y = %d:%d",mouseX_,mouseY_);
 
-	if (cnt & 8)
+	int ww, wh;
+	GetWindowSize(&ww,&wh);
+	ImGui::Text("windowSize = %d:%d",ww,wh);
+
+	int mx, my;
+	GetMousePoint(&mx,&my);
+	ImGui::Text("mousePoint = %d:%d",mx,my);
+
+
+	
+	if (cnt_ & 8)
 	{
 		ImGui::Text("<<PUSH TO SPACE MOUSE MOVE RELESE>>");
 	}
+
+
 }
 
 void Fream_Camera::Set()
@@ -189,6 +214,15 @@ void Fream_Camera::Set()
 	SetCameraNearFar(10.0f, 300000.0f);
 	// クリップ距離を設定する(SetDrawScreenでリセットされる)
 	SetCameraPositionAndAngle(pos_.toVECTOR(), rot_.x_, rot_.y_, rot_.z_);
+	
+	
+	int wh, ww;
+	GetWindowSize(&ww, &wh);
+	Vector2Flt windowSize = {
+	   ww / 2,
+	   wh / 2
+	};
+	DrawCircle(windowSize.x_, windowSize.y_,5,0xffff00,true);
 }
 
 void Fream_Camera::PushMouseMove(Vector2Flt mousePoint)
@@ -211,23 +245,30 @@ void Fream_Camera::PushMouseMove(Vector2Flt mousePoint)
 	mc_ *= 0.9;
 }
 
-void Fream_Camera::MouseMove()
+void Fream_Camera::MouseMove(Vector2Flt mousePoint, float factor)
 {
-	mb_ = { static_cast<double>(mouseX_),static_cast<double>(mouseY_) };
-	// Dxlibのマウス位置取得
-	GetMousePoint(&mouseX_, &mouseY_);
-	// sceneViewのマウス位置取得
-	//mouseX_ = lpFreamMng.GetSceneViewMousePoint().x_;
-	//mouseY_ = lpFreamMng.GetSceneViewMousePoint().y_;
-	//
-	ma_ = { static_cast<double>(mouseX_),static_cast<double>(mouseY_) };
-	mc_ = ma_ - mb_;
-	rot_.x_ += mc_.y_ * sens_ / 180;
-	rot_.y_ += mc_.x_ * sens_ / 180;
-	//mc_ *= 0.9;
+	Vector2Flt nowPoint = { mousePoint.x_ - windowHlfeSize_.x_ ,mousePoint.y_ - windowHlfeSize_.y_ };
+	Vector2 centerPoint = correctWindowLeftTop_+windowHlfeSize_;
 
-	int DesktopW, DesktopH;
-	GetDefaultState(&DesktopW, &DesktopH, NULL);
-	SetMousePoint(DesktopW / 2, DesktopH / 2);
-	//SetMousePoint(lpFreamMng.GetSceneViewSize().x_ - lpFreamMng.GetImageSize().x_, lpFreamMng.GetSceneViewSize().y_ - lpFreamMng.GetImageSize().y_ / 2);
+	auto move =  nowPoint;
+
+
+	
+
+	//mb_ = { static_cast<double>(mouseX_),static_cast<double>(mouseY_) };
+	//// sceneViewのマウス位置取得
+	//mouseX_ = mousePoint.x_;
+	//mouseY_ = mousePoint.y_;
+	//ma_ = { static_cast<double>(mouseX_),static_cast<double>(mouseY_) };
+	//mc_ = ma_ - mb_;
+
+	ImGui::SetNextWindowSize(ImVec2{300,100});
+	ImGui::Begin("debug");
+	ImGui::Text("move %f:%f",move.x_,move.y_);
+	ImGui::End();
+
+	rot_.x_ += move.y_ * sens_ / 180;
+	rot_.y_ += move.x_ * sens_ / 180;
+
+	SetMousePoint(static_cast<int>(centerPoint.x_), static_cast<int>(centerPoint.y_));
 }

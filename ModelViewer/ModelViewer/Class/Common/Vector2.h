@@ -39,6 +39,7 @@ public:
 	Vector2Template operator*(Vector2Template vec);
 	Vector2Template operator/(Vector2Template vec);
 	Vector2Template operator%(Vector2Template vec);
+	Vector2Template operator/(T scale);
 
 	//”äŠr‰‰ŽZŽq
 	bool operator==(const Vector2Template& vec) const;

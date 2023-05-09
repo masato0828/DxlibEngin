@@ -30,7 +30,7 @@ void FreamMng::Init()
     stage_ = std::make_unique<Fream_Stage>();
     camera_ = std::make_unique<Fream_Camera>();
 
-    optionWindowFlg_ = false;
+    optionWindowFlg_ = true;
 }
 
 void FreamMng::Update()
@@ -91,7 +91,32 @@ void FreamMng::Update()
         sceneView_->GetDefaultImageSize(),
         sceneView_->GetImageLeftUpCornor(),
         sceneView_->GetImageRightDownCornor() });
-    camera_->Update(mousePoint);
+
+
+    int wh, ww;
+    GetWindowSize(&ww,&wh);
+    RECT cR;
+    GetWindowClientRect(&cR);
+
+    Vector2Flt imageRightDown = {
+        sceneView_->GetImageRightDownCornor().x_-cR.left,
+        sceneView_->GetImageRightDownCornor().y_ - cR.top
+    };
+    Vector2Flt imageLeftUp = {
+        sceneView_->GetImageLeftUpCornor().x_-cR.left,
+        sceneView_->GetImageLeftUpCornor().y_ - cR.top
+    };
+
+    Vector2Flt windowSize = {
+       imageRightDown.x_ - imageLeftUp.x_,
+       imageRightDown.y_ - imageLeftUp.y_
+    };
+
+    Vector2Flt mouse = {};
+
+    //camera_->Update(mousePoint, windowSize/2.f,sceneView_->GetFactor());
+    camera_->Update(mousePoint, windowSize / 2.f, imageLeftUp, sceneView_->GetFactor());
+    //camera_->Update(mousePoint, { windowSize.x_/2 + imageLeftUp.x_,windowSize.y_/2 +imageLeftUp.y_ },sceneView_->GetFactor());
 
     if (optionWindowFlg_) { OptionWindow(); };
    
@@ -192,6 +217,11 @@ void FreamMng::DrawMousePoint()
         sceneView_->GetDefaultImageSize(),
         sceneView_->GetImageLeftUpCornor(),
         sceneView_->GetImageRightDownCornor() });
+
+    Vector2Flt reductionScreenSize_ = sceneView_->GetImageRightDownCornor() - sceneView_->GetImageLeftUpCornor() ;
+    Vector2Flt defaultScreenSize = { sceneView_->GetDefaultImageSize().x_, sceneView_->GetDefaultImageSize().y_ };
+    mousePoint /= reductionScreenSize_;
+    mousePoint *= defaultScreenSize;
 
     DrawCircleAA(
         mousePoint.x_,

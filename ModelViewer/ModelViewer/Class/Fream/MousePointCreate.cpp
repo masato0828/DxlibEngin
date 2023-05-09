@@ -16,12 +16,12 @@ Vector2Flt MousePoint::Create(windowImageData data)
     GetMousePoint(&mousePoint_.x_, &mousePoint_.y_);
 
     Vector2Flt mousePointFactor = {
-    (static_cast<float>(mousePoint_.x_) + cR.left - data.reftUpCornor.x_) / imageSize_.x_,
-    (static_cast<float>(mousePoint_.y_) + cR.top - data.reftUpCornor.y_) / imageSize_.y_
+    (static_cast<float>(mousePoint_.x_) + cR.left - data.reftUpCornor.x_) /*/ imageSize_.x_*/,
+    (static_cast<float>(mousePoint_.y_) + cR.top - data.reftUpCornor.y_)/* / imageSize_.y_*/
     };
 
-    mousePointFactor.x_ *= data.imageSize.x_;
-    mousePointFactor.y_ *= data.imageSize.y_;
+    /*mousePointFactor.x_ *= data.imageSize.x_;
+    mousePointFactor.y_ *= data.imageSize.y_;*/
 
     // マウスから画像サイズを引く
     return mousePointFactor;

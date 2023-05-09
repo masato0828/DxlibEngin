@@ -10,7 +10,6 @@ public:
     ~Fream_SceneView();
     void Init() override;
     void Update() override;
-
     void Create();
 
     float GetFactor();

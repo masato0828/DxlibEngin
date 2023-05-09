@@ -1,3 +1,4 @@
+#include "..\Vector2.h"
 //#include "Vector2.h"
 // Vector2.cppには書けないためヘッダーにする必要がある
 
@@ -141,13 +142,19 @@ Vector2Template<T> Vector2Template<T>::operator-() const//マイナスを付与する
 template<class T>
 Vector2Template<T> Vector2Template<T>::operator*=(double scale)
 {
-	return { x_ * scale,y_ * scale };
+	x_ = x_ * scale;
+	y_ = y_ * scale;
+
+	return { x_,y_ };
 }
 
 template<class T>
 Vector2Template<T> Vector2Template<T>::operator/=(double scale)
 {
-	return { x_ / scale,y_ / scale };
+	x_ = x_ / scale;
+	y_ = y_ / scale;
+
+	return { x_,y_};
 }
 
 //============================================================
@@ -182,6 +189,12 @@ template<class T>
 Vector2Template<T> Vector2Template<T>::operator%(Vector2Template<T> vec)
 {
 	return { x_ % vec.x_, y_ % vec.y_ };
+}
+
+template<class T>
+Vector2Template<T> Vector2Template<T>::operator/(T scale)
+{
+	return { x_ / scale, y_ / scale };
 }
 
 //============================================================

@@ -9,12 +9,12 @@ public:
     ~Fream_Camera();
 	void Init()override;
 	void Update()override;
-	void Update(Vector2Flt mousePoint);
+	void Update(Vector2Flt mousePoint,Vector2Flt windowSize,Vector2Flt correctLeftTop, float factor);
 	void Angle();
 	void Move();
 	void Set();
 	void PushMouseMove(Vector2Flt mousePoint);
-	void MouseMove();
+	void MouseMove(Vector2Flt mousePoint,float factor);
 
 	void Custom();
 private:
@@ -39,5 +39,11 @@ private:
 
 	float moveSpeed_;
 	int moveSpeedBoost_;
+
+	Vector2 correctWindowLeftTop_;
+	Vector2 windowHlfeSize_;
+
+	bool mouseMove_;
+	int cnt_;
 };
 

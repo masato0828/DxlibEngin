@@ -1,5 +1,6 @@
 #include "Fream_SceneView.h"
 #include <vector>
+#include <Dxlib.h>
 #include "../../imGui/imgui.h"
 #include "../../imGui/imgui_impl_dx11.h"
 #include "../../imGui/imgui_impl_win32.h"
@@ -21,6 +22,7 @@ void Fream_SceneView::Init()
 void Fream_SceneView::Update()
 {
 }
+
 
 void Fream_SceneView::Create()
 { 
