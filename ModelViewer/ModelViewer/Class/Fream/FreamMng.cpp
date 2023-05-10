@@ -29,7 +29,7 @@ void FreamMng::Init()
     dokingArea_ = std::make_unique<Fream_DokingArea>();
     stage_ = std::make_unique<Fream_Stage>();
     camera_ = std::make_unique<Fream_Camera>();
-
+    mouse_ = std::make_unique<Device_Mouse>();
     optionWindowFlg_ = true;
 }
 
@@ -92,9 +92,6 @@ void FreamMng::Update()
         sceneView_->GetImageLeftUpCornor(),
         sceneView_->GetImageRightDownCornor() });
 
-
-    int wh, ww;
-    GetWindowSize(&ww,&wh);
     RECT cR;
     GetWindowClientRect(&cR);
 
@@ -112,19 +109,22 @@ void FreamMng::Update()
        imageRightDown.y_ - imageLeftUp.y_
     };
 
-    Vector2Flt mouse = {};
-
-    //camera_->Update(mousePoint, windowSize/2.f,sceneView_->GetFactor());
-    camera_->Update(mousePoint, windowSize / 2.f, imageLeftUp, sceneView_->GetFactor());
-    //camera_->Update(mousePoint, { windowSize.x_/2 + imageLeftUp.x_,windowSize.y_/2 +imageLeftUp.y_ },sceneView_->GetFactor());
-
+    camera_->Update(mousePoint, windowSize / 2.f, imageLeftUp);
+    
     if (optionWindowFlg_) { OptionWindow(); };
    
+    mouse_->Update(
+        sceneView_->GetImageLeftUpCornor(),
+        sceneView_->GetImageRightDownCornor(), 
+        sceneView_->GetDefaultImageSize());
+
     // シーンビューの作成
     sceneView_->Create();
 
 	// デモウィンドウ
 	ImGui::ShowDemoWindow();
+
+    
 }
 
 void FreamMng::Draw()
@@ -132,6 +132,7 @@ void FreamMng::Draw()
     camera_->Set();
     stage_->Draw();
     DrawMousePoint();
+    //mouse_->Draw();
 }
 
 void FreamMng::Render()

@@ -35,8 +35,8 @@ void Fream_Camera::Init()
 	input_ = false;
 
 	sens_ = 0.46;
-	// マウス位置の設定
-	SetMousePoint(1600 / 2 - 80, 720 / 2);
+	// マウス初期位置の設定
+	//SetMousePoint(1600 / 2 - 80, 720 / 2);
 
 
 
@@ -53,7 +53,7 @@ void Fream_Camera::Update()
 {
 }
 
-void Fream_Camera::Update(Vector2Flt mousePoint, Vector2Flt windowSize, Vector2Flt correctLeftTop, float factor)
+void Fream_Camera::Update(Vector2Flt mousePoint, Vector2Flt windowSize, Vector2Flt correctLeftTop)
 {
 	windowHlfeSize_ = { windowSize.x_,windowSize.y_ };
 	correctWindowLeftTop_ = {correctLeftTop.x_,correctLeftTop.y_ };
@@ -63,7 +63,7 @@ void Fream_Camera::Update(Vector2Flt mousePoint, Vector2Flt windowSize, Vector2F
 	if (mouseMove_)
 	{
 		cnt_++;
-		MouseMove(mousePoint,factor);
+		MouseMove(mousePoint);
 		if (CheckHitKey(KEY_INPUT_SPACE))
 		{
 			mouseMove_ = false;
@@ -245,30 +245,14 @@ void Fream_Camera::PushMouseMove(Vector2Flt mousePoint)
 	mc_ *= 0.9;
 }
 
-void Fream_Camera::MouseMove(Vector2Flt mousePoint, float factor)
+void Fream_Camera::MouseMove(Vector2Flt mousePoint)
 {
 	Vector2Flt nowPoint = { mousePoint.x_ - windowHlfeSize_.x_ ,mousePoint.y_ - windowHlfeSize_.y_ };
 	Vector2 centerPoint = correctWindowLeftTop_+windowHlfeSize_;
 
-	auto move =  nowPoint;
+	rot_.x_ += nowPoint.y_ * sens_ / 180;
+	rot_.y_ += nowPoint.x_ * sens_ / 180;
 
-
-	
-
-	//mb_ = { static_cast<double>(mouseX_),static_cast<double>(mouseY_) };
-	//// sceneViewのマウス位置取得
-	//mouseX_ = mousePoint.x_;
-	//mouseY_ = mousePoint.y_;
-	//ma_ = { static_cast<double>(mouseX_),static_cast<double>(mouseY_) };
-	//mc_ = ma_ - mb_;
-
-	ImGui::SetNextWindowSize(ImVec2{300,100});
-	ImGui::Begin("debug");
-	ImGui::Text("move %f:%f",move.x_,move.y_);
-	ImGui::End();
-
-	rot_.x_ += move.y_ * sens_ / 180;
-	rot_.y_ += move.x_ * sens_ / 180;
-
+	// マウスの位置の固定
 	SetMousePoint(static_cast<int>(centerPoint.x_), static_cast<int>(centerPoint.y_));
 }

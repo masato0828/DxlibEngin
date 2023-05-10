@@ -6,6 +6,7 @@
 #include "Fream_SceneView.h"
 #include "Fream_Camera.h"
 #include "MousePointCreate.h"
+#include "../NewFolder1/Device_Mouse.h"
 
 class FreamMng
 {
@@ -41,6 +42,7 @@ private:
 	std::unique_ptr<Fream_DokingArea> dokingArea_;
 	std::unique_ptr<Fream_Stage> stage_;
 	std::unique_ptr<Fream_Camera> camera_;
+	std::unique_ptr<Device_Mouse> mouse_;
 
 	bool optionWindowFlg_;
 

@@ -30,6 +30,7 @@
     <ClCompile Include="Class\Fream\Fream_SceneView.cpp" />
     <ClCompile Include="Class\Fream\Fream_Stage.cpp" />
     <ClCompile Include="Class\Fream\MousePointCreate.cpp" />
+    <ClCompile Include="Class\NewFolder1\Device_Mouse.cpp" />
     <ClCompile Include="Class\System\Application.cpp" />
     <ClCompile Include="Class\System\ImguiImageStb.cpp" />
     <ClCompile Include="imGui\imgui.cpp" />
@@ -58,6 +59,7 @@
     <ClInclude Include="Class\Fream\Fream_SceneView.h" />
     <ClInclude Include="Class\Fream\Fream_Stage.h" />
     <ClInclude Include="Class\Fream\MousePointCreate.h" />
+    <ClInclude Include="Class\NewFolder1\Device_Mouse.h" />
     <ClInclude Include="Class\System\Application.h" />
     <ClInclude Include="Class\System\ImguiImageStb.h" />
     <ClInclude Include="imGui\imconfig.h" />
