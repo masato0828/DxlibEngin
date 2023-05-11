@@ -40,9 +40,7 @@ bool Application::Run()
 		// XV
 		freamMng_->Update();
 
-		SetDrawScreen(DX_SCREEN_BACK);
-		RefreshDxLibDirect3DSetting();
-		ClearDrawScreen();
+		
 
 		freamMng_->Draw();
 

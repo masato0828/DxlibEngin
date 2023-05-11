@@ -9,12 +9,12 @@ public:
     ~Fream_Camera();
 	void Init()override;
 	void Update()override;
-	void Update(Vector2Flt mousePoint,Vector2Flt windowSize,Vector2Flt correctLeftTop);
+	void Update(Vector2 mousePoint,Vector2Flt windowHlfeSize,Vector2 centerPoint);
 	void Angle();
 	void Move();
 	void Set();
-	void PushMouseMove(Vector2Flt mousePoint);
-	void MouseMove(Vector2Flt mousePoint);
+	void PushMouseMove();
+	void MouseMove(Vector2 centerPoint);
 
 	void Custom();
 private:
@@ -25,9 +25,9 @@ private:
 	Vector3 targetPos_;
 
 	// マウス用
-	Vector2Dbl ma_;
-	Vector2Dbl mb_;
-	Vector2Dbl mc_;
+	Vector2Dbl aftorMousePoint_;
+	Vector2Dbl beforMousePoint_;
+	Vector2Dbl mousePointDiff_;
 	float sens_;
 	int mouseX_;
 	int mouseY_;
@@ -45,5 +45,6 @@ private:
 
 	bool mouseMove_;
 	int cnt_;
+	Vector2 mousePoint_;
 };
 

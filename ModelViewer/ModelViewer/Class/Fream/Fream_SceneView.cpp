@@ -107,3 +107,34 @@ Vector2Flt Fream_SceneView::GetImageRightDownCornor()
 {
     return imageRightDownCornor_;
 }
+
+Vector2 Fream_SceneView::GetWindowCenterPoint()
+{
+    RECT cR;
+    GetWindowClientRect(&cR);
+
+    Vector2Flt imageRightDown = {
+        imageRightDownCornor_.x_ - cR.left,
+        imageRightDownCornor_.y_ - cR.top
+    };
+    Vector2Flt imageLeftUp = {
+        imageLeftUpCornor_.x_ - cR.left,
+        imageLeftUpCornor_.y_ - cR.top
+    };
+
+    screenSize_ = {
+       imageRightDown.x_ - imageLeftUp.x_,
+       imageRightDown.y_ - imageLeftUp.y_
+    };
+
+    Vector2Flt windowHlfeSize_ = screenSize_ / 2.f;
+    Vector2 correctWindowLeftTop_ = imageLeftUp.int_cast();
+    Vector2 centerPoint = correctWindowLeftTop_ + windowHlfeSize_.int_cast();
+
+    return centerPoint;
+}
+
+Vector2Flt Fream_SceneView::GetScreenSize()
+{
+    return screenSize_;
+}

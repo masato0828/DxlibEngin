@@ -236,6 +236,33 @@ bool Vector2Template<T>::operator>=(const Vector2Template<T>& vec) const
 	return (x_ >= vec.x_ && y_ >= vec.y_);
 }
 
+template<class T>
+Vector2Template<int> Vector2Template<T>::int_cast()
+{
+	Vector2Template<int> result;
+	result.x_ = static_cast<int>(x_);
+	result.y_ = static_cast<int>(y_);
+	return result;
+}
+
+template<class T>
+Vector2Template<float> Vector2Template<T>::float_cast()
+{
+	Vector2Template<float> result;
+	result.x_ = static_cast<float>(x_);
+	result.y_ = static_cast<float>(y_);
+	return result;
+}
+
+template<class T>
+Vector2Template<double> Vector2Template<T>::double_cast()
+{
+	Vector2Template<double> result;
+	result.x_ = static_cast<double>(x_);
+	result.y_ = static_cast<double>(y_);
+	return result;
+}
+
 //============================================================
 //éQè∆ìnÇµ
 //============================================================

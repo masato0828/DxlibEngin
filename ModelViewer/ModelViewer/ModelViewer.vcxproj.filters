@@ -78,9 +78,6 @@
     <ClCompile Include="Class\Fream\Fream_SceneView.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Class\Fream\MousePointCreate.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Class\Fream\Fream_DokingArea.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -90,7 +87,7 @@
     <ClCompile Include="Class\Fream\Fream_Camera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Class\NewFolder1\Device_Mouse.cpp">
+    <ClCompile Include="Class\Device\Device_Mouse.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,9 +164,6 @@
     <ClInclude Include="Class\Fream\Fream_SceneView.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Class\Fream\MousePointCreate.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Class\Fream\Fream_DokingArea.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -179,7 +173,7 @@
     <ClInclude Include="Class\Fream\Fream_Camera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Class\NewFolder1\Device_Mouse.h">
+    <ClInclude Include="Class\Device\Device_Mouse.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,8 +5,7 @@
 #include "Fream_Stage.h"
 #include "Fream_SceneView.h"
 #include "Fream_Camera.h"
-#include "MousePointCreate.h"
-#include "../NewFolder1/Device_Mouse.h"
+#include "../Device/Device_Mouse.h"
 
 class FreamMng
 {
@@ -22,8 +21,6 @@ public:
 	void Render();
 	// ImGui終了処理
 	void ShutDown();
-	// マウスの位置の表示
-	void DrawMousePoint();
 private:
 	// 初期化
 	void Init();
@@ -45,7 +42,6 @@ private:
 	std::unique_ptr<Device_Mouse> mouse_;
 
 	bool optionWindowFlg_;
-
-	MousePoint mousePoint_;
+	bool demoWindowActivFlg_;
 };
 

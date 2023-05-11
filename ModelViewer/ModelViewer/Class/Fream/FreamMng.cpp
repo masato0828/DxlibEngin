@@ -30,7 +30,8 @@ void FreamMng::Init()
     stage_ = std::make_unique<Fream_Stage>();
     camera_ = std::make_unique<Fream_Camera>();
     mouse_ = std::make_unique<Device_Mouse>();
-    optionWindowFlg_ = true;
+    optionWindowFlg_ = false;
+    demoWindowActivFlg_ = false;
 }
 
 void FreamMng::Update()
@@ -79,6 +80,7 @@ void FreamMng::Update()
         }
         Inspector();
 
+        // ドッキングエリアの作成
         dokingArea_->Create();
     }
     else
@@ -86,59 +88,40 @@ void FreamMng::Update()
         std::exit(0);
     }
 
+    // ステージの更新
     stage_->Update();
-    auto mousePoint = mousePoint_.Create({
-        sceneView_->GetDefaultImageSize(),
-        sceneView_->GetImageLeftUpCornor(),
-        sceneView_->GetImageRightDownCornor() });
 
-    RECT cR;
-    GetWindowClientRect(&cR);
-
-    Vector2Flt imageRightDown = {
-        sceneView_->GetImageRightDownCornor().x_-cR.left,
-        sceneView_->GetImageRightDownCornor().y_ - cR.top
-    };
-    Vector2Flt imageLeftUp = {
-        sceneView_->GetImageLeftUpCornor().x_-cR.left,
-        sceneView_->GetImageLeftUpCornor().y_ - cR.top
-    };
-
-    Vector2Flt windowSize = {
-       imageRightDown.x_ - imageLeftUp.x_,
-       imageRightDown.y_ - imageLeftUp.y_
-    };
-
-    camera_->Update(mousePoint, windowSize / 2.f, imageLeftUp);
-    
-    if (optionWindowFlg_) { OptionWindow(); };
-   
+    // マウスの更新
     mouse_->Update(
         sceneView_->GetImageLeftUpCornor(),
-        sceneView_->GetImageRightDownCornor(), 
+        sceneView_->GetImageRightDownCornor(),
         sceneView_->GetDefaultImageSize());
-
+    
+    // カメラの更新
+    camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());
+    
+    // オプション項目を開いているかどうか
+    if (optionWindowFlg_) { OptionWindow(); };
+   
     // シーンビューの作成
     sceneView_->Create();
-
-	// デモウィンドウ
-	ImGui::ShowDemoWindow();
-
-    
 }
 
 void FreamMng::Draw()
 {
+    stage_->PreviewMake();
+
+    SetDrawScreen(DX_SCREEN_BACK);
+    RefreshDxLibDirect3DSetting();
+    ClearDrawScreen();
+
     camera_->Set();
     stage_->Draw();
-    DrawMousePoint();
-    //mouse_->Draw();
+    mouse_->Draw();
 }
 
 void FreamMng::Render()
 {
-    
-
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	//// Update and Render additional Platform Windows
@@ -207,27 +190,6 @@ void FreamMng::Inspector()
 {
     ImGui::Begin("Inspector");
     ImGui::End();
-}
-
-
-void FreamMng::DrawMousePoint()
-{
-    //DrawCircleAA(sceneViewMousePoint_.x_, sceneViewMousePoint_.y_,10,100,0xff0000);
-
-    auto mousePoint = mousePoint_.Create({
-        sceneView_->GetDefaultImageSize(),
-        sceneView_->GetImageLeftUpCornor(),
-        sceneView_->GetImageRightDownCornor() });
-
-    Vector2Flt reductionScreenSize_ = sceneView_->GetImageRightDownCornor() - sceneView_->GetImageLeftUpCornor() ;
-    Vector2Flt defaultScreenSize = { sceneView_->GetDefaultImageSize().x_, sceneView_->GetDefaultImageSize().y_ };
-    mousePoint /= reductionScreenSize_;
-    mousePoint *= defaultScreenSize;
-
-    DrawCircleAA(
-        mousePoint.x_,
-        mousePoint.y_,
-        10, 100, 0xff0000);
 }
 
 void FreamMng::CreateMenuBer()
@@ -321,6 +283,14 @@ void FreamMng::CreateMenuBer()
 void FreamMng::OptionWindow()
 {
     ImGui::Begin("Option");
+
+    ImGui::Checkbox("demoWindowActivFlg_", &demoWindowActivFlg_);
+
+    if (demoWindowActivFlg_)
+    {
+        ImGui::ShowDemoWindow();
+    }
+
     if (ImGui::BeginTabBar("##tabs", ImGuiTabBarFlags_None))
     {
         if (ImGui::BeginTabItem("Stage"))
@@ -333,6 +303,7 @@ void FreamMng::OptionWindow()
             camera_->Custom();
             ImGui::EndTabItem();
         }
+        
         
         ImGui::EndTabBar();
     }

@@ -46,7 +46,7 @@ bool ImguiSup::LoadTextureFromFile(const char* filename, ID3D11ShaderResourceVie
     srvDesc.Texture2D.MostDetailedMip = 0;
     if (pTexture != NULL)
     {
-        g_pd3dDevice->CreateShaderResourceView(pTexture, &srvDesc, out_srv);
+        g_pd3dDevice->CreateShaderResourceView(pTexture, &srvDesc,out_srv);
     }
     else
     {
@@ -118,16 +118,16 @@ bool ImguiSup::LoadBackGroundTextureFromFile(
     return true;
 }
 
-/*/
-
-bool LoadTextureFromFile::operator()(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
+bool ImguiSup::LoadTextureFromFile(int handle, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
 {
     // Load from disk into a raw RGBA buffer
     int image_width = 0;
     int image_height = 0;
-    unsigned char* image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
-    if (image_data == NULL)
+
+    if (GetGraphSize(handle, &image_width, &image_height) == -1)
+    {
         return false;
+    }
 
     // Create texture
     D3D11_TEXTURE2D_DESC desc;
@@ -142,15 +142,11 @@ bool LoadTextureFromFile::operator()(const char* filename, ID3D11ShaderResourceV
     desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
     desc.CPUAccessFlags = 0;
 
-    ID3D11Texture2D* pTexture = NULL;
-    D3D11_SUBRESOURCE_DATA subResource;
-    subResource.pSysMem = image_data;
-    subResource.SysMemPitch = desc.Width * 4;
-    subResource.SysMemSlicePitch = 0;
+    //ID3D11Texture2D* pTexture = (ID3D11Texture2D*)GetUseDirect3D11BackBufferTexture2D();
+    auto pTexture = (ID3D11Texture2D*)GetGraphID3D11Texture2D(handle);
 
     // directX11のデバイスの取得（Dxlib必要あり）
     auto g_pd3dDevice = (ID3D11Device*)GetUseDirect3D11Device();
-    g_pd3dDevice->CreateTexture2D(&desc, &subResource, &pTexture);
 
     // Create texture view
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -159,13 +155,27 @@ bool LoadTextureFromFile::operator()(const char* filename, ID3D11ShaderResourceV
     srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Texture2D.MipLevels = desc.MipLevels;
     srvDesc.Texture2D.MostDetailedMip = 0;
-    g_pd3dDevice->CreateShaderResourceView(pTexture, &srvDesc, out_srv);
+    if (pTexture != NULL)
+    {
+        if (g_pd3dDevice->CreateShaderResourceView(pTexture, &srvDesc, out_srv) != S_OK)
+        {
+            return false;
+        }
+    }
+    else
+    {
+        //例外処理
+        return false;
+    }
     pTexture->Release();
 
     *out_width = image_width;
     *out_height = image_height;
-    stbi_image_free(image_data);
+
+    if (out_srv == NULL)
+    {
+        return false;
+    }
 
     return true;
 }
-/**/

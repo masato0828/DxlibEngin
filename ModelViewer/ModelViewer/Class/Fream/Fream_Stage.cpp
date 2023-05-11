@@ -1,6 +1,15 @@
 #include <Dxlib.h>
+#include <vector>
 #include "Fream_Stage.h"
 #include "../../imGui/imgui.h"
+
+
+#include "../../imGui/imgui_impl_dx11.h"
+#include "../../imGui/imgui_impl_win32.h"
+#include "../../imGui/imgui_internal.h"
+
+#include "../Common/Utility.h"
+#include "../Common/ImGuiMyCustom.h"
 
 Fream_Stage::Fream_Stage()
 {
@@ -13,19 +22,26 @@ Fream_Stage::~Fream_Stage()
 
 void Fream_Stage::Init()
 {
+    my_shaderData = NULL;
+
     modelH_ = MV1LoadModel("data/modelData/plane.mv1");
     pixelShaderH_ = LoadPixelShader("Shader/ps/planePixelShader.ps");
     vertexShaderH_ = LoadVertexShader("Shader/vs/planeVertexShader.vs");
 
     buffer_ = CreateShaderConstantBuffer(sizeof(stageGrid) * 8);
     lineNum_ = 79.8f;
-    lineSize_ = 2.0f;
-    color_[2] = color_[1] = color_[0] =  0.5f;
+    lineSize_ = 4.0f;
+    color_[2] = color_[1] = color_[0] = 0.5f;
     scale_ = 8.0f;
 
     int x, y;
     GetWindowSize(&x, &y);
-    screen_ = MakeScreen(x, y);
+    screen_ = MakeScreen(x, y, true);
+
+    previewData.cameraPos_ = { -243,185, -231 };
+    previewData.cameraRot_ = { 0.420f,0.795f,0.0f };
+
+    previewData.previewTypeChange_ = false;
 }
 
 void Fream_Stage::Update()
@@ -78,11 +94,78 @@ void Fream_Stage::Custom()
     ImGui::DragFloat("lineNum", &lineNum_);
     ImGui::DragFloat("lineSize", &lineSize_);
     ImGui::ColorEdit3("lineColor", color_);
-
+    ImGui::Checkbox("previewType", &previewData.previewTypeChange_);
+    
     // ラインのサイズはラインの数まで
     // もし超えてしまった場合は、ラインの数に合わせる
-    if (lineSize_ >= lineNum_)
+    lineSize_ = (std::min)(lineSize_, lineNum_);
+
+    // ラインの数と大きさの最小値
+    lineNum_ = (std::max)(lineNum_, 0.1f);
+    lineSize_ = (std::max)(lineSize_, 0.1f);
+    scale_ = (std::max)(scale_, 1.0f);
+
+    LoadTextureFromFile(screen_, &my_shaderData, &imageSize_.x_, &imageSize_.y_);
+    
+    // 画像の読み込み
+    auto sizeX = ImGui::GetWindowSize().x;
+    auto sizeY = ImGui::GetWindowSize().y;
+
+    // 横割合
+    auto x = ImGui::GetWindowSize().x / imageSize_.x_;
+    // 縦割合
+    auto y = ImGui::GetWindowSize().y / imageSize_.y_;
+
+    // 係数
+    auto factor = (std::min)(x, y);
+
+    if (factor == 0)
     {
-        lineSize_ = lineNum_;
+        ImGui::End();
+        return;
+    }
+
+    ImGui::Image(
+        // 画像情報
+        (void*)my_shaderData,
+        // 画像サイズを割合で変える
+        ImVec2{ imageSize_.x_ * factor, imageSize_.y_ * factor },
+        // UV1
+        ImVec2{ 0,0 },
+        // UV2
+        ImVec2{ 1,1 },
+        // 描画カラー
+        ImVec4{ 1,1,1,1 },
+        // 枠のカラー
+        ImVec4{ 0,0,0,0 });
+
+    PreviewTypeChange();
+}
+
+void Fream_Stage::PreviewMake()
+{
+    SetDrawScreen(screen_);
+    ClearDrawScreen();
+    // クリップ距離を設定する(SetDrawScreenでリセットされる)
+    // カメラのクリッピング距離を設定
+    SetCameraNearFar(10.0f, 300000.0f);
+    // クリップ距離を設定する(SetDrawScreenでリセットされる)
+    SetCameraPositionAndAngle(previewData.cameraPos_.toVECTOR(),
+        previewData.cameraRot_.x_, previewData.cameraRot_.y_, previewData.cameraRot_.z_);
+
+    Draw();
+}
+
+void Fream_Stage::PreviewTypeChange()
+{
+    if (!previewData.previewTypeChange_)
+    {
+        previewData.cameraPos_ = { -243,185, -231 };
+        previewData.cameraRot_ = { 0.420f,0.795f,0.0f };
+    }
+    else
+    {
+        previewData.cameraPos_ = { 0,800+(100*scale_),0 };
+        previewData.cameraRot_ = { Deg2Rad(90.0f),0.f,0.f};
     }
 }

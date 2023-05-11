@@ -16,6 +16,8 @@ public:
     Vector2 GetDefaultImageSize();
     Vector2Flt GetImageLeftUpCornor();
     Vector2Flt GetImageRightDownCornor();
+    Vector2 GetWindowCenterPoint();
+    Vector2Flt GetScreenSize();
 private:
 
     float factor_;
@@ -24,5 +26,7 @@ private:
 
     Vector2Flt imageLeftUpCornor_;
     Vector2Flt imageRightDownCornor_;
+
+    Vector2Flt screenSize_;
 };
 

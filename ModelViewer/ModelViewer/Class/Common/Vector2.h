@@ -49,6 +49,11 @@ public:
 	bool operator<=(const Vector2Template& vec) const;
 	bool operator>=(const Vector2Template& vec) const;
 
+	// キャスト
+	Vector2Template<int> int_cast();
+	Vector2Template<float> float_cast();
+	Vector2Template<double> double_cast();
+
 };
 template <class T>
 Vector2Template<T> operator*(const Vector2Template<T>& u, T k);		//参照渡し:const 型& 引数

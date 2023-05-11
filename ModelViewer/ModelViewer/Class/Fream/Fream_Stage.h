@@ -1,5 +1,9 @@
 #pragma once
 #include "FreamBase.h"
+#include "../System/ImguiImageStb.h"
+#include "../Common/Vector2.h"
+#include "../Common/Geometry.h"
+
 class Fream_Stage :
     public FreamBase
 {
@@ -13,6 +17,9 @@ public:
 
     void Custom();
 
+    void PreviewMake();
+
+    void PreviewTypeChange();
 private:
     struct  stageGrid
     {
@@ -32,5 +39,18 @@ private:
     float color_[3];
     float scale_;
     int screen_;
+
+    // シェーダ情報の作成
+    ID3D11ShaderResourceView* my_shaderData;
+    Vector2 imageSize_;
+    
+    struct PreviewData
+    {
+        Vector3 cameraPos_;
+        Vector3 cameraRot_;
+        bool previewTypeChange_;
+    } previewData;
+
+
 };
 
