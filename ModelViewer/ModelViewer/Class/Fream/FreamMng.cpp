@@ -1,5 +1,6 @@
 #include <Dxlib.h>
 #include <memory>
+#include <string>
 #include "FreamMng.h"
 #include "../../imGui/imgui.h"
 #include "../../imGui/imgui_impl_dx11.h"
@@ -30,6 +31,8 @@ void FreamMng::Init()
     stage_ = std::make_unique<Fream_Stage>();
     camera_ = std::make_unique<Fream_Camera>();
     mouse_ = std::make_unique<Device_Mouse>();
+    items_ = std::make_unique<Fream_Item>();
+    fileDialog_ = std::make_unique<Fream_FileDialog>();
     optionWindowFlg_ = false;
     demoWindowActivFlg_ = false;
 }
@@ -105,6 +108,9 @@ void FreamMng::Update()
    
     // シーンビューの作成
     sceneView_->Create();
+
+    items_->Update();
+    fileDialog_->Update();
 }
 
 void FreamMng::Draw()
@@ -152,7 +158,7 @@ void FreamMng::Style()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\meiryo.ttc", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
+	io.Fonts->AddFontFromFileTTF("c:\\WINDOWS\\FONTS\\MEIRYO.TTC", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
 	(void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -282,31 +288,44 @@ void FreamMng::CreateMenuBer()
 
 void FreamMng::OptionWindow()
 {
-    ImGui::Begin("Option");
+    // Imgui用ウィンドウクラスの作成
+    ImGuiWindowClass window_classview;
+    // ウィンドウの効果の編集(ウィンドウのドッキングは切っておく)
+    window_classview.DockNodeFlagsOverrideSet = 
+        ImGuiDockNodeFlags_NoDocking| 
+        ImGuiDockNodeFlags_NoDockingSplitMe| 
+        ImGuiDockNodeFlags_NoDockingSplitOther| 
+        ImGuiDockNodeFlags_NoDockingOverMe| 
+        ImGuiDockNodeFlags_NoDockingOverOther|
+        ImGuiDockNodeFlags_NoDockingOverEmpty;
+    ImGui::SetNextWindowClass(&window_classview);
 
-    ImGui::Checkbox("demoWindowActivFlg_", &demoWindowActivFlg_);
-
-    if (demoWindowActivFlg_)
+    if (ImGui::Begin("Option"))
     {
-        ImGui::ShowDemoWindow();
-    }
+        ImGui::Checkbox("demoWindowActivFlg_", &demoWindowActivFlg_);
 
-    if (ImGui::BeginTabBar("##tabs", ImGuiTabBarFlags_None))
-    {
-        if (ImGui::BeginTabItem("Stage"))
+        if (demoWindowActivFlg_)
         {
-            stage_->Custom();
-            ImGui::EndTabItem();
+            ImGui::ShowDemoWindow();
         }
-        if (ImGui::BeginTabItem("Camera"))
+
+        if (ImGui::BeginTabBar("##tabs", ImGuiTabBarFlags_None))
         {
-            camera_->Custom();
-            ImGui::EndTabItem();
+            if (ImGui::BeginTabItem("Stage"))
+            {
+                stage_->Custom();
+                ImGui::EndTabItem();
+            }
+            if (ImGui::BeginTabItem("Camera"))
+            {
+                camera_->Custom();
+                ImGui::EndTabItem();
+            }
+
+
+            ImGui::EndTabBar();
         }
-        
-        
-        ImGui::EndTabBar();
+
+        ImGui::End();
     }
-    
-    ImGui::End();
 }

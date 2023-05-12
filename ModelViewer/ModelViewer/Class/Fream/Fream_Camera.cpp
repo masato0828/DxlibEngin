@@ -189,6 +189,9 @@ void Fream_Camera::Custom()
 	int mx, my;
 	GetMousePoint(&mx,&my);
 	ImGui::Text("mousePoint = %d:%d",mx,my);
+	ImGui::Text(u8"çüë∫mamamama");
+
+
 
 
 	

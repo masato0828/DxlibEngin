@@ -6,6 +6,8 @@
 #include "Fream_SceneView.h"
 #include "Fream_Camera.h"
 #include "../Device/Device_Mouse.h"
+#include "Fream_Item.h"
+#include "Fream_FileDialog.h"
 
 class FreamMng
 {
@@ -40,6 +42,8 @@ private:
 	std::unique_ptr<Fream_Stage> stage_;
 	std::unique_ptr<Fream_Camera> camera_;
 	std::unique_ptr<Device_Mouse> mouse_;
+	std::unique_ptr<Fream_Item> items_;
+	std::unique_ptr<Fream_FileDialog> fileDialog_;
 
 	bool optionWindowFlg_;
 	bool demoWindowActivFlg_;

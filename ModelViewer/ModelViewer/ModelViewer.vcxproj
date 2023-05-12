@@ -27,11 +27,16 @@
     <ClCompile Include="Class\Fream\FreamMng.cpp" />
     <ClCompile Include="Class\Fream\Fream_Camera.cpp" />
     <ClCompile Include="Class\Fream\Fream_DokingArea.cpp" />
+    <ClCompile Include="Class\Fream\Fream_FileDialog.cpp" />
+    <ClCompile Include="Class\Fream\Fream_Item.cpp" />
+    <ClCompile Include="Class\Fream\Fream_Model.cpp" />
     <ClCompile Include="Class\Fream\Fream_SceneView.cpp" />
     <ClCompile Include="Class\Fream\Fream_Stage.cpp" />
     <ClCompile Include="Class\Device\Device_Mouse.cpp" />
     <ClCompile Include="Class\System\Application.cpp" />
     <ClCompile Include="Class\System\ImguiImageStb.cpp" />
+    <ClCompile Include="imGui\CustomFont.cpp" />
+    <ClCompile Include="imGui\ImFileDialog.cpp" />
     <ClCompile Include="imGui\imgui.cpp" />
     <ClCompile Include="imGui\ImGuiFileDialog.cpp" />
     <ClCompile Include="imGui\imgui_demo.cpp" />
@@ -55,12 +60,17 @@
     <ClInclude Include="Class\Fream\FreamMng.h" />
     <ClInclude Include="Class\Fream\Fream_Camera.h" />
     <ClInclude Include="Class\Fream\Fream_DokingArea.h" />
+    <ClInclude Include="Class\Fream\Fream_FileDialog.h" />
+    <ClInclude Include="Class\Fream\Fream_Item.h" />
+    <ClInclude Include="Class\Fream\Fream_Model.h" />
     <ClInclude Include="Class\Fream\Fream_SceneView.h" />
     <ClInclude Include="Class\Fream\Fream_Stage.h" />
     <ClInclude Include="Class\Device\Device_Mouse.h" />
     <ClInclude Include="Class\System\Application.h" />
     <ClInclude Include="Class\System\ImguiImageStb.h" />
+    <ClInclude Include="imGui\CustomFont.h" />
     <ClInclude Include="imGui\imconfig.h" />
+    <ClInclude Include="imGui\ImFileDialog.h" />
     <ClInclude Include="imGui\imgui.h" />
     <ClInclude Include="imGui\ImGuiFileDialog.h" />
     <ClInclude Include="imGui\ImGuiFileDialogConfig.h" />
@@ -173,6 +183,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(DXLIB_DIR)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
