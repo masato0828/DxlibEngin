@@ -78,13 +78,15 @@ void FreamMng::Update()
             // メニューバーの作成
             CreateMenuBer();
 
+            // ドッキングエリアの作成
+            dokingArea_->Create();
+
             // ウィンドウの終了
             ImGui::End();
         }
         Inspector();
 
-        // ドッキングエリアの作成
-        dokingArea_->Create();
+        
     }
     else
     {
@@ -174,16 +176,14 @@ void FreamMng::Style()
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 	{
 		//　ウィンドウの丸み
-		style.WindowRounding = 1.0f;
-
-        style.WindowRounding = 12.0f;
-        style.ChildRounding = 12.0f;
-        style.FrameRounding = 12.0f;
-        style.PopupRounding = 12.0f;
-        style.ScrollbarRounding = 12.0f;
-        style.GrabRounding = 12.0f;
-        style.LogSliderDeadzone = 12.0f;
-        style.TabRounding = 12.0f;
+        style.WindowRounding = 1.0f;
+        style.ChildRounding = 1.0f;
+        style.FrameRounding = 1.0f;
+        style.PopupRounding = 1.0f;
+        style.ScrollbarRounding = 1.0f;
+        style.GrabRounding = 1.0f;
+        style.LogSliderDeadzone = 1.0f;
+        style.TabRounding = 1.0f;
 
 		// 指定ウィンドウ（ここでは背景）の変更
 		style.Colors[ImGuiCol_WindowBg].w = 0.5f;
