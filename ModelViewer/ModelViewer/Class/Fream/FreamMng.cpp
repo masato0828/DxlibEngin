@@ -7,6 +7,7 @@
 #include "../../imGui/imgui_impl_win32.h"
 #include "../System/ImguiImageStb.h"
 #include "../../imGui/imgui_internal.h"
+#include "../Common/ImGuiMyCustom.h"
 
 FreamMng::FreamMng()
 {
@@ -66,12 +67,13 @@ void FreamMng::Update()
         int DesktopW, DesktopH;
         GetDefaultState(&DesktopW, &DesktopH, NULL);
         // ウィンドウの位置
-        //ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
+        ImGui::SetNextWindowPos(ImVec2(200, 100), ImGuiCond_Once);
         ///ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
         // ウィンドウの大きさ
-        //ImGui::SetNextWindowSize(ImVec2(DesktopW/2, DesktopH/2), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(DesktopW / 2 + DesktopW / 3, DesktopH / 2 + DesktopH / 3), ImGuiCond_Once);
         ///ImGui::SetNextWindowSize(ImVec2(DesktopW, DesktopH), ImGuiCond_FirstUseEver);
-
+        
+        
         // ウィンドウの作成（ウィンドウの名前、開いているか、ウィンドウの効果）
         if (ImGui::Begin("model view", &m_show, window_flags))
         {
@@ -83,10 +85,10 @@ void FreamMng::Update()
 
             // ウィンドウの終了
             ImGui::End();
+            
+            //Test();
         }
         Inspector();
-
-        
     }
     else
     {
@@ -107,12 +109,14 @@ void FreamMng::Update()
     
     // オプション項目を開いているかどうか
     if (optionWindowFlg_) { OptionWindow(); };
-   
+  
     // シーンビューの作成
     sceneView_->Create();
 
     items_->Update();
     fileDialog_->Update();
+
+   
 }
 
 void FreamMng::Draw()
@@ -170,7 +174,7 @@ void FreamMng::Style()
 	io.ConfigViewportsNoAutoMerge = true;
 
 	// iniファイルの吐き出しを止める
-	//io.IniFilename = NULL;
+	io.IniFilename = NULL;
 	ImGuiStyle& style = ImGui::GetStyle();
 
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -194,6 +198,11 @@ void FreamMng::Style()
 
 void FreamMng::Inspector()
 {
+    // Imgui用ウィンドウクラスの作成
+    ImGuiWindowClass window_classview;
+    // ウィンドウの効果の編集（今回はウィンドウの非表示を無くす設定とウィンドウタブを無くす処理）
+    window_classview.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoWindowMenuButton;
+    ImGui::SetNextWindowClass(&window_classview);
     ImGui::Begin("Inspector");
     ImGui::End();
 }

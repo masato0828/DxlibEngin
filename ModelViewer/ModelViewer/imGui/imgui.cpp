@@ -17431,6 +17431,15 @@ void ImGui::DockBuilderSetNodeSize(ImGuiID node_id, ImVec2 size)
 //   For various reason, the splitting code currently needs a base size otherwise space may not be allocated as precisely as you would expect.
 // - Use (id == 0) to let the system allocate a node identifier.
 // - Existing node with a same id will be removed.
+// 
+// ImGuiDockNodeFlags_DockSpaceフラグを使用して、ドックスペースノードを作成することを確認してください！そうでない場合は、フローティングノードが作成されます！
+// -フローティングノード：その後、DockBuilderSetNodePos()/DockBuilderSetNodeSize()を呼び出してフローティングノードの位置とサイズを決めることができます。
+// -Dockspaceノード：DockBuilderSetNodePos()の呼び出しは不要です。
+// - DockBuilderSplitNode()を使用して作成直後にノードを分割する場合は、必ず事前にDockBuilderSetNodeSize()を呼び出してください！
+//  様々な理由により、現在、分割コードにはベースサイズが必要であり、そうでない場合は、期待するほど正確にスペースが割り当てられないことがあります。
+// - ノード識別子をシステムに割り当てさせるには、(id == 0)を使用します。
+// -同じIDを持つ既存のノードは削除されます。
+
 ImGuiID ImGui::DockBuilderAddNode(ImGuiID id, ImGuiDockNodeFlags flags)
 {
     ImGuiContext* ctx = GImGui;
@@ -17579,6 +17588,10 @@ void ImGui::DockBuilderRemoveNodeDockedWindows(ImGuiID root_id, bool clear_setti
 // If 'out_id_at_dir' or 'out_id_at_opposite_dir' are non NULL, the function will write out the ID of the two new nodes created.
 // Return value is ID of the node at the specified direction, so same as (*out_id_at_dir) if that pointer is set.
 // FIXME-DOCK: We are not exposing nor using split_outer.
+
+//out_id_at_dir' または 'out_id_at_opposite_dir' が NULL でない場合、この関数は新たに作成された2つのノードのIDを書き出す。
+// 戻り値は、指定された方向のノードのIDであり、そのポインタが設定されている場合は、(*out_id_at_dir)と同じである。
+//FIXME-DOCK: split_outerは公開していませんし、使用していません。
 ImGuiID ImGui::DockBuilderSplitNode(ImGuiID id, ImGuiDir split_dir, float size_ratio_for_node_at_dir, ImGuiID* out_id_at_dir, ImGuiID* out_id_at_opposite_dir)
 {
     ImGuiContext& g = *GImGui;

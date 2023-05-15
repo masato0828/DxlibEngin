@@ -6,6 +6,7 @@
 #include "../../imGui/imgui_impl_win32.h"
 #include "../System/ImguiImageStb.h"
 #include "../../imGui/imgui_internal.h"
+#include "../Common/ImGuiMyCustom.h"
 
 Fream_SceneView::Fream_SceneView()
 {
@@ -31,9 +32,12 @@ void Fream_SceneView::Create()
     // ウィンドウの効果の編集（今回はウィンドウの非表示を無くす設定とウィンドウタブを無くす処理）
     window_classview.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoWindowMenuButton;
     ImGui::SetNextWindowClass(&window_classview);
+    
     // ウィンドウの表示
     if (ImGui::Begin("scene"))
     {
+        ImGuiCustom::NoCenterDoking();
+
         // シェーダ情報の作成
         static ID3D11ShaderResourceView* my_shaderData = NULL;
         // 画像の読み込み

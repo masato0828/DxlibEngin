@@ -1,6 +1,7 @@
 #pragma once
 #include "FreamBase.h"
 #include "../Common/Vector2.h"
+#include <string>
 
 class Fream_SceneView :
     public FreamBase

@@ -14,3 +14,10 @@ namespace ImGui
     //IMGUI_API bool InputText(const char* label, std::string* buf, size_t buf_size, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
 }
 
+namespace ImGuiCustom
+{
+    void CreateDokingArea(std::string areaName);
+
+    // 真ん中のドッキングをさせないようにする
+    void NoCenterDoking();
+}
