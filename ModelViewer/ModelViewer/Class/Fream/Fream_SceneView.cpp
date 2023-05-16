@@ -36,7 +36,7 @@ void Fream_SceneView::Create()
     // ウィンドウの表示
     if (ImGui::Begin("scene"))
     {
-        ImGuiCustom::NoCenterDoking();
+        //ImGuiCustom::NoCenterDoking();
 
         // シェーダ情報の作成
         static ID3D11ShaderResourceView* my_shaderData = NULL;
