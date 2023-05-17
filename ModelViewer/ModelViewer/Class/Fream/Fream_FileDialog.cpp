@@ -30,6 +30,7 @@ void Fream_FileDialog::Update()
 {
 	if (ImGui::Begin("Project"))
 	{
+		// 強制ドッキング設定
 		ImGuiID dockspace_id = ImGui::GetID("projectDock");
 		if (ImGui::DockBuilderGetNode(dockspace_id) == NULL)
 		{
@@ -49,12 +50,14 @@ void Fream_FileDialog::Update()
 		}
 		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f));
 
+		mainWindowSize_ = { ImGui::GetWindowSize().x,ImGui::GetWindowSize().y};
+
 		// Imgui用ウィンドウクラスの作成
 		ImGuiWindowClass window_class;
 		// ウィンドウの効果の編集（今回はウィンドウの非表示を無くす設定とウィンドウタブを無くす処理）
 		window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoTabBar;
 		ImGui::SetNextWindowClass(&window_class);
-		if (ImGui::Begin("fileDialog",0))
+		if (ImGui::Begin("fileDialog", 0))
 		{
 			//現在のカンレントディレクトリを取得
 			auto directory = std::filesystem::current_path();
@@ -63,49 +66,49 @@ void Fream_FileDialog::Update()
 
 			//if (ImGui::TreeNode("file"))
 			//{
-				int eraseNum = directory.string().find_last_of('\\');
-				//// 
-				std::string file = directory.string().erase(0, eraseNum);
-				//// 
-				std::string fileN = file.erase(0, 1);
+			int eraseNum = directory.string().find_last_of('\\');
+			//// 
+			std::string file = directory.string().erase(0, eraseNum);
+			//// 
+			std::string fileN = file.erase(0, 1);
 
-				//if (ImGui::TreeNode(fileN.c_str()))
-				//{
-				//	selection_mask_vector_.push_back((0 << 1));
-					//Tree(directory,0);
-				ImGuiTreeNodeFlags node_flags =
-					ImGuiTreeNodeFlags_OpenOnArrow |
-					ImGuiTreeNodeFlags_OpenOnDoubleClick
-					|ImGuiTreeNodeFlags_SpanAvailWidth;
+			//if (ImGui::TreeNode(fileN.c_str()))
+			//{
+			//	selection_mask_vector_.push_back((0 << 1));
+				//Tree(directory,0);
+			ImGuiTreeNodeFlags node_flags =
+				ImGuiTreeNodeFlags_OpenOnArrow |
+				ImGuiTreeNodeFlags_OpenOnDoubleClick
+				| ImGuiTreeNodeFlags_SpanAvailWidth;
 
-				if (&fileData_ == nowSelect)
-				{
-					node_flags |= ImGuiTreeNodeFlags_Selected;
-				}
-					bool isopen = ImGui::TreeNodeEx((void*)&fileData_, node_flags, fileData_.myName.c_str());
+			if (&fileData_ == nowSelect)
+			{
+				node_flags |= ImGuiTreeNodeFlags_Selected;
+			}
+			bool isopen = ImGui::TreeNodeEx((void*)&fileData_, node_flags, fileData_.myName.c_str());
 
-					// ツリーを選択
-					if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
-					{
-						// 現在選択中
-						nowSelect = &fileData_;
+			// ツリーを選択
+			if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+			{
+				// 現在選択中
+				nowSelect = &fileData_;
 
-					}
-					if (isopen)
-					{
-						Tree2(directory, fileData_);
-						ImGui::TreePop();
-					}
-
-					
+			}
+			if (isopen)
+			{
+				Tree2(directory, fileData_);
+				ImGui::TreePop();
+			}
 
 
-					
-				//	ImGui::TreePop();
-				//}
 
-			/*	ImGui::TreePop();
-			}*/
+
+
+			//	ImGui::TreePop();
+			//}
+
+		/*	ImGui::TreePop();
+		}*/
 
 			ImGui::End();
 		}
@@ -218,8 +221,8 @@ void Fream_FileDialog::Tree2(std::filesystem::path directory, FileData& fileData
 	std::filesystem::directory_iterator end{};
 
 	for (; itr != end; ++itr) 
-
-	{	// ツリーデータの設定
+	{	
+		// ツリーデータの設定
 		ImGuiTreeNodeFlags node_flags = 0;//=
 			
 			//ImGuiTreeNodeFlags_OpenOnDoubleClick |
@@ -258,7 +261,6 @@ void Fream_FileDialog::Tree2(std::filesystem::path directory, FileData& fileData
 		if (is_selected)
 			node_flags |= ImGuiTreeNodeFlags_Selected;
 
-		auto nowpath = itr->path();
 		std::filesystem::recursive_directory_iterator subItr(itr->path());
 
 		for (auto& sub : subItr)
@@ -280,6 +282,7 @@ void Fream_FileDialog::Tree2(std::filesystem::path directory, FileData& fileData
 			// 現在選択中
 			//nowSelect = &dataItr->second;
 			nowSelect = &data->second;
+			nowSelectPath_ = itr->path();
 		}
 
 		// ノードが開かれている
@@ -288,6 +291,7 @@ void Fream_FileDialog::Tree2(std::filesystem::path directory, FileData& fileData
 			// 再起処理
 			//Tree2(itr->path(), dataItr->second);
 			Tree2(itr->path(), data->second);
+
 			// ツリーの終了
 			ImGui::TreePop();
 		}
@@ -311,55 +315,51 @@ void Fream_FileDialog::ItemWindow()
 {
 	if (ImGui::Begin("ITEM"))
 	{
+
 		ImGui::Separator();
-		auto directory = std::filesystem::current_path();
-		std::string directry_str = directory.filename().u8string();
-		//ImGui::Button();
 		if (nowSelect != nullptr)
 		{
+			filePaht_.clear();
 			Recovery(nowSelect);
+			filePaht_ = filePaht_.size() == 0 ? std::filesystem::current_path().string(): 
+				std::filesystem::current_path().string() + "/" + filePaht_;
+			ImGui::Separator();
+
+			ImGui::Begin("viewr");
+			ImGui::Text(filePaht_.c_str());
+			ImGui::End();
+
+
+			auto current_path = std::filesystem::current_path();
+
+
+			//// イテレータの作成
+			std::filesystem::directory_iterator itr(filePaht_);
+			std::filesystem::directory_iterator end{};
+
+			for (; itr != end; ++itr)
+			{
+
+				auto directoryName = (--itr->path().end())->u8string();
+				{
+					ImVec2 buttonPos = ImGui::GetCursorPos();
+					MakeFileImage(directoryName/*現在フォルダの下の階層のファイル及びフォルダの名前*/);
+
+					auto getRectMin = ImGui::GetWindowDrawList()->GetClipRectMin();
+					auto getRectMax = ImGui::GetWindowDrawList()->GetClipRectMax();
+					auto windowDisplayArea = getRectMax.x - getRectMin.x;
+
+					if (buttonPos.x <= windowDisplayArea - 200/*ボタンのサイズ*2*/)
+					{
+						ImGui::SameLine();
+					}
+				}
+			}
 		}
-		ImGui::Separator();
 
 
-		/*ImGui::Button("button", ImVec2(100,100));
-		ImGui::SameLine();
-		ImGui::Button("button", ImVec2(100, 100));
-		ImGui::SameLine();
-		ImGui::Button("button", ImVec2(100, 100));
-		ImGui::SameLine();
-		ImGui::Button("button", ImVec2(100, 100));
-		ImGui::SameLine();
-		ImGui::Button("button", ImVec2(100, 100));
-		ImGui::SameLine();
-		ImGui::Button("button", ImVec2(100, 100));
-		ImGui::SameLine();
-		ImGui::Button("button", ImVec2(100, 100));
-		ImGui::Text("text1");
-		ImGui::SameLine();
-		ImGui::Text("text2");
-		ImGui::SameLine();
-		ImGui::Text("text3");
-		ImGui::SameLine();
-		ImGui::Text("text4");
-		ImGui::SameLine();
-		ImGui::Text("text5");
-		ImGui::SameLine();
-		ImGui::Text("text6");
-		ImGui::SameLine();
-		ImGui::Text("text7");
-		ImGui::SameLine();*/
+		
 
-
-		CreateImage();
-		MakeFileImage(u8"text");
-		ImGui::SameLine();
-
-		MakeFileImage(u8"text1");
-		ImGui::SameLine();
-
-		MakeFileImage(u8"text2");
-		ImGui::SameLine();
 		ImGui::End();
 	}
 }
@@ -369,14 +369,15 @@ void Fream_FileDialog::Recovery(FileData* selectData)
 	if (selectData->parentFile_ != NULL)
 	{
 		Recovery(selectData->parentFile_);
+		filePaht_ += selectData->myName + "/";
 		ImGui::SameLine();
 		ImGui::Button("/");
 	}
 	ImGui::SameLine();
-	//	ImGui::Button(selectData->myName.c_str());
 	if (ImGui::Button(selectData->myName.c_str()))
 	{
 		nowSelect = selectData;
+		filePaht_ += selectData->myName + "/";
 		return;
 	}
 }
@@ -384,61 +385,77 @@ void Fream_FileDialog::Recovery(FileData* selectData)
 void Fream_FileDialog::MakeFileImage( std::string_view name)
 {
 	ImGui::BeginGroup();
-
 	ImVec2 buttonPos = ImGui::GetCursorPos();
-	ImVec2 buttonSize = ImVec2(100, 100);
+	ImVec2 buttonSize = ImVec2(90, 100);
 	ImGui::ImageButton((void*)my_shaderData, buttonSize);
 	// テキストの幅を計算
 	{
-		ImVec2 textSize = ImGui::CalcTextSize(name.data());
-		float textWidth = textSize.x;
+		//std::string fileName = name.data();
+		//ImVec2 textSize = ImGui::CalcTextSize(fileName.c_str());
+		//
+		//if (textSize.x >= buttonSize.x)
+		//{
+		//	fileName = "...";
+		//	textSize = ImGui::CalcTextSize(fileName.c_str());
+		//}
+		//
+		//float textWidth = textSize.x;
+		//// テキストの中央揃えを行うためにカーソルの位置を調整
+		//float posX = (buttonSize.x - textWidth) * 0.5f;
+		//ImGui::SetCursorPosX(posX+ buttonPos.x);
+		//ImGui::Text(fileName.c_str());
 
+		std::string fileName = name.data();
+
+		ImVec2 textSize = ImGui::CalcTextSize(fileName.c_str());
+		// ボタンの幅と文字列の長さを比較し、ボタンの幅を超える場合は文字列を切り詰めて "..." を追加
+		if (textSize.x > buttonSize.x)
+		{
+			while (textSize.x > buttonSize.x && fileName.length() > 0)
+			{
+				fileName.pop_back();
+				// テキストのサイズを毎回更新する
+				textSize = ImGui::CalcTextSize(fileName.c_str());
+			}
+			fileName += "...";
+			// 合成後のサイズを取得
+			textSize = ImGui::CalcTextSize(fileName.c_str());
+		}
+
+		float textWidth = textSize.x;
 		// テキストの中央揃えを行うためにカーソルの位置を調整
 		float posX = (buttonSize.x - textWidth) * 0.5f;
 		ImGui::SetCursorPosX(posX+ buttonPos.x);
-		ImGui::Text(name.data());
+		ImGui::Text(fileName.c_str());
 	}
 	ImGui::EndGroup();
 }
 
-void Fream_FileDialog::CreateImage()
+void Fream_FileDialog::CreateImage(std::string filePath)
 {
 	
 	// 画像の読み込み
 	auto defaultImageSize_ = Vector2();
-	bool ret = LoadBackGroundTextureFromFile(&my_shaderData, &defaultImageSize_.x_, &defaultImageSize_.y_);
-
-	auto sizeX = ImGui::GetWindowSize().x;
-	auto sizeY = ImGui::GetWindowSize().y;
-
-	// 横割合
-	auto x = ImGui::GetWindowSize().x / defaultImageSize_.x_;
-	// 縦割合
-	auto y = ImGui::GetWindowSize().y / defaultImageSize_.y_;
-
-
-	// 係数
-	auto factor = (std::min)(x, y);
-
-	if (factor == 0)
+	//bool ret = LoadBackGroundTextureFromFile(&my_shaderData, &defaultImageSize_.x_, &defaultImageSize_.y_);
+	bool ret = false; 
+	
+	if (my_shaderData_vector_.size() != NULL)
 	{
-		ImGui::End();
-		return;
+		ret = LoadTextureFromFile(
+			filePath.c_str(),// 画像ファイルの場所
+			&my_shaderData_vector_.at(my_shaderData_vector_.size() - 1),	// シェーダのデータ作成用の変数
+			&defaultImageSize_.x_,// 画像のサイズ取得変数
+			&defaultImageSize_.y_);
+
+		if (!ret)
+		{
+			my_shaderData_vector_.at(my_shaderData_vector_.size() - 1) = NULL;
+		}
+
+		MakeFileImage("fileName");
 	}
 
-	//ImGui::Image(
-	//	// 画像情報
-	//	(void*)my_shaderData,
-	//	// 画像サイズを割合で変える
-	//	ImVec2{ defaultImageSize_.x_ * factor, defaultImageSize_.y_ * factor },
-	//	// UV1
-	//	ImVec2{ 0,0 },
-	//	// UV2
-	//	ImVec2{ 1,1 },
-	//	// 描画カラー
-	//	ImVec4{ 1,1,1,1 },
-	//	// 枠のカラー
-	//	ImVec4{ 0,0,0,0 });
+	
 }
 
 Fream_FileDialog::FileData::FileData(FileData* parent, std::string name)

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <unordered_map>
 #include "../System/ImguiImageStb.h"
+#include "../Common/Vector2.h"
 
 class Fream_FileDialog :
     public FreamBase
@@ -39,11 +40,18 @@ private:
 
     FileData fileData_;
     FileData* nowSelect;
+    std::filesystem::path nowSelectPath_;
+
 
     std::vector<int> selection_mask_vector_;
 
+    Vector2 mainWindowSize_;
+
+    std::string filePaht_;
+
     // シェーダ情報の作成
     ID3D11ShaderResourceView* my_shaderData = NULL;
+    std::vector<ID3D11ShaderResourceView*> my_shaderData_vector_;
 
     struct Color
     {
@@ -60,6 +68,6 @@ private:
 
     void MakeFileImage(std::string_view name);
 
-    void CreateImage();
+    void CreateImage(std::string filePath);
 };
 
