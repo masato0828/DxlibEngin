@@ -23,7 +23,8 @@ void Fream_FileDialog::Init()
 	// 選択用マスク
 	//selection_mask_ = (1 << 0);
 	nowSelect = &fileData_;
-	
+
+	nowSelectFileName_ = "";
 }
 
 void Fream_FileDialog::Update()
@@ -85,7 +86,15 @@ void Fream_FileDialog::Update()
 			{
 				node_flags |= ImGuiTreeNodeFlags_Selected;
 			}
-			bool isopen = ImGui::TreeNodeEx((void*)&fileData_, node_flags, fileData_.myName.c_str());
+
+			//if (fileData_.myName)
+			//nowSelect
+			if(directory == nowSelect->myName)
+			{
+				node_flags |= ImGuiTreeNodeFlags_DefaultOpen;
+			}
+
+			bool is_open = ImGui::TreeNodeEx((void*)&fileData_, node_flags, fileData_.myName.c_str());
 
 			// ツリーを選択
 			if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
@@ -94,7 +103,7 @@ void Fream_FileDialog::Update()
 				nowSelect = &fileData_;
 
 			}
-			if (isopen)
+			if (is_open)
 			{
 				Tree2(directory, fileData_);
 				ImGui::TreePop();
@@ -219,7 +228,8 @@ void Fream_FileDialog::Tree2(std::filesystem::path directory, FileData& fileData
 	// イテレータの作成
 	std::filesystem::directory_iterator itr(directory.u8string());
 	std::filesystem::directory_iterator end{};
-
+	directory;
+	nowSelect;
 	for (; itr != end; ++itr) 
 	{	
 		// ツリーデータの設定
@@ -233,6 +243,11 @@ void Fream_FileDialog::Tree2(std::filesystem::path directory, FileData& fileData
 		{
 			// もう一度
 			continue;
+		}
+
+		if (fileData.myName == nowSelect->myName)
+		{
+			node_flags |= ImGuiTreeNodeFlags_DefaultOpen;
 		}
 
 		// イメージ
@@ -301,11 +316,12 @@ void Fream_FileDialog::Tree2(std::filesystem::path directory, FileData& fileData
 	}
 }
 
-bool Fream_FileDialog::CharacterSearch(std::string target,std::string searchFileName,Color color)
+bool Fream_FileDialog::CharacterSearch(std::string showName,std::string searchFileName,Color color, std::string defaultTarget)
 {
-	if (target.find(searchFileName) != std::string::npos)
+	if(isHeaderFile(defaultTarget,searchFileName))
+	//if (defaultTarget.find(searchFileName) != std::string::npos)
 	{
-		ImGui::TextColored(ImVec4(color.r, color.g,color.b, color.a), target.c_str());
+		ImGui::TextColored(ImVec4(color.r, color.g,color.b, color.a), showName.c_str());
 		return true;
 	}
 	return false;
@@ -313,55 +329,96 @@ bool Fream_FileDialog::CharacterSearch(std::string target,std::string searchFile
 
 void Fream_FileDialog::ItemWindow()
 {
+	//// 強制ドッキング設定
+	ImGuiID dockspace_id = ImGui::GetID("ShowFileNameLog");
+
+	if (ImGui::DockBuilderGetNode(dockspace_id) == NULL)
+	{
+		ImGui::DockBuilderRemoveNode(dockspace_id); // Clear out existing layout
+		ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace); // Add empty node
+
+		ImGuiID dock_main_id = dockspace_id;
+		ImGuiID dock_id_FileNameLog = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.1f, NULL, &dock_main_id);
+
+		ImGui::DockBuilderSetNodeSize(dock_main_id, ImVec2(293, 1));
+
+		ImGui::DockBuilderDockWindow("FileNameLog", dock_main_id);
+
+		ImGui::DockBuilderFinish(dockspace_id);
+	}
+
 	if (ImGui::Begin("ITEM"))
 	{
+		
+		ImGui::DockSpace(dockspace_id, ImVec2(ImGui::GetWindowWidth(), 50.0f));
 
 		ImGui::Separator();
 		if (nowSelect != nullptr)
 		{
-			filePaht_.clear();
+			fileFullPaht_.clear();
 			Recovery(nowSelect);
-			filePaht_ = filePaht_.size() == 0 ? std::filesystem::current_path().string(): 
-				std::filesystem::current_path().string() + "/" + filePaht_;
+			fileFullPaht_ = fileFullPaht_.size() == 0 ? std::filesystem::current_path().string() :
+				std::filesystem::current_path().string() + "/" + fileFullPaht_;
 			ImGui::Separator();
-
-			ImGui::Begin("viewr");
-			ImGui::Text(filePaht_.c_str());
-			ImGui::End();
-
 
 			auto current_path = std::filesystem::current_path();
 
-
-			//// イテレータの作成
-			std::filesystem::directory_iterator itr(filePaht_);
+			// イテレータの作成
+			std::filesystem::directory_iterator itr(fileFullPaht_);
 			std::filesystem::directory_iterator end{};
+			std::string directoryName;
 
+			auto copySelectPath = nowSelectFileName_;
 			for (; itr != end; ++itr)
 			{
+				directoryName = (--itr->path().end())->u8string();
 
-				auto directoryName = (--itr->path().end())->u8string();
+				MakeFileImage(directoryName/*現在フォルダの下の階層のファイル及びフォルダの名前*/);
+
+				if (nowSelectFileName_ != copySelectPath)
 				{
-					ImVec2 buttonPos = ImGui::GetCursorPos();
-					MakeFileImage(directoryName/*現在フォルダの下の階層のファイル及びフォルダの名前*/);
+					fileFullPaht_ += ("/" + nowSelectFileName_);
+					copySelectPath = nowSelectFileName_;
 
-					auto getRectMin = ImGui::GetWindowDrawList()->GetClipRectMin();
-					auto getRectMax = ImGui::GetWindowDrawList()->GetClipRectMax();
-					auto windowDisplayArea = getRectMax.x - getRectMin.x;
-
-					if (buttonPos.x <= windowDisplayArea - 200/*ボタンのサイズ*2*/)
+					// フォルダの場合
+					if (std::filesystem::is_directory(fileFullPaht_))
 					{
-						ImGui::SameLine();
+						std::filesystem::path path(fileFullPaht_);
+						auto directoryName = (--path.end())->u8string();
+						nowSelect->fileMap_.try_emplace(directoryName.c_str(), FileData(nowSelect, directoryName.c_str()));
+						nowSelect = &nowSelect->fileMap_.at(directoryName.c_str());
+					}
+					// ファイルの場合
+					else
+					{
+						if (isHeaderFile(fileFullPaht_, "cpp"))
+						{
+							//AppOpen();
+							// edit file open
+						}
 					}
 				}
 			}
+
+			
+
 		}
-
-
-		
 
 		ImGui::End();
 	}
+
+	// Imgui用ウィンドウクラスの作成
+	ImGuiWindowClass window_class;
+	// ウィンドウの効果の編集（今回はウィンドウの非表示を無くす設定とウィンドウタブを無くす処理）
+	window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoTabBar;
+	ImGui::SetNextWindowClass(&window_class);
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+	ImGui::SetNextWindowSize(ImVec2(300, 80), ImGuiCond_Once);
+	ImGui::Begin("FileNameLog");
+	// ウィンドウの背景色を設定
+	ImGui::Text(nowSelectFileName_.c_str());
+	ImGui::End();
+	ImGui::PopStyleColor();
 }
 
 void Fream_FileDialog::Recovery(FileData* selectData)
@@ -369,7 +426,7 @@ void Fream_FileDialog::Recovery(FileData* selectData)
 	if (selectData->parentFile_ != NULL)
 	{
 		Recovery(selectData->parentFile_);
-		filePaht_ += selectData->myName + "/";
+		fileFullPaht_ += selectData->myName + "/";
 		ImGui::SameLine();
 		ImGui::Button("/");
 	}
@@ -377,58 +434,68 @@ void Fream_FileDialog::Recovery(FileData* selectData)
 	if (ImGui::Button(selectData->myName.c_str()))
 	{
 		nowSelect = selectData;
-		filePaht_ += selectData->myName + "/";
+		//fileFullPaht_ += selectData->myName + "/";
 		return;
 	}
 }
 
-void Fream_FileDialog::MakeFileImage( std::string_view name)
+void Fream_FileDialog::MakeFileImage( std::string name)
 {
-	ImGui::BeginGroup();
 	ImVec2 buttonPos = ImGui::GetCursorPos();
 	ImVec2 buttonSize = ImVec2(90, 100);
-	ImGui::ImageButton((void*)my_shaderData, buttonSize);
-	// テキストの幅を計算
+	float buttonSpacing = 10.0f; // ボタン間のスペース
+
+	ImGui::BeginGroup();
+
+	// ユニークなIDを作成
+	ImGuiID buttonID = ImGui::GetID(name.c_str());
+
+	// ボタンを生成
+	ImGui::PushID(buttonID);
+	bool buttonPressed = ImGui::ImageButton((void*)my_shaderData, buttonSize);
+	ImGui::PopID();
+
+	if (buttonPressed)
 	{
-		//std::string fileName = name.data();
-		//ImVec2 textSize = ImGui::CalcTextSize(fileName.c_str());
-		//
-		//if (textSize.x >= buttonSize.x)
-		//{
-		//	fileName = "...";
-		//	textSize = ImGui::CalcTextSize(fileName.c_str());
-		//}
-		//
-		//float textWidth = textSize.x;
-		//// テキストの中央揃えを行うためにカーソルの位置を調整
-		//float posX = (buttonSize.x - textWidth) * 0.5f;
-		//ImGui::SetCursorPosX(posX+ buttonPos.x);
-		//ImGui::Text(fileName.c_str());
+		// ボタンが押されたときの処理
+		nowSelectFileName_ = name;
+	}
 
-		std::string fileName = name.data();
+	// テキストの幅を計算
+	std::string fileName = name;
+	ImVec2 textSize = ImGui::CalcTextSize(fileName.c_str());
 
-		ImVec2 textSize = ImGui::CalcTextSize(fileName.c_str());
-		// ボタンの幅と文字列の長さを比較し、ボタンの幅を超える場合は文字列を切り詰めて "..." を追加
-		if (textSize.x > buttonSize.x)
+	// ボタンの幅と文字列の長さを比較し、ボタンの幅を超える場合は文字列を切り詰めて "..." を追加
+	if (textSize.x > buttonSize.x)
+	{
+		while (textSize.x > buttonSize.x && fileName.length() > 0)
 		{
-			while (textSize.x > buttonSize.x && fileName.length() > 0)
-			{
-				fileName.pop_back();
-				// テキストのサイズを毎回更新する
-				textSize = ImGui::CalcTextSize(fileName.c_str());
-			}
-			fileName += "...";
-			// 合成後のサイズを取得
+			fileName.pop_back();
+			// テキストのサイズを毎回更新する
 			textSize = ImGui::CalcTextSize(fileName.c_str());
 		}
+		fileName += "...";
+		// 合成後のサイズを取得
+		textSize = ImGui::CalcTextSize(fileName.c_str());
+	}
 
-		float textWidth = textSize.x;
-		// テキストの中央揃えを行うためにカーソルの位置を調整
-		float posX = (buttonSize.x - textWidth) * 0.5f;
-		ImGui::SetCursorPosX(posX+ buttonPos.x);
+	float textWidth = textSize.x;
+	// テキストの中央揃えを行うためにカーソルの位置を調整
+	float posX = (buttonSize.x - textWidth) * 0.5f;
+	ImGui::SetCursorPosX(posX + buttonPos.x);
+	//ImGui::Text(fileName.c_str());
+	if (!CharacterSearch(fileName, "cpp", { 0,1,1,1 }, name)&&
+		!CharacterSearch(fileName, "h", { 1,0,1,1 }, name))
+	{
 		ImGui::Text(fileName.c_str());
 	}
 	ImGui::EndGroup();
+
+	// ボタンの右端がウィンドウの幅を超える場合は改行する
+	if (buttonPos.x + buttonSize.x + buttonSpacing <= ImGui::GetWindowWidth() - 100)
+	{
+		ImGui::SameLine();
+	}
 }
 
 void Fream_FileDialog::CreateImage(std::string filePath)
@@ -458,8 +525,71 @@ void Fream_FileDialog::CreateImage(std::string filePath)
 	
 }
 
+void Fream_FileDialog::AppOpen()
+{
+	// 起動したいアプリケーションのフルパス(あるいはカレントフォルダーからの相対パス)と、
+   // 必要に応じて引数も空白区切りにて付加する。
+	wchar_t commandLine[] = L"C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\devenv.exe";
+
+	STARTUPINFO si{};
+	PROCESS_INFORMATION pi{};
+
+	si.cb = sizeof(si);
+
+	// コマンドラインの実行(成功すると0以外が戻る)
+	if (CreateProcess(nullptr, (LPSTR)commandLine, nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi))
+	{
+		// 起動成功
+		//
+
+		// アプリケーションの終了まで待つ
+		// (待たずに処理を先に進める場合、WaitForSingleObjectとGetExitCodeProcessは不要)
+		WaitForSingleObject(pi.hProcess, INFINITE);
+
+		// アプリケーションの終了コードの取得
+		// (終了コードを使用しない場合は不要)
+		unsigned long exitCode;
+		GetExitCodeProcess(pi.hProcess, &exitCode);
+
+		// 終了コードが負の値になる場合もあるので、signedにキャストする
+		long ec = static_cast<long>(exitCode);
+
+		// ハンドルを閉じる
+		CloseHandle(pi.hProcess);
+		CloseHandle(pi.hThread);
+	}
+	else
+	{
+		// 起動失敗
+		//
+	}
+}
+
 Fream_FileDialog::FileData::FileData(FileData* parent, std::string name)
 {
 	parentFile_ = parent;
 	myName = name;
+}
+
+bool Fream_FileDialog::isHeaderFile(const std::string& filename, const std::string& ext)
+{	
+	// 拡張子の位置を探す
+	std::size_t dotPos = filename.find_last_of(".");
+	if (dotPos == std::string::npos) {
+		// ドットが見つからない場合は拡張子がないと判断
+		return false;
+	}
+
+	// 拡張子を取得して比較する
+	std::string extension = filename.substr(dotPos + 1);
+	if (extension == ext) {
+		return true;
+	}
+
+	return false;
+}
+
+void Fream_FileDialog::ChangeNowSelect(FileData* selectData)
+{
+
 }

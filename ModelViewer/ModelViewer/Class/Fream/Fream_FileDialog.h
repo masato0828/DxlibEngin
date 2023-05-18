@@ -47,7 +47,8 @@ private:
 
     Vector2 mainWindowSize_;
 
-    std::string filePaht_;
+    std::string fileFullPaht_;
+    std::string nowSelectFileName_;
 
     // シェーダ情報の作成
     ID3D11ShaderResourceView* my_shaderData = NULL;
@@ -60,14 +61,20 @@ private:
         float b;
         float a;
     };
-    bool CharacterSearch(std::string target, std::string searchFileName,Color color );
+    bool CharacterSearch(std::string showName, std::string searchFileName,Color color, std::string defaultTarget);
 
     void ItemWindow();
     
     void Recovery(FileData* selectData);
 
-    void MakeFileImage(std::string_view name);
+    void MakeFileImage(std::string name);
 
     void CreateImage(std::string filePath);
+
+    bool isHeaderFile(const std::string& filename,const std::string& ext);
+
+    void ChangeNowSelect(FileData* selectData);
+
+    void AppOpen();
 };
 
