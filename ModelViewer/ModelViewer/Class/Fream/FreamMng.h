@@ -47,5 +47,13 @@ private:
 
 	bool optionWindowFlg_;
 	bool demoWindowActivFlg_;
+
+	Vector2 copyWindowSize_;
+	Vector2 copyWindowPos_;
+	bool windowMaxFlag_;
+	bool windowMinFlag_;
+	bool firstWindowFlg_;
+
+	HWND hwnd_;
 };
 

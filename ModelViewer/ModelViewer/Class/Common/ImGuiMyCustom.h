@@ -20,4 +20,5 @@ namespace ImGuiCustom
 
     // 真ん中のドッキングをさせないようにする
     void NoCenterDoking();
+    void RenderCustomTitleBar(std::string windowName);
 }

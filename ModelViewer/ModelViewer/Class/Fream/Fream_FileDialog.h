@@ -73,8 +73,10 @@ private:
 
     bool isHeaderFile(const std::string& filename,const std::string& ext);
 
-    void ChangeNowSelect(FileData* selectData);
-
     void AppOpen();
+
+    bool isMatch(const std::string& filepath, const std::string& target);
+
+    std::wstring stringToWideString(const std::string& str);
 };
 

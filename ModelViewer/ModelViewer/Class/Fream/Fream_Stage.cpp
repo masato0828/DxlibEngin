@@ -27,7 +27,6 @@ void Fream_Stage::Init()
     modelH_ = MV1LoadModel("data/modelData/plane.mv1");
     pixelShaderH_ = LoadPixelShader("Shader/ps/planePixelShader.ps");
     vertexShaderH_ = LoadVertexShader("Shader/vs/planeVertexShader.vs");
-
     buffer_ = CreateShaderConstantBuffer(sizeof(stageGrid) * 8);
     lineNum_ = 79.8f;
     lineSize_ = 4.0f;
@@ -152,7 +151,6 @@ void Fream_Stage::PreviewMake()
     // クリップ距離を設定する(SetDrawScreenでリセットされる)
     SetCameraPositionAndAngle(previewData.cameraPos_.toVECTOR(),
         previewData.cameraRot_.x_, previewData.cameraRot_.y_, previewData.cameraRot_.z_);
-
     Draw();
 }
 

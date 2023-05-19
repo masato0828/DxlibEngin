@@ -46,3 +46,30 @@ void ImGuiCustom::NoCenterDoking()
 		dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe;
 	}
 }
+
+void ImGuiCustom::RenderCustomTitleBar(std::string windowName)
+{
+
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+        ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.4f, 0.4f, 0.4f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.4f, 0.4f, 0.4f, 1.0f));
+
+        ImGui::Begin(windowName.c_str(), nullptr, ImGuiWindowFlags_NoTitleBar);
+        ImVec2 windowPos = ImGui::GetWindowPos();
+        ImVec2 windowSize = ImGui::GetWindowSize();
+
+        float windowHight = 20.0f;
+
+        ImDrawList* drawList = ImGui::GetWindowDrawList();
+        drawList->AddRectFilled(windowPos, ImVec2(windowPos.x + windowSize.x, windowPos.y + 25.0f), IM_COL32(100, 100, 100, 255)); // タイトルバーの色
+
+        // タイトルバーの描画
+        drawList->AddText(ImVec2(windowPos.x + 5.0f, windowPos.y + 2.0f), IM_COL32(255, 255, 255, 255),windowName.c_str());
+
+        ImGui::End();
+
+        ImGui::PopStyleColor(2);
+        ImGui::PopStyleVar();
+    };
+}

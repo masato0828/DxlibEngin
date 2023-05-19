@@ -79,6 +79,7 @@ bool Application::SysInit()
 	SetWindowVisibleFlag(false);
 	// アプリが非アクティブ状態でも処理を実行するかどうかを設定する( TRUE:実行する  FALSE:停止する( デフォルト ) )
 	SetAlwaysRunFlag(true);
+
 	// Dxlibの初期化
 	if (DxLib_Init() == -1)
 	{

@@ -1,4 +1,4 @@
-#include <Dxlib.h>
+ï»¿#include <Dxlib.h>
 #include <memory>
 #include <string>
 #include "FreamMng.h"
@@ -16,6 +16,7 @@ FreamMng::FreamMng()
 
 FreamMng::~FreamMng()
 {
+    ShutDown();
 }
 
 void FreamMng::Init()
@@ -36,58 +37,95 @@ void FreamMng::Init()
     fileDialog_ = std::make_unique<Fream_FileDialog>();
     optionWindowFlg_ = false;
     demoWindowActivFlg_ = false;
+    firstWindowFlg_ = false;
+    windowMaxFlag_ = false;
+    windowMinFlag_ = false;
 }
 
 void FreamMng::Update()
 {
 	SysNewFream();
+    if (firstWindowFlg_)
+    {
+        if (windowMaxFlag_)
+        {
+            Vector2 w;
+            GetWindowSize(&w.x_, &w.y_);
+            ImGui::SetWindowSize("##model view", ImVec2(w.x_, w.y_));
+            ImGui::SetWindowPos("##model view", ImVec2(0, 0));
+        }
+        else
+        {
+            if (windowMinFlag_)
+            {
+                ImGui::SetWindowPos("##model view", ImVec2(copyWindowPos_.x_, copyWindowPos_.y_));
+                ImGui::SetWindowSize("##model view", ImVec2(copyWindowSize_.x_, copyWindowSize_.y_));
+                windowMinFlag_ = false;
+            }
+        }
+    }
 
-	// SceneViewPort¶¬
-     // •Â‚¶‚éƒ{ƒ^ƒ“—p
+	// SceneViewPortç”Ÿæˆ
+     // é–‰ã˜ã‚‹ãƒœã‚¿ãƒ³ç”¨
     static bool m_show = true;
 
-    // ƒEƒBƒ“ƒhƒEŒø‰Ê
+    // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦åŠ¹æœ
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
     window_flags |=
         ImGuiWindowFlags_MenuBar |
         ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoBringToFrontOnFocus |
-        ImGuiWindowFlags_NoNavFocus;
+        ImGuiWindowFlags_NoNavFocus
+        |ImGuiWindowFlags_NoTitleBar;
 
-    // Imgui—pƒEƒBƒ“ƒhƒEƒNƒ‰ƒX‚Ìì¬
+    // Imguiç”¨ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹ã®ä½œæˆ
     ImGuiWindowClass window_class;
-    // ƒEƒBƒ“ƒhƒE‚ÌŒø‰Ê‚Ì•ÒWi¡‰ñ‚ÍƒEƒBƒ“ƒhƒE‚Ì”ñ•\¦‚ğ–³‚­‚·İ’èj
+    // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®åŠ¹æœã®ç·¨é›†ï¼ˆä»Šå›ã¯ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®éè¡¨ç¤ºã‚’ç„¡ãã™è¨­å®šï¼‰
     window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoWindowMenuButton;
     ImGui::SetNextWindowClass(&window_class);
 
-    // ƒEƒBƒ“ƒhƒE‚ªŠJ‚¢‚Ä‚¢‚é
+    // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒé–‹ã„ã¦ã„ã‚‹
     if (m_show)
     {
-        // ƒfƒXƒNƒgƒbƒv‚ÌƒTƒCƒY‚ğæ“¾
-        int DesktopW, DesktopH;
-        GetDefaultState(&DesktopW, &DesktopH, NULL);
-        // ƒEƒBƒ“ƒhƒE‚ÌˆÊ’u
-        ImGui::SetNextWindowPos(ImVec2(200, 100), ImGuiCond_Once);
-        ///ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-        // ƒEƒBƒ“ƒhƒE‚Ì‘å‚«‚³
-        ImGui::SetNextWindowSize(ImVec2(DesktopW / 2 + DesktopW / 3, DesktopH / 2 + DesktopH / 3), ImGuiCond_Once);
-        ///ImGui::SetNextWindowSize(ImVec2(DesktopW, DesktopH), ImGuiCond_FirstUseEver);
-        
-        
-        // ƒEƒBƒ“ƒhƒE‚Ìì¬iƒEƒBƒ“ƒhƒE‚Ì–¼‘OAŠJ‚¢‚Ä‚¢‚é‚©AƒEƒBƒ“ƒhƒE‚ÌŒø‰Êj
-        if (ImGui::Begin("model view", &m_show, window_flags))
+        if (!firstWindowFlg_)
         {
-            // ƒƒjƒ…[ƒo[‚Ìì¬
+            // ãƒ‡ã‚¹ã‚¯ãƒˆãƒƒãƒ—ã®ã‚µã‚¤ã‚ºã‚’å–å¾—
+            int DesktopW, DesktopH;
+            GetDefaultState(&DesktopW, &DesktopH, NULL);
+            // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä½ç½®
+            ImGui::SetNextWindowPos(ImVec2(200, 100), ImGuiCond_Once);
+            ///ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+            // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®å¤§ãã•
+            ImGui::SetNextWindowSize(ImVec2(DesktopW / 2 + DesktopW / 3, DesktopH / 2 + DesktopH / 3), ImGuiCond_Once);
+            ///ImGui::SetNextWindowSize(ImVec2(DesktopW, DesktopH), ImGuiCond_FirstUseEver);
+            firstWindowFlg_ = true;
+        }
+        
+        // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä½œæˆï¼ˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®åå‰ã€é–‹ã„ã¦ã„ã‚‹ã‹ã€ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®åŠ¹æœï¼‰
+        //if (ImGui::Begin("model view", &m_show, window_flags))
+        //{
+           
+
+        if (ImGui::Begin("##model view", &m_show, window_flags))
+        {
+            //hwnd_ = (HWND)ImGui::GetWindowViewport()->PlatformHandleRaw;
+           
+
+            // ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼ã®ä½œæˆ
             CreateMenuBer();
 
-            // ƒhƒbƒLƒ“ƒOƒGƒŠƒA‚Ìì¬
+            // ãƒ‰ãƒƒã‚­ãƒ³ã‚°ã‚¨ãƒªã‚¢ã®ä½œæˆ
             dokingArea_->Create();
 
-            // ƒEƒBƒ“ƒhƒE‚ÌI—¹
+            // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®çµ‚äº†
             ImGui::End();
-            
             //Test();
         }
+
+        hwnd_ = (HWND)ImGui::GetMainViewport()->PlatformHandleRaw;
+
+        
+
         Inspector();
     }
     else
@@ -95,22 +133,23 @@ void FreamMng::Update()
         std::exit(0);
     }
 
-    // ƒXƒe[ƒW‚ÌXV
+
+    // ã‚¹ãƒ†ãƒ¼ã‚¸ã®æ›´æ–°
     stage_->Update();
 
-    // ƒ}ƒEƒX‚ÌXV
+    // ãƒã‚¦ã‚¹ã®æ›´æ–°
     mouse_->Update(
         sceneView_->GetImageLeftUpCornor(),
         sceneView_->GetImageRightDownCornor(),
         sceneView_->GetDefaultImageSize());
     
-    // ƒJƒƒ‰‚ÌXV
+    // ã‚«ãƒ¡ãƒ©ã®æ›´æ–°
     camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());
     
-    // ƒIƒvƒVƒ‡ƒ“€–Ú‚ğŠJ‚¢‚Ä‚¢‚é‚©‚Ç‚¤‚©
+    // ã‚ªãƒ—ã‚·ãƒ§ãƒ³é …ç›®ã‚’é–‹ã„ã¦ã„ã‚‹ã‹ã©ã†ã‹
     if (optionWindowFlg_) { OptionWindow(); };
   
-    // ƒV[ƒ“ƒrƒ…[‚Ìì¬
+    // ã‚·ãƒ¼ãƒ³ãƒ“ãƒ¥ãƒ¼ã®ä½œæˆ
     sceneView_->Create();
 
     items_->Update();
@@ -149,6 +188,7 @@ void FreamMng::ShutDown()
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+    DxLib_End();
 }
 
 void FreamMng::SysNewFream()
@@ -160,7 +200,7 @@ void FreamMng::SysNewFream()
 
 void FreamMng::Style()
 {
-	// ImGui‰Šú‰»
+	// ImGuiåˆæœŸåŒ–
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
@@ -170,16 +210,16 @@ void FreamMng::Style()
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-	// ‘S‚Ä‚ÌƒEƒBƒ“ƒhƒE‚Å‚Ìƒrƒ…[ƒ|[ƒg‚ğ•\¦
+	// å…¨ã¦ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã§ã®ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã‚’è¡¨ç¤º
 	io.ConfigViewportsNoAutoMerge = true;
 
-	// iniƒtƒ@ƒCƒ‹‚Ì“f‚«o‚µ‚ğ~‚ß‚é
+	// iniãƒ•ã‚¡ã‚¤ãƒ«ã®åãå‡ºã—ã‚’æ­¢ã‚ã‚‹
 	io.IniFilename = NULL;
 	ImGuiStyle& style = ImGui::GetStyle();
 
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 	{
-		//@ƒEƒBƒ“ƒhƒE‚ÌŠÛ‚İ
+		//ã€€ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä¸¸ã¿
         style.WindowRounding = 1.0f;
         style.ChildRounding = 1.0f;
         style.FrameRounding = 1.0f;
@@ -189,7 +229,7 @@ void FreamMng::Style()
         style.LogSliderDeadzone = 1.0f;
         style.TabRounding = 1.0f;
 
-		// w’èƒEƒBƒ“ƒhƒEi‚±‚±‚Å‚Í”wŒij‚Ì•ÏX
+		// æŒ‡å®šã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ï¼ˆã“ã“ã§ã¯èƒŒæ™¯ï¼‰ã®å¤‰æ›´
 		style.Colors[ImGuiCol_WindowBg].w = 0.5f;
 	}
 
@@ -198,9 +238,9 @@ void FreamMng::Style()
 
 void FreamMng::Inspector()
 {
-    // Imgui—pƒEƒBƒ“ƒhƒEƒNƒ‰ƒX‚Ìì¬
+    // Imguiç”¨ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹ã®ä½œæˆ
     ImGuiWindowClass window_classview;
-    // ƒEƒBƒ“ƒhƒE‚ÌŒø‰Ê‚Ì•ÒWi¡‰ñ‚ÍƒEƒBƒ“ƒhƒE‚Ì”ñ•\¦‚ğ–³‚­‚·İ’è‚ÆƒEƒBƒ“ƒhƒEƒ^ƒu‚ğ–³‚­‚·ˆ—j
+    // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®åŠ¹æœã®ç·¨é›†ï¼ˆä»Šå›ã¯ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®éè¡¨ç¤ºã‚’ç„¡ãã™è¨­å®šã¨ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ãƒ–ã‚’ç„¡ãã™å‡¦ç†ï¼‰
     window_classview.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoWindowMenuButton;
     ImGui::SetNextWindowClass(&window_classview);
     ImGui::Begin("Inspector");
@@ -209,14 +249,18 @@ void FreamMng::Inspector()
 
 void FreamMng::CreateMenuBer()
 {
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.FramePadding.y = 8.0f;  // ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼ã®ä¸Šä¸‹ã®ä½™ç™½ã®é«˜ã•ã‚’èª¿æ•´
+    style.FrameRounding = 0.0f;  // ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼ã®è§’ã®ä¸¸ã¿ã‚’ç„¡åŠ¹åŒ–
+
     static bool open = false;
-    // ƒƒjƒ…[ƒo[‚Ìì¬
+    // ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼ã®ä½œæˆ
     if (ImGui::BeginMenuBar())
     {
-        // ƒƒjƒ…[1
+        // ãƒ¡ãƒ‹ãƒ¥ãƒ¼1
         if (ImGui::BeginMenu("File"))
         {
-            // ƒƒjƒ…[‚Ì’†g
+            // ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ä¸­èº«
             if (ImGui::MenuItem("new data"))
             {
                 // 
@@ -224,11 +268,11 @@ void FreamMng::CreateMenuBer()
                     auto id = MessageBoxA(NULL, "Do you want to save the current data?", "SAVE", MB_OKCANCEL);
                     if (id == IDOK)
                     {
-                        // ‘S‰Šú‰»
+                        // å…¨åˆæœŸåŒ–
                     }
                 }
             }
-            // ƒƒjƒ…[‚Ì’†g
+            // ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ä¸­èº«
             if (ImGui::BeginMenu("add model"))
             {
                 ImGui::EndMenu();
@@ -239,7 +283,7 @@ void FreamMng::CreateMenuBer()
             }
             ImGui::EndMenu();
         }
-        // ƒƒjƒ…[2
+        // ãƒ¡ãƒ‹ãƒ¥ãƒ¼2
         if (ImGui::BeginMenu("System")) {
 
 #ifndef IMGUI_DISABLE_DEBUG_TOOLS
@@ -254,22 +298,56 @@ void FreamMng::CreateMenuBer()
             //ImGui::MenuItem("About Dear ImGui", NULL, &show_app_about);
             //ImGui::EndMenu();
 
-            
+
 
             ImGui::EndMenu();
         };
-        // ƒƒjƒ…[3
+        // ãƒ¡ãƒ‹ãƒ¥ãƒ¼3
         if (ImGui::BeginMenu("View")) { ImGui::EndMenu(); };
-        // ƒƒjƒ…[4
+        // ãƒ¡ãƒ‹ãƒ¥ãƒ¼4
         if (ImGui::BeginMenu("Project")) { ImGui::EndMenu(); };
-        // ƒƒjƒ…[5
+        // ãƒ¡ãƒ‹ãƒ¥ãƒ¼5
         if (ImGui::BeginMenu("Desktop")) { ImGui::EndMenu(); };
-        // ƒƒjƒ…[6
+        // ãƒ¡ãƒ‹ãƒ¥ãƒ¼6
         if (ImGui::BeginMenu("Help")) { ImGui::EndMenu(); };
 
-        // ƒƒjƒ…[ƒo[‚ÌI—¹
+        // ã‚«ã‚¹ã‚¿ãƒ ã®ãƒœã‚¿ãƒ³ã‚’è¿½åŠ 
+        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 20.0f - 25.0f);
+        if (ImGui::Button("x", ImVec2(25.0f, ImGui::GetFrameHeight())))
+        {
+            std::exit(0);
+        }
+        if (windowMaxFlag_)
+        {
+            ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 20.0 - 55.0f);
+            if (ImGui::Button(u8"---", ImVec2(25.0f, ImGui::GetFrameHeight())))
+            {
+                windowMaxFlag_ = false;
+                windowMinFlag_ = true;
+            }
+        }
+        else
+        {
+            ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 20.0f - 55);
+            if (ImGui::Button(u8"å£", ImVec2(25.0f, ImGui::GetFrameHeight())))
+            {
+                if (!windowMaxFlag_)
+                {
+                    copyWindowSize_ = { ImGui::GetWindowSize().x,ImGui::GetWindowSize().y };
+                    copyWindowPos_ = { ImGui::GetWindowPos().x,ImGui::GetWindowPos().y };
+                }
+                windowMaxFlag_ = true;
+                windowMinFlag_ = false;
+            }
+        }
+        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 20.0f - 80.0f);
+        if (ImGui::Button(u8"ãƒ¼", ImVec2(25.0f, ImGui::GetFrameHeight())))
+        {
+        };
+        // ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼ã®çµ‚äº†
         ImGui::EndMenuBar();
     }
+
 
     if (open)
     {
@@ -277,7 +355,7 @@ void FreamMng::CreateMenuBer()
         if (ImGui::Button("export"))
         {
             auto fileName = FilePathErase()(
-                FileSeve(nullptr, "json", "jsonƒtƒ@ƒCƒ‹(*.json)\0 * .json\0")
+                FileSeve(nullptr, "json", "jsonãƒ•ã‚¡ã‚¤ãƒ«(*.json)\0 * .json\0")
                 );
             std::ofstream writing_file;
             writing_file.open(fileName, std::ios::out);
@@ -297,9 +375,9 @@ void FreamMng::CreateMenuBer()
 
 void FreamMng::OptionWindow()
 {
-    // Imgui—pƒEƒBƒ“ƒhƒEƒNƒ‰ƒX‚Ìì¬
+    // Imguiç”¨ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹ã®ä½œæˆ
     ImGuiWindowClass window_classview;
-    // ƒEƒBƒ“ƒhƒE‚ÌŒø‰Ê‚Ì•ÒW(ƒEƒBƒ“ƒhƒE‚ÌƒhƒbƒLƒ“ƒO‚ÍØ‚Á‚Ä‚¨‚­)
+    // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®åŠ¹æœã®ç·¨é›†(ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒ‰ãƒƒã‚­ãƒ³ã‚°ã¯åˆ‡ã£ã¦ãŠã)
     window_classview.DockNodeFlagsOverrideSet = 
         ImGuiDockNodeFlags_NoDocking| 
         ImGuiDockNodeFlags_NoDockingSplitMe| 
