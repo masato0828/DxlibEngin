@@ -4,10 +4,46 @@
 #include "../../imGui/imgui_impl_dx11.h"
 #include "../../imGui/imgui_impl_win32.h"
 
+
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	static bool window_open = false;
+
+	switch (msg) {
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	case WM_LBUTTONDOWN:
+		SendMessage(hWnd, WM_CLOSE, 0, 0);
+		return 0;
+		// タスクバーでアイコンがクリックされたときの処理
+	case WM_ACTIVATEAPP:
+	{
+		// wParam が 0 の場合は非アクティブ状態（タスクバーでクリックされた）
+		if (wParam == 0)
+		{
+			// ImGui ウィンドウを非表示にするなどの処理を行う
+			if (window_open)
+			{
+				window_open = true;
+			}
+		}
+		else
+		{
+			// ImGui ウィンドウを再表示するなどの処理を行う
+			if (!window_open)
+			{
+				window_open = true;
+			}
+		}
+		break;
+	}
+
+	};
+	//return DefWindowProc(hwnd, msg, wp, lp);
 	ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
 	return 0;
 }
@@ -38,9 +74,7 @@ bool Application::Run()
 	while (!ProcessMessage() && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 	{
 		// 更新
-		freamMng_->Update();
-
-		
+		freamMng_->Update(true);
 
 		freamMng_->Draw();
 

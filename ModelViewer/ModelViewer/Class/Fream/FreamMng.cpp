@@ -16,7 +16,6 @@ FreamMng::FreamMng()
 
 FreamMng::~FreamMng()
 {
-    ShutDown();
 }
 
 void FreamMng::Init()
@@ -40,11 +39,21 @@ void FreamMng::Init()
     firstWindowFlg_ = false;
     windowMaxFlag_ = false;
     windowMinFlag_ = false;
+
+    m_show = true;
+
+    int ww, wh;
+    GetWindowSize(&ww,&wh);
+    screen_ = MakeScreen(ww,wh,true);
+
+    lpShaderMng.LoadShader("screen","","Shader/ps/screen_ps.ps",8);
+
 }
 
-void FreamMng::Update()
+void FreamMng::Update(bool window_open_flg)
 {
 	SysNewFream();
+
     if (firstWindowFlg_)
     {
         if (windowMaxFlag_)
@@ -67,7 +76,7 @@ void FreamMng::Update()
 
 	// SceneViewPort生成
      // 閉じるボタン用
-    static bool m_show = true;
+    //static bool m_show = true;
 
     // ウィンドウ効果
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
@@ -109,7 +118,7 @@ void FreamMng::Update()
         if (ImGui::Begin("##model view", &m_show, window_flags))
         {
             //hwnd_ = (HWND)ImGui::GetWindowViewport()->PlatformHandleRaw;
-           
+            hwnd_ = (HWND)ImGui::GetMainViewport()->PlatformHandleRaw;
 
             // メニューバーの作成
             CreateMenuBer();
@@ -117,58 +126,82 @@ void FreamMng::Update()
             // ドッキングエリアの作成
             dokingArea_->Create();
 
+            Inspector();
+
+            // ステージの更新
+            stage_->Update();
+
+            // マウスの更新
+            mouse_->Update(
+                sceneView_->GetImageLeftUpCornor(),
+                sceneView_->GetImageRightDownCornor(),
+                sceneView_->GetDefaultImageSize());
+
+            // カメラの更新
+            camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());
+
+            // オプション項目を開いているかどうか
+            if (optionWindowFlg_) { OptionWindow(); };
+
+            // シーンビューの作成
+            sceneView_->Create();
+
+            items_->Update();
+            fileDialog_->Update();
+
             // ウィンドウの終了
             ImGui::End();
             //Test();
         }
 
-        hwnd_ = (HWND)ImGui::GetMainViewport()->PlatformHandleRaw;
+        
 
         
 
-        Inspector();
+        
     }
     else
     {
-        std::exit(0);
+        ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
+        ImGui::SetNextWindowPos(ImVec2(0, 0));
+        ImGui::SetNextWindowSize(ImVec2(0, 0));
+        ImGui::Begin("Invisible Window",nullptr, windowFlags);
+        ImGui::End();
     }
 
+    if (!m_show&&CheckHitKey(KEY_INPUT_0))
+    {
+        m_show = true;
+    }
 
-    // ステージの更新
-    stage_->Update();
-
-    // マウスの更新
-    mouse_->Update(
-        sceneView_->GetImageLeftUpCornor(),
-        sceneView_->GetImageRightDownCornor(),
-        sceneView_->GetDefaultImageSize());
-    
-    // カメラの更新
-    camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());
-    
-    // オプション項目を開いているかどうか
-    if (optionWindowFlg_) { OptionWindow(); };
-  
-    // シーンビューの作成
-    sceneView_->Create();
-
-    items_->Update();
-    fileDialog_->Update();
-
-   
+    lpShaderMng.SetTexture(0,screen_);
 }
 
 void FreamMng::Draw()
 {
+    MV1SetUseOrigShader(true);
+
+
     stage_->PreviewMake();
 
-    SetDrawScreen(DX_SCREEN_BACK);
-    RefreshDxLibDirect3DSetting();
+
+    SetDrawScreen(screen_);
     ClearDrawScreen();
 
     camera_->Set();
     stage_->Draw();
     mouse_->Draw();
+
+    SetDrawScreen(DX_SCREEN_BACK);
+    RefreshDxLibDirect3DSetting();
+    ClearDrawScreen();
+
+
+    lpShaderMng.Draw("screen");
+    DrawGraph(0,0,screen_,true);
+    lpShaderMng.DrawEnd();
+
+    MV1SetUseOrigShader(false);
 }
 
 void FreamMng::Render()
@@ -251,7 +284,7 @@ void FreamMng::CreateMenuBer()
 {
     ImGuiStyle& style = ImGui::GetStyle();
     style.FramePadding.y = 8.0f;  // メニューバーの上下の余白の高さを調整
-    style.FrameRounding = 0.0f;  // メニューバーの角の丸みを無効化
+    style.FrameRounding = 1.0f;  // メニューバーの角の丸みを無効化
 
     static bool open = false;
     // メニューバーの作成
@@ -340,9 +373,10 @@ void FreamMng::CreateMenuBer()
                 windowMinFlag_ = false;
             }
         }
-        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 20.0f - 80.0f);
+        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 20.0f - 85.0f);
         if (ImGui::Button(u8"ー", ImVec2(25.0f, ImGui::GetFrameHeight())))
         {
+            m_show = false;
         };
         // メニューバーの終了
         ImGui::EndMenuBar();

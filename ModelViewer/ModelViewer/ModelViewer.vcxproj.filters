@@ -105,6 +105,12 @@
     <ClCompile Include="imGui\CustomFont.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Class\Common\Shader\ShaderMng.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\Common\Shader\ConstantBuffer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class\System\Application.h">
@@ -206,5 +212,14 @@
     <ClInclude Include="imGui\CustomFont.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Class\Common\Shader\ShaderMng.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\Common\Shader\ConstantBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\hlsl\screen_ps.hlsl" />
   </ItemGroup>
 </Project>

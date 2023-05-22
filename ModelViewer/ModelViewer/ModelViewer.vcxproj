@@ -22,6 +22,7 @@
     <ClCompile Include="Class\Common\Geometry.cpp" />
     <ClCompile Include="Class\Common\ImGuiMyCustom.cpp" />
     <ClCompile Include="Class\Common\Shader3D.cpp" />
+    <ClCompile Include="Class\Common\Shader\ConstantBuffer.cpp" />
     <ClCompile Include="Class\Common\Utility.cpp" />
     <ClCompile Include="Class\Fream\FreamBase.cpp" />
     <ClCompile Include="Class\Fream\FreamMng.cpp" />
@@ -31,6 +32,7 @@
     <ClCompile Include="Class\Fream\Fream_Item.cpp" />
     <ClCompile Include="Class\Fream\Fream_Model.cpp" />
     <ClCompile Include="Class\Fream\Fream_SceneView.cpp" />
+    <ClCompile Include="Class\Common\Shader\ShaderMng.cpp" />
     <ClCompile Include="Class\Fream\Fream_Stage.cpp" />
     <ClCompile Include="Class\Device\Device_Mouse.cpp" />
     <ClCompile Include="Class\System\Application.cpp" />
@@ -54,6 +56,7 @@
     <ClInclude Include="Class\Common\Geometry.h" />
     <ClInclude Include="Class\Common\ImGuiMyCustom.h" />
     <ClInclude Include="Class\Common\Shader3D.h" />
+    <ClInclude Include="Class\Common\Shader\ConstantBuffer.h" />
     <ClInclude Include="Class\Common\Utility.h" />
     <ClInclude Include="Class\Common\Vector2.h" />
     <ClInclude Include="Class\Fream\FreamBase.h" />
@@ -64,6 +67,7 @@
     <ClInclude Include="Class\Fream\Fream_Item.h" />
     <ClInclude Include="Class\Fream\Fream_Model.h" />
     <ClInclude Include="Class\Fream\Fream_SceneView.h" />
+    <ClInclude Include="Class\Common\Shader\ShaderMng.h" />
     <ClInclude Include="Class\Fream\Fream_Stage.h" />
     <ClInclude Include="Class\Device\Device_Mouse.h" />
     <ClInclude Include="Class\System\Application.h" />
@@ -83,6 +87,13 @@
     <ClInclude Include="imGui\imstb_textedit.h" />
     <ClInclude Include="imGui\imstb_truetype.h" />
     <ClInclude Include="imGui\stb_image.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\hlsl\screen_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)/Shader/ps/%(Filename).ps</ObjectFileOutput>
+    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -189,6 +200,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(DXLIB_DIR)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);d3d11.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

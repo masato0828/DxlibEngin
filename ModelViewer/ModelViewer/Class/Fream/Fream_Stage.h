@@ -4,6 +4,8 @@
 #include "../Common/Vector2.h"
 #include "../Common/Geometry.h"
 
+#include "../Common/Shader/ShaderMng.h"
+
 class Fream_Stage :
     public FreamBase
 {
@@ -50,6 +52,7 @@ private:
         Vector3 cameraRot_;
         bool previewTypeChange_;
     } previewData;
+
 
 
 };

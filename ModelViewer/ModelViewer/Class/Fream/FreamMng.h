@@ -8,6 +8,7 @@
 #include "../Device/Device_Mouse.h"
 #include "Fream_Item.h"
 #include "Fream_FileDialog.h"
+#include "../Common/Shader/ShaderMng.h"
 
 class FreamMng
 {
@@ -16,7 +17,7 @@ public:
 	~FreamMng();
 
 	// XVˆ—
-	void Update();
+	void Update(bool window_open_flg);
 	// •`‰æˆ—
 	void Draw();
 	// ImGui•`‰æI—¹ˆ—
@@ -55,5 +56,9 @@ private:
 	bool firstWindowFlg_;
 
 	HWND hwnd_;
+
+	bool m_show;
+
+	int screen_;
 };
 

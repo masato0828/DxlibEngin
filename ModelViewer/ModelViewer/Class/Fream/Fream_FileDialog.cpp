@@ -342,11 +342,10 @@ void Fream_FileDialog::ItemWindow()
 	{
 		ImGui::DockBuilderRemoveNode(dockspace_id); // Clear out existing layout
 		ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace); // Add empty node
+		
 
 		ImGuiID dock_main_id = dockspace_id;
-		ImGuiID dock_id_FileNameLog = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.1f, NULL, &dock_main_id);
-
-		ImGui::DockBuilderSetNodeSize(dock_main_id, ImVec2(293, 1));
+		ImGuiID dock_id_FileNameLog = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.001f, NULL, &dock_main_id);
 
 		ImGui::DockBuilderDockWindow("FileNameLog", dock_main_id);
 
@@ -418,14 +417,16 @@ void Fream_FileDialog::ItemWindow()
 	window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoTabBar;
 	ImGui::SetNextWindowClass(&window_class);
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
-	ImGui::SetNextWindowSize(ImVec2(300, 80), ImGuiCond_Once);
-	ImGui::Begin("FileNameLog");
-	if (!std::filesystem::is_directory(stringToWideString(nowSelectFileName_)))
+	ImGui::SetNextWindowSize(ImVec2(50, 10), ImGuiCond_Once);
+	if (ImGui::Begin("FileNameLog"))
 	{
-		// ウィンドウの背景色を設定
-		ImGui::Text(nowSelectFileName_.c_str());
+		if (!std::filesystem::is_directory(stringToWideString(nowSelectFileName_)))
+		{
+			// ウィンドウの背景色を設定
+			ImGui::Text(nowSelectFileName_.c_str());
+		}
+		ImGui::End();
 	}
-	ImGui::End();
 	ImGui::PopStyleColor();
 }
 
