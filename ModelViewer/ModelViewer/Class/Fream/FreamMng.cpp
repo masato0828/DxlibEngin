@@ -8,6 +8,7 @@
 #include "../System/ImguiImageStb.h"
 #include "../../imGui/imgui_internal.h"
 #include "../Common/ImGuiMyCustom.h"
+#include "../Common/PostMyGraph.h"
 
 FreamMng::FreamMng()
 {
@@ -20,6 +21,7 @@ FreamMng::~FreamMng()
 
 void FreamMng::Init()
 {
+
 	Style();
 
 	ImGui_ImplWin32_Init(GetMainWindowHandle());
@@ -34,6 +36,7 @@ void FreamMng::Init()
     mouse_ = std::make_unique<Device_Mouse>();
     items_ = std::make_unique<Fream_Item>();
     fileDialog_ = std::make_unique<Fream_FileDialog>();
+    postEffect_ = std::make_unique<PostEffectMng>();
     optionWindowFlg_ = false;
     demoWindowActivFlg_ = false;
     firstWindowFlg_ = false;
@@ -46,12 +49,13 @@ void FreamMng::Init()
     GetWindowSize(&ww,&wh);
     screen_ = MakeScreen(ww,wh,true);
 
-    lpShaderMng.LoadShader("screen","","Shader/ps/screen_ps.ps",8);
+    
 
 }
 
 void FreamMng::Update(bool window_open_flg)
 {
+    postEffect_->Update();
 	SysNewFream();
 
     if (firstWindowFlg_)
@@ -73,11 +77,7 @@ void FreamMng::Update(bool window_open_flg)
             }
         }
     }
-
-	// SceneViewPort生成
-     // 閉じるボタン用
-    //static bool m_show = true;
-
+	
     // ウィンドウ効果
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
     window_flags |=
@@ -111,10 +111,6 @@ void FreamMng::Update(bool window_open_flg)
         }
         
         // ウィンドウの作成（ウィンドウの名前、開いているか、ウィンドウの効果）
-        //if (ImGui::Begin("model view", &m_show, window_flags))
-        //{
-           
-
         if (ImGui::Begin("##model view", &m_show, window_flags))
         {
             //hwnd_ = (HWND)ImGui::GetWindowViewport()->PlatformHandleRaw;
@@ -153,12 +149,6 @@ void FreamMng::Update(bool window_open_flg)
             ImGui::End();
             //Test();
         }
-
-        
-
-        
-
-        
     }
     else
     {
@@ -173,17 +163,13 @@ void FreamMng::Update(bool window_open_flg)
     {
         m_show = true;
     }
-
-    lpShaderMng.SetTexture(0,screen_);
 }
 
 void FreamMng::Draw()
 {
-    MV1SetUseOrigShader(true);
-
+   
 
     stage_->PreviewMake();
-
 
     SetDrawScreen(screen_);
     ClearDrawScreen();
@@ -196,12 +182,7 @@ void FreamMng::Draw()
     RefreshDxLibDirect3DSetting();
     ClearDrawScreen();
 
-
-    lpShaderMng.Draw("screen");
-    DrawGraph(0,0,screen_,true);
-    lpShaderMng.DrawEnd();
-
-    MV1SetUseOrigShader(false);
+    postEffect_->Draw(screen_);
 }
 
 void FreamMng::Render()
@@ -440,6 +421,28 @@ void FreamMng::OptionWindow()
             if (ImGui::BeginTabItem("Camera"))
             {
                 camera_->Custom();
+                ImGui::EndTabItem();
+            }
+            if (ImGui::BeginTabItem("PostEffect"))
+            {
+                postEffect_->Custom();
+               /* const char* listbox_items[] = { "none","noise"};
+                static int listbox_item_current = 1;
+                ImGui::ListBox("postEffect\n(single select)", &listbox_item_current, listbox_items, IM_ARRAYSIZE(listbox_items), 4);
+                for (auto& postState : postStateMap_)
+                {
+                    postState.second = false;
+                }
+                postStateMap_[listbox_items[listbox_item_current]] = true;
+
+                if (postStateMap_["noise"])
+                {
+                    ImGui::InputFloat("noise1",&postE_.noise1, 0.001);
+                    ImGui::InputFloat("noise2",&postE_.noise2, 0.001);
+                    ImGui::InputFloat("noise3",&postE_.noise3,0.001);
+                }*/
+
+
                 ImGui::EndTabItem();
             }
 

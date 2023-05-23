@@ -9,6 +9,7 @@
 #include "Fream_Item.h"
 #include "Fream_FileDialog.h"
 #include "../Common/Shader/ShaderMng.h"
+#include "../Common/Shader/PostEffectMng.h"
 
 class FreamMng
 {
@@ -25,6 +26,7 @@ public:
 	// ImGui終了処理
 	void ShutDown();
 private:
+
 	// 初期化
 	void Init();
 	// ImGuiのダイレクトXとウィンドウの更新
@@ -45,6 +47,7 @@ private:
 	std::unique_ptr<Device_Mouse> mouse_;
 	std::unique_ptr<Fream_Item> items_;
 	std::unique_ptr<Fream_FileDialog> fileDialog_;
+	std::unique_ptr<PostEffectMng> postEffect_;
 
 	bool optionWindowFlg_;
 	bool demoWindowActivFlg_;
@@ -60,5 +63,6 @@ private:
 	bool m_show;
 
 	int screen_;
+
 };
 

@@ -111,6 +111,18 @@
     <ClCompile Include="Class\Common\Shader\ConstantBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Class\Common\Shader\PostEffectMng.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\Common\Shader\PostEffect_Base.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\Common\Shader\PostEffect_Noise.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Class\Common\Shader\PostEffect_ScanLine.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class\System\Application.h">
@@ -218,8 +230,24 @@
     <ClInclude Include="Class\Common\Shader\ConstantBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Class\Common\PostMyGraph.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\Common\Shader\PostEffectMng.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\Common\Shader\PostEffect_Base.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\Common\Shader\PostEffect_Noise.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\Common\Shader\PostEffect_ScanLine.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\hlsl\screen_ps.hlsl" />
+    <FxCompile Include="Shader\hlsl\ScanLine.hlsl" />
   </ItemGroup>
 </Project>

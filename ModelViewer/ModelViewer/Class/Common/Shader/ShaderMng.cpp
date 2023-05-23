@@ -28,10 +28,11 @@ bool ShaderMng::LoadShader(const std::string& name, const std::string& vsPath, c
     shaders_[name] = std::make_pair(vsHandle, psHandle);
     
     constansBuffers_[name] = std::make_unique<ConstantBuffer>();
-    if (constansBuffers_[name]->Create(bufferSize) == -1)
+    constansBuffers_[name]->Create(bufferSize);
+    /*if (constansBuffers_[name]->Create(bufferSize) < 0)
     {
         return false;
-    }
+    }*/
 
     return true;
 }
