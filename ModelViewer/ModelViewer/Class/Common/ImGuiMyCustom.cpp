@@ -4,18 +4,33 @@
 
 IMGUI_API bool ImGui::DragFloat3(const char* label, Vector3* vec3, float v_speed, float v_min, float v_max, const char* format, ImGuiSliderFlags flags)
 {
-	return ImGui::DragScalarN(label, ImGuiDataType_Float, vec3, 3, v_speed, &v_min, &v_max, format, flags);
+	return DragScalarN(label, ImGuiDataType_Float, vec3, 3, v_speed, &v_min, &v_max, format, flags);
 }
 
 IMGUI_API bool ImGui::DragFloat2(const char* label, Vector2Flt* vec2, float v_speed, float v_min, float v_max, const char* format, ImGuiSliderFlags flags)
 {
-	return ImGui::DragScalarN(label, ImGuiDataType_Float, vec2, 2, v_speed, &v_min, &v_max, format, flags);;
+	return DragScalarN(label, ImGuiDataType_Float, vec2, 2, v_speed, &v_min, &v_max, format, flags);;
 }
 
-IMGUI_API bool ImGui::ColorEdit3(std::string label, float col[3], ImGuiColorEditFlags flags)
+IMGUI_API bool ImGuiCustom::ColorEdit3(const char* label, IM_COLOR* col, ImGuiColorEditFlags flags)
 {
-	const char* name = label.c_str();
-	return ImGui::ColorEdit3(name, col, flags);
+    float color[4] = {col->red,col->green ,col->blue,col->alpha};
+    bool flg = ImGui::ColorEdit4(label, color, flags | ImGuiColorEditFlags_NoAlpha);
+    col->red =  color[0];
+    col->green =  color[1];
+    col->blue =  color[2];
+    col->alpha =  color[3];
+	return flg;
+}
+IMGUI_API bool ImGuiCustom::ColorEdit4(const char* label, IM_COLOR* col, ImGuiColorEditFlags flags)
+{
+    float color[4] = { col->red,col->green ,col->blue,col->alpha };
+    bool flg = ImGui::ColorEdit4(label, color, flags);
+    col->red = color[0];
+    col->green = color[1];
+    col->blue = color[2];
+    col->alpha = color[3];
+    return flg;
 }
 //
 //IMGUI_API bool ImGui::InputText(const char* label, std::string* buf, size_t buf_size, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* user_data)

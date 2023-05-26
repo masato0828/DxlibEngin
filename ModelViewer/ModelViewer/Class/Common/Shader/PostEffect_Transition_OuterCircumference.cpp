@@ -3,7 +3,7 @@
 #include "../PostMyGraph.h"
 #include <DxLib.h>
 #include "../../../imGui/imgui.h"
-#include "../../Common/ImGuiMyCustom.h"
+#include "../../Common/Utility.h"
 
 PostEffect_Transition_OuterCircumference::PostEffect_Transition_OuterCircumference()
 {
@@ -16,21 +16,36 @@ PostEffect_Transition_OuterCircumference::~PostEffect_Transition_OuterCircumfere
 
 void PostEffect_Transition_OuterCircumference::Init()
 {
-	lpShaderMng.LoadShader("outerCircumference", "Shader/vs/OuterCircumference_vs.vs", "Shader/ps/OuterCircumference_ps.ps", sizeof(Transition_OuterCircumference) * 8);
+	lpShaderMng.LoadShader("outerCircumference", "Shader/vs/OuterCircumference_vs.vs", "Shader/ps/OuterCircumference_ps.ps", sizeof(Transition_OuterCircumference) * 16);
 
-    pram_.size = {0.1f,0.1f };
-    pram_.color = {0.0f,0.0f,1.0f,0.5f};
-    pram_.time = 0.0f;
-    pram_._rotation = 0;
-    pram_._aspect = 1;
+    timespeed_ = 1.0f;
+
+    pram_.div = 100.0f;
+    pram_.color = {1.0f,1.0f,1.0f,1.0f};
     int ww, wh;
-    GetWindowSize(&ww,&wh);
+    GetWindowSize(&ww, &wh);
+    pram_.screenSize = { ww,wh };
+    pram_.time = 0.0f;
+    pram_.direction = 0.0f;
+    pram_.rotation = 0.0f;
 
-    pram_._screenSize = {ww,wh};
+    int num = Gcd(ww,wh);
+
+    pram_.aspect.x_ = ww / num;
+    pram_.aspect.y_ = wh / num;
+    pram_.size = 1.0f;
+   /* pram_._rotation = 0;
+    pram_._aspect = 1;
+   
+
+    pram_._drection = 0;*/
+
+    rotationDir_ = false;
 }
 
 void PostEffect_Transition_OuterCircumference::Update()
 {
+    pram_.time += timespeed_;
 }
 
 void PostEffect_Transition_OuterCircumference::Draw(std::string name, const int imageHnadle)
@@ -43,17 +58,20 @@ void PostEffect_Transition_OuterCircumference::Draw(std::string name, const int 
         lpShaderMng.Draw(name);
         lpShaderMng.SetTexture(0, imageHnadle);
         Transition_OuterCircumference* cbBuf = (Transition_OuterCircumference*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
-        cbBuf[0].size = pram_.size;
         cbBuf[0].color = pram_.color;
+        cbBuf[0].screenSize = pram_.screenSize;
+        cbBuf[0].aspect = pram_.aspect;
         cbBuf[0].time = pram_.time;
-        cbBuf[0]._aspect = pram_._aspect;
-        cbBuf[0]._rotation = pram_._rotation;
-        cbBuf[0]._screenSize = pram_._screenSize;
+        cbBuf[0].div = pram_.div;
+        cbBuf[0].direction = pram_.direction;
+        cbBuf[0].rotation = pram_.rotation;
+        cbBuf[0].size = pram_.size;
+
         //// ピクセルシェーダー用の定数バッファを更新して書き込んだ内容を反映する
         UpdateShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
         //// ピクセルシェーダー用の定数バッファを定数バッファレジスタにセット
         //// 引数の三番目はレジスタに設定している番号
-        SetShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name), DX_SHADERTYPE_PIXEL, 5);
+        SetShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name), DX_SHADERTYPE_PIXEL, 7);
         MyDrawGraph(0, 0, imageHnadle);
         //
         lpShaderMng.DrawEnd();
@@ -63,13 +81,21 @@ void PostEffect_Transition_OuterCircumference::Draw(std::string name, const int 
 
 void PostEffect_Transition_OuterCircumference::Custom()
 {
-    ImGui::DragFloat2("size",&pram_.size,0.01f);
-    ImGui::DragFloat2("screen",&pram_._screenSize,1.0f);
-    ImGui::DragFloat("color.r", &pram_.color.r, 0.1f);
-    ImGui::DragFloat("color.g", &pram_.color.g, 0.1f);
-    ImGui::DragFloat("color.b", &pram_.color.b, 0.1f);
-    ImGui::DragFloat("color.a", &pram_.color.a, 0.1f);
+    ImGuiCustom::ColorEdit4("color",&pram_.color);
+
     ImGui::DragFloat("time",&pram_.time,0.1f);
-    ImGui::DragFloat("aspect",&pram_._aspect,1.0f);
-    ImGui::DragFloat("rotation", &pram_._rotation, 1.0f);
+    ImGui::DragFloat("div", &pram_.div, 1.0f);
+    static int select;
+    if (ImGui::RadioButton("rotation dir [left]", &select, 0))
+    {
+        pram_.direction = 0.0f;
+    }
+    ImGui::SameLine();
+    if (ImGui::RadioButton("rotation dir [right]", &select, 1))
+    {
+        pram_.direction = 1.0f;
+    }
+    ImGui::DragFloat("rotation",&pram_.rotation,0.1f);
+    ImGui::DragFloat("size",&pram_.size,0.1f);
+    ImGui::DragFloat("pramspeed", &timespeed_, 1.0f);
 }

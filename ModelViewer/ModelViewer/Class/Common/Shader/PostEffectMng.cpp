@@ -2,6 +2,7 @@
 #include "PostEffect_Noise.h"
 #include "PostEffect_ScanLine.h"
 #include "PostEffect_Transition_OuterCircumference.h"
+#include "PostEffect_Transition_Circle.h"
 #include "../../../imGui/imgui.h"
 #include <DxLib.h>
 
@@ -21,6 +22,7 @@ void PostEffectMng::Init()
 	postEffect_["noise"] = std::make_unique<PostEffect_Noise>();
 	postEffect_["scanLine"] = std::make_unique<PostEffect_ScanLine>();
 	postEffect_["outerCircumference"] = std::make_unique<PostEffect_Transition_OuterCircumference>();
+	postEffect_["circle"] = std::make_unique<PostEffect_Transition_Circle>();
 
 	// 初期要素の名前
 	selectName_ = "none";
@@ -67,9 +69,8 @@ void PostEffectMng::Draw(const int screen)
 void PostEffectMng::Custom()
 {
 	//const char* listbox_items[] = { "none","noise" };
-
 	// 要素追加時に数値を増やす
-	const char* listbox_items[4];
+	const char* listbox_items[5];
 
 	// 要素の名前を入れる
 	auto cnt = 0;

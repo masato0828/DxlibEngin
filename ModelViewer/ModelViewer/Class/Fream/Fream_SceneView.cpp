@@ -46,11 +46,15 @@ void Fream_SceneView::Create()
         auto sizeX = ImGui::GetWindowSize().x;
         auto sizeY = ImGui::GetWindowSize().y;
 
-        // 横割合
-        auto x = ImGui::GetWindowSize().x / defaultImageSize_.x_;
-        // 縦割合
-        auto y = ImGui::GetWindowSize().y / defaultImageSize_.y_;
-
+       // 横割合
+       auto rectX =ImGui::GetWindowDrawList()->GetClipRectMax().x - ImGui::GetWindowDrawList()->GetClipRectMin().x;
+       auto rectY =ImGui::GetWindowDrawList()->GetClipRectMax().y - ImGui::GetWindowDrawList()->GetClipRectMin().y-20;
+       //auto x = ImGui::GetWindowSize().x / defaultImageSize_.x_;
+       auto x = rectX / defaultImageSize_.x_;
+       // 縦割合
+       //auto y = ImGui::GetWindowSize().y / defaultImageSize_.y_;
+       auto y = rectY / defaultImageSize_.y_;
+       
 
         // 係数
         auto factor = (std::min)(x, y);
@@ -60,12 +64,12 @@ void Fream_SceneView::Create()
             ImGui::End();
             return;
         }
-
+        factor_ = factor;
         ImGui::Image(
             // 画像情報
             (void*)my_shaderData,
             // 画像サイズを割合で変える
-            ImVec2{ defaultImageSize_.x_ * factor, defaultImageSize_.y_ * factor },
+            ImVec2{ (float)defaultImageSize_.x_ * factor_, (float)defaultImageSize_.y_ * factor_ },
             // UV1
             ImVec2{ 0,0 },
             // UV2
@@ -75,7 +79,7 @@ void Fream_SceneView::Create()
             // 枠のカラー
             ImVec4{ 0,0,0,0 });
 
-        factor_ = factor;
+        
         // このウィンドウの画像の左上
         imageLeftUpCornor_ = {
             ImGui::GetWindowDrawList()->VtxBuffer[0].pos.x,

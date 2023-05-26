@@ -1,6 +1,7 @@
 #pragma once
 #include "PostEffect_Base.h"
 #include "../../Common/Vector2.h"
+#include "../../Common/ImGuiMyCustom.h"
 class PostEffect_Transition_OuterCircumference :
     public PostEffect_Base
 {
@@ -13,24 +14,27 @@ public:
 	void Custom()override final;
 private:
 
-	struct COLORS
-	{
-		float r;
-		float g;
-		float b;
-		float a;
-	};
-
 	struct Transition_OuterCircumference
 	{
-		Vector2Flt size;
-		COLORS color;
+		
+		ImGuiCustom::IM_COLOR color;
+		Vector2Flt screenSize;
+		Vector2Flt aspect;
 		float time;
-		float _rotation;
+		float div;
+		float direction;
+		float rotation;
+		float size;
+		/*float _rotation;
 		float _aspect;
 		Vector2Flt _screenSize;
+		float _drection;*/
 	};
 
 	Transition_OuterCircumference pram_;
+
+	float timespeed_;
+
+	bool rotationDir_;
 };
 

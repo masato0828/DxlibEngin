@@ -126,6 +126,9 @@
     <ClCompile Include="Class\Common\Shader\PostEffect_Transition_OuterCircumference.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Class\Common\Shader\PostEffect_Transition_Circle.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class\System\Application.h">
@@ -251,11 +254,15 @@
     <ClInclude Include="Class\Common\Shader\PostEffect_Transition_OuterCircumference.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Class\Common\Shader\PostEffect_Transition_Circle.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\hlsl\screen_ps.hlsl" />
     <FxCompile Include="Shader\hlsl\ScanLine.hlsl" />
     <FxCompile Include="Shader\hlsl\OuterCircumference_ps.hlsl" />
     <FxCompile Include="Shader\hlsl\OuterCircumference_vs.hlsl" />
+    <FxCompile Include="Shader\hlsl\Circle_ps.hlsl" />
   </ItemGroup>
 </Project>

@@ -1,22 +1,23 @@
 struct PixelInput
 {
-    float4 dif : COLOR; // ディフューズ
-    float4 spc : COLOR1; // スペキュラ
+    float4 dif : COLOR; // ??????
+    float4 spc : COLOR1; // ?????
     float2 uv : TEXCOORD0;
 };
 
-SamplerState _MainTex_sampler; 
-Texture2D _MainTex : register(t0); // テクスチャ
+SamplerState _MainTex_sampler;
+Texture2D _MainTex : register(t0); // ?????
 
-cbuffer args : register(b5)
+cbuffer args : register(b7)
 {
-    float2 size;
     float4 color;
+    float2 screenSize;
+    float2 aspect;
     float time;
+    float div;
+    float direction;
     float rotation;
-    float _aspect;
-    float2 _screenSize;
-    float _drection;
+    float size;
 };
 
 //rectangle
@@ -25,7 +26,7 @@ float rectangle(float2 p, float2 size)
     return max(abs(p.x) - size.x, abs(p.y) - size.y);
 }
 
-float2 rotation(float2 p, float theta)
+float2 Rotation(float2 p, float theta)
 {
     return float2((p.x) * cos(theta) - p.y * sin(theta), p.x * sin(theta) + p.y * cos(theta));
 }
@@ -61,45 +62,50 @@ float trs(float2 p, float val, float div, float t)
 
 float4 main(PixelInput input) : SV_Target
 {
+    // ???
+    float4 _color = color;
+    // ???
+    float _div = div;
+    // ????
+    float _dir = direction;
+    // ??
+    float _rot = rotation;
+    // ??????
+    float2 _asp = aspect;
+    // ????
+    float _ratio = screenSize.x / screenSize.y;
+    // ???
+    float _size = size;
     
-    float div = 10;
-    float2 _size = size;
-    int asp = _aspect;
-    float ratio = _screenSize.x / _screenSize.y;
-    float dir = _drection;
-    float _rotation = rotation;
-    
-    float val = time * div * div * 2.0;
-    // -1 ～ 1
+    // -1 ? 1
     float2 f_st = input.uv * 2.0 - 1.0;
     
+    // ????
+    f_st.x = f_st.x * (1.0 - 2.0 * _dir);
+    // ??
+    f_st = Rotation(f_st, radians(_rot));
     
-    //アスペクト比で調整
-    f_st.x *= (ratio * asp + (1.0 - asp));
+   // f_st.x *= (_ratio * _asp.x + (1.0 - _asp.x));
+    //f_st.y *= (_ratio * _asp.y + (1.0 - _asp.y));
     
-    //座標の回転
-    //f_st = rotation(f_st, radians(rotation));
-    
-    //回転方向
-    f_st.x = f_st.x * (1.0 - 2.0 * dir);
-    
-    // -分割数 ～ 分割数
-    f_st *= div;
     f_st *= _size;
+    // -1 ? 1?->?-div ? div
+    f_st *= _div;
     
+    // ???
     float a = 0.0f;
-    
-    for (int i = 0; i < div * 0.5; i++)
+    // ?????
+    for (int i = 0; i < _div * 0.5; i++)
     {
-        a = min(a + trs(f_st, val, div, i), 1);
+        a = min(a + trs(f_st, time, _div, i), 1);
     }
-    
-    
+    // ??????????????
     if (a == 0.0)
     {
         discard;
     }
-    
-    return color;
+   
+    return _color;
+    //return float4(1.0f, 0.0f, 0.0f, 1.0f);
 
 }

@@ -27,6 +27,7 @@
     <ClCompile Include="Class\Common\Shader\PostEffect_Base.cpp" />
     <ClCompile Include="Class\Common\Shader\PostEffect_Noise.cpp" />
     <ClCompile Include="Class\Common\Shader\PostEffect_ScanLine.cpp" />
+    <ClCompile Include="Class\Common\Shader\PostEffect_Transition_Circle.cpp" />
     <ClCompile Include="Class\Common\Utility.cpp" />
     <ClCompile Include="Class\Fream\FreamBase.cpp" />
     <ClCompile Include="Class\Fream\FreamMng.cpp" />
@@ -67,6 +68,7 @@
     <ClInclude Include="Class\Common\Shader\PostEffect_Base.h" />
     <ClInclude Include="Class\Common\Shader\PostEffect_Noise.h" />
     <ClInclude Include="Class\Common\Shader\PostEffect_ScanLine.h" />
+    <ClInclude Include="Class\Common\Shader\PostEffect_Transition_Circle.h" />
     <ClInclude Include="Class\Common\Utility.h" />
     <ClInclude Include="Class\Common\Vector2.h" />
     <ClInclude Include="Class\Fream\FreamBase.h" />
@@ -100,6 +102,13 @@
     <ClInclude Include="Class\Common\Shader\PostEffect_Transition_OuterCircumference.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Shader\hlsl\Circle_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)/Shader/ps/%(Filename).ps</ObjectFileOutput>
+    </FxCompile>
     <FxCompile Include="Shader\hlsl\OuterCircumference_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>

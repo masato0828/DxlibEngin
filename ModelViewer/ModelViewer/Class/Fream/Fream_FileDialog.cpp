@@ -392,6 +392,9 @@ void Fream_FileDialog::ItemWindow()
 						auto directoryName = (--path.end())->u8string();
 						nowSelect->fileMap_.try_emplace(directoryName.c_str(), FileData(nowSelect, directoryName.c_str()));
 						nowSelect = &nowSelect->fileMap_.at(directoryName.c_str());
+
+
+
 					}
 					// ƒtƒ@ƒCƒ‹‚Ìê‡
 					else

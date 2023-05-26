@@ -5,6 +5,9 @@
 // 度からラジアン角度に
 extern float Deg2Rad(float deg);
 
+// 最大公約数を求める
+extern int Gcd(int x, int y);
+
 // LPCSTR -> string
 //extern LPCSTR LPCSTRtoString(std::string str);
 
