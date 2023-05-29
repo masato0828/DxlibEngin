@@ -5,6 +5,9 @@
 #include "../../imGui/imgui_internal.h"
 #include "../Common/ImGuiMyCustom.h"
 #include <codecvt>
+#include <shlwapi.h>
+#include <Windows.h>
+#include <string>
 
 Fream_FileDialog::Fream_FileDialog():fileData_(nullptr, (--std::filesystem::current_path().end())->u8string())
 {
@@ -89,7 +92,7 @@ void Fream_FileDialog::Update()
 			
 			if (nowSelect->parentFile_ != NULL)
 			{
-				if (isMatch(directory.string(), nowSelect->parentFile_->myName))
+				if (IsMatch(directory.string(), nowSelect->parentFile_->myName))
 				{
 					// ツリーを開く
 					ImGui::SetNextItemOpen(true);
@@ -110,7 +113,7 @@ void Fream_FileDialog::Update()
 			}
 			if (is_open)
 			{
-				Tree2(directory, fileData_);
+				Tree(directory, fileData_);
 				ImGui::TreePop();
 			}
 
@@ -134,101 +137,7 @@ void Fream_FileDialog::Update()
 	}
 }
 
-void Fream_FileDialog::Tree(std::filesystem::path  directory,int levelNo)
-{
-	//auto fii = ".\\" + fi;
-	std::filesystem::directory_iterator e = std::filesystem::directory_iterator(directory.string());
-
-	int cnt = 0;
-	// 現在の選択番号
-	int node_clicked = -1;
-
-	
-
-	for (auto f : e)
-	{
-		
-		// ツリーデータの設定
-		ImGuiTreeNodeFlags node_flags =
-			ImGuiTreeNodeFlags_OpenOnArrow |
-			ImGuiTreeNodeFlags_OpenOnDoubleClick |
-			ImGuiTreeNodeFlags_SpanAvailWidth;
-
-		// 選択しているかどうか
-		const bool is_selected = (selection_mask_vector_.at(levelNo) & (1 << cnt)) != 0;
-		// 選択中
-		if (is_selected)
-			node_flags |= ImGuiTreeNodeFlags_Selected;
-
-		// \\がある所までの文字数を取得
-		int eraseNums = f.path().u8string().find_last_of('\\');
-		// 絶対パスからeraseNumsまでを削除
-		std::string files = f.path().u8string().erase(0, eraseNums);
-		// filesから\\を削除
-		std::string fileNs = files.erase(0, 1);
-		// ファイルかフォルダかチェック
-		bool isDirectory = std::filesystem::is_directory(f.path());
-
-		if (isDirectory)
-		{
-			// ノードを開いているかどうか
-			bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)cnt, node_flags, files.c_str());
-
-			// ツリーを選択
-			if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
-			{
-				// 選択している番号に変更
-				node_clicked = cnt;
-				selected_ = node_clicked;
-				selection_mask_vector_.at(levelNo+cnt) = (1 << 0);
-			}
-
-			// ノードが開かれている
-			if (node_open)
-			{
-				selection_mask_vector_.push_back((1 << 0));
-				// 名前変更
-				Tree(f,levelNo+1+cnt);
-				// ツリーの終了
-				ImGui::TreePop();
-
-			}
-
-			// 現在ツリーをクリックしていない
-			if (node_clicked != -1)
-			{
-				if (ImGui::GetIO().KeyCtrl)
-					selection_mask_vector_.at(levelNo) ^= (1 << node_clicked);          // CTRL+click to toggle
-				else //if (!(selection_mask & (1 << node_clicked))) // Depending on selection behavior you want, may want to preserve selection when clicking on item that is part of the selection
-					selection_mask_vector_.at(levelNo) = (1 << node_clicked);           // Click to single-select
-			}
-
-			
-			//// 名前とする
-			//if (ImGui::TreeNode(files.c_str()))
-			//{
-			//	// 再帰
-			//	Tree(f);
-			//	// ツリーの終了処理
-			//	ImGui::TreePop();
-			//}
-		}
-		else
-		{
-			////ImGui::Text(files.c_str());
-			//if (!CharacterSearch(files, ".cpp", { 1,1,0,1 }) &&
-			//	!CharacterSearch(files, ".h", { 0,1,0,1 }) &&
-			//	!CharacterSearch(files, ".txt", { 1,1,1,1 }))
-			//{
-			//	ImGui::Text(files.c_str());
-			//}
-		}
-
-		cnt++;
-	}
-}
-
-void Fream_FileDialog::Tree2(std::filesystem::path directory, FileData& fileData)
+void Fream_FileDialog::Tree(std::filesystem::path directory, FileData& fileData)
 {
 	// イテレータの作成
 	std::filesystem::directory_iterator itr(directory.u8string());
@@ -288,7 +197,7 @@ void Fream_FileDialog::Tree2(std::filesystem::path directory, FileData& fileData
 			node_flags |= ImGuiTreeNodeFlags_Leaf;
 		}
 
-		if (isMatch(directoryName.c_str(), nowSelectFileName_))
+		if (IsMatch(directoryName.c_str(), nowSelectFileName_))
 		{
 			// ツリーを開く
 			ImGui::SetNextItemOpen(true);
@@ -312,7 +221,7 @@ void Fream_FileDialog::Tree2(std::filesystem::path directory, FileData& fileData
 		{
 			// 再起処理
 			//Tree2(itr->path(), dataItr->second);
-			Tree2(itr->path(), data->second);
+			Tree(itr->path(), data->second);
 
 			// ツリーの終了
 			ImGui::TreePop();
@@ -324,7 +233,7 @@ void Fream_FileDialog::Tree2(std::filesystem::path directory, FileData& fileData
 
 bool Fream_FileDialog::CharacterSearch(std::string showName,std::string searchFileName,Color color, std::string defaultTarget)
 {
-	if(isHeaderFile(defaultTarget,searchFileName))
+	if(IsHeaderFile(defaultTarget,searchFileName))
 	//if (defaultTarget.find(searchFileName) != std::string::npos)
 	{
 		ImGui::TextColored(ImVec4(color.r, color.g,color.b, color.a), showName.c_str());
@@ -362,8 +271,8 @@ void Fream_FileDialog::ItemWindow()
 		{
 			fileFullPaht_.clear();
 			Recovery(nowSelect);
-			fileFullPaht_ = fileFullPaht_.size() == 0 ? std::filesystem::current_path().string() :
-				std::filesystem::current_path().string() + "/" + fileFullPaht_;
+			fileFullPaht_ = fileFullPaht_.empty() ? std::filesystem::current_path() :
+				std::filesystem::current_path() /= fileFullPaht_;
 			ImGui::Separator();
 
 			auto current_path = std::filesystem::current_path();
@@ -382,24 +291,25 @@ void Fream_FileDialog::ItemWindow()
 
 				if (nowSelectFileName_ != copySelectPath)
 				{
-					fileFullPaht_ += ("/" + nowSelectFileName_);
+					fileFullPaht_ /= nowSelectFileName_;
 					copySelectPath = nowSelectFileName_;
 
 					// フォルダの場合
-					if (std::filesystem::is_directory(stringToWideString(fileFullPaht_)))
+					if (std::filesystem::is_directory(fileFullPaht_))
 					{
-						std::filesystem::path path(stringToWideString(fileFullPaht_));
-						auto directoryName = (--path.end())->u8string();
+						//std::filesystem::path path(fileFullPaht_);
+						//auto directoryName = (--path.end())->u8string();
+						directoryName = fileFullPaht_.filename().u8string();
+						
 						nowSelect->fileMap_.try_emplace(directoryName.c_str(), FileData(nowSelect, directoryName.c_str()));
 						nowSelect = &nowSelect->fileMap_.at(directoryName.c_str());
-
-
-
 					}
 					// ファイルの場合
 					else
 					{
-						if (isHeaderFile(fileFullPaht_, "cpp"))
+						if (IsHeaderFile(fileFullPaht_.string(), "cpp")||
+							IsHeaderFile(fileFullPaht_.string(), "h")||
+							IsHeaderFile(fileFullPaht_.string(), "txt"))
 						{
 							AppOpen();
 						}
@@ -423,7 +333,7 @@ void Fream_FileDialog::ItemWindow()
 	ImGui::SetNextWindowSize(ImVec2(50, 10), ImGuiCond_Once);
 	if (ImGui::Begin("FileNameLog"))
 	{
-		if (!std::filesystem::is_directory(stringToWideString(nowSelectFileName_)))
+		if (!std::filesystem::is_directory(StringToWideString(nowSelectFileName_)))
 		{
 			// ウィンドウの背景色を設定
 			ImGui::Text(nowSelectFileName_.c_str());
@@ -438,7 +348,7 @@ void Fream_FileDialog::Recovery(FileData* selectData)
 	if (selectData->parentFile_ != NULL)
 	{
 		Recovery(selectData->parentFile_);
-		fileFullPaht_ += selectData->myName + "/";
+		fileFullPaht_ += selectData->myName + "\\";
 		ImGui::SameLine();
 		ImGui::Button("/");
 	}
@@ -539,7 +449,130 @@ void Fream_FileDialog::CreateImage(std::string filePath)
 
 void Fream_FileDialog::AppOpen()
 {
-	
+	std::wstring commandLine;
+
+	// コマンドライン引数（開くソリューションファイルのパスなど）
+	std::wstring commandLineArgs = fileFullPaht_.wstring();
+
+	// アプリの実行可能ファイルパス
+	//const wchar_t* programPath = L"C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\Common7\\IDE\\devenv.exe";
+	std::wstring programPath = GetAssociatedApplicationPath(fileFullPaht_.extension().wstring());
+
+	// プロセス情報構造体の初期化
+	STARTUPINFOW startupInfo = { sizeof(STARTUPINFOW) };
+	PROCESS_INFORMATION processInfo;
+
+	if (fileFullPaht_.extension() == ".cpp"|| fileFullPaht_.extension() == ".h")
+	{
+		commandLine = programPath;
+		commandLine += L" /edit ";
+		commandLine += commandLineArgs;
+
+		programPath.clear();
+	}
+	else if(fileFullPaht_.extension() == ".txt")
+	{
+		//commandLine = commandLineArgs;
+		commandLine = programPath;
+		commandLine += L"  ";
+		commandLine += commandLineArgs;
+
+		programPath.clear();
+	}
+
+	LPCWSTR appcation = NULL;
+
+	if (programPath == L"")
+	{
+		appcation = NULL;
+	}
+	else
+	{
+		appcation = programPath.c_str();
+	}
+
+
+	BOOL result = CreateProcessW(
+		appcation,		// 実行するプログラムのパス
+		&commandLine[0],			// コマンドライン引数
+		NULL,                       // セキュリティ属性
+		NULL,                       // スレッドのセキュリティ属性
+		FALSE,                      // ハンドルの継承オプション
+		0,                          // 作成フラグ
+		NULL,                       // 環境変数ブロック
+		NULL,                       // カレントディレクトリ
+		&startupInfo,               // スタートアップ情報
+		&processInfo                // プロセス情報
+	);
+
+	if (result) {
+		// プロセスが正常に起動した場合の処理
+		//std::cout << "Visual Studioが起動しました。" << std::endl;
+
+		// プロセスの終了を待つ場合は、WaitForSingleObject関数などを使用
+		// WaitForSingleObject(processInfo.hProcess, INFINITE);
+
+		// プロセスハンドルの解放
+		CloseHandle(processInfo.hProcess);
+		CloseHandle(processInfo.hThread);
+	}
+	else {
+		// プロセス起動が失敗した場合の処理
+		DWORD errorCode = GetLastError();
+		std::cout << "Visual Studioの起動に失敗しました。エラーコード: " << errorCode << std::endl;
+	}
+
+}
+
+// std::stringをwchar_t*に変換する関数
+std::wstring Fream_FileDialog::ConvertToWideString(const std::string& str) 
+{
+	int length = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, nullptr, 0);
+	std::vector<wchar_t> buffer(length);
+	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, buffer.data(), length);
+	return std::wstring(buffer.data());
+}
+
+std::wstring Fream_FileDialog::GetAssociatedApplicationPath(const std::wstring& extension)
+{
+	wchar_t progId[MAX_PATH];
+	DWORD progIdSize = MAX_PATH;
+
+	std::string messageContent;
+	std::wstring errorMsg;
+	std::wstring errorText;
+
+	// 拡張子に関連付けられたプログラムIDを取得
+	HRESULT result = AssocQueryStringW(ASSOCF_NONE, ASSOCSTR_EXECUTABLE, extension.c_str(), nullptr, progId, &progIdSize);
+	if (result == S_OK)
+	{
+		// プログラムIDから実行可能ファイルパスを取得
+		wchar_t executablePath[MAX_PATH];
+		DWORD executablePathSize = MAX_PATH;
+
+		result = AssocQueryStringW(ASSOCF_NONE, ASSOCSTR_EXECUTABLE, progId, nullptr, executablePath, &executablePathSize);
+		if (result == S_OK)
+		{
+			return progId;
+		}
+		else
+		{
+			messageContent = "progIDの実行可能パスの取得に失敗しました。:";
+			errorMsg = progId;
+			errorText = StringToWideString(messageContent) + errorMsg;
+			MessageBox(NULL, (LPCSTR)(errorText.c_str()), "error", MB_OK);
+		}
+	}
+	else
+	{
+		messageContent = "拡張子のProgIDの取得に失敗しました。:";
+		errorMsg = extension.c_str();
+		errorText = StringToWideString(messageContent) + errorMsg;
+		MessageBox(NULL,(LPCSTR)(errorText.c_str()), "error", MB_OK);
+	}
+
+	MessageBox(NULL,"その他エラー","error",MB_OK);
+	return L"その他エラー";
 }
 
 Fream_FileDialog::FileData::FileData(FileData* parent, std::string name)
@@ -548,7 +581,7 @@ Fream_FileDialog::FileData::FileData(FileData* parent, std::string name)
 	myName = name;
 }
 
-bool Fream_FileDialog::isHeaderFile(const std::string& filename, const std::string& ext)
+bool Fream_FileDialog::IsHeaderFile(const std::string& filename, const std::string& ext)
 {	
 	// 拡張子の位置を探す
 	std::size_t dotPos = filename.find_last_of(".");
@@ -566,7 +599,7 @@ bool Fream_FileDialog::isHeaderFile(const std::string& filename, const std::stri
 	return false;
 }
 
-bool Fream_FileDialog::isMatch(const std::string& filepath, const std::string& target) {
+bool Fream_FileDialog::IsMatch(const std::string& filepath, const std::string& target) {
 	std::filesystem::path pathObj(filepath);
 	std::string filename = pathObj.filename().string();
 
@@ -588,7 +621,7 @@ bool Fream_FileDialog::isMatch(const std::string& filepath, const std::string& t
 	return false;
 }
 
-std::wstring Fream_FileDialog::stringToWideString(const std::string& str)
+std::wstring Fream_FileDialog::StringToWideString(const std::string& str)
 {
 	std::wstring wideStr;
 	wideStr.resize(str.size());

@@ -28,7 +28,7 @@ void PostEffect_Transition_Circle::Init()
     pram_.val = 0;
     pram_.width = 0.15;
     pram_.revers = 0.0f;
-    timeSpeed_ = 0.01f;
+    timeSpeed_ = 0.02f;
     
 }
 

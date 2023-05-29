@@ -17,9 +17,7 @@ public:
     void Init();
     void Update();
 
-    void Tree(std::filesystem::path directory,int levelNo);
-
-    void Tree2(std::filesystem::path directory, FileData& fileData);
+    void Tree(std::filesystem::path directory, FileData& fileData);
 private:
 
     bool fileDialogFlg_;
@@ -47,7 +45,7 @@ private:
 
     Vector2 mainWindowSize_;
 
-    std::string fileFullPaht_;
+    std::filesystem::path fileFullPaht_;
     std::string nowSelectFileName_;
 
     // シェーダ情報の作成
@@ -71,12 +69,18 @@ private:
 
     void CreateImage(std::string filePath);
 
-    bool isHeaderFile(const std::string& filename,const std::string& ext);
+    bool IsHeaderFile(const std::string& filename,const std::string& ext);
 
     void AppOpen();
 
-    bool isMatch(const std::string& filepath, const std::string& target);
+    bool IsMatch(const std::string& filepath, const std::string& target);
 
-    std::wstring stringToWideString(const std::string& str);
+    std::wstring StringToWideString(const std::string& str);
+
+    // std::stringをwchar_t*に変換する関数
+    std::wstring ConvertToWideString(const std::string& str);
+
+    std::wstring GetAssociatedApplicationPath(const std::wstring& filePath);
+
 };
 

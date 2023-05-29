@@ -8,9 +8,6 @@ extern float Deg2Rad(float deg);
 // Å‘åŒö–ñ”‚ğ‹‚ß‚é
 extern int Gcd(int x, int y);
 
-// LPCSTR -> string
-//extern LPCSTR LPCSTRtoString(std::string str);
-
 // vector‚©‚çindex”Ô–Ú‚Ì—v‘f‚ğíœ‚·‚é
 template<typename T>
 void remove(std::vector<T>& vector, unsigned int index)
