@@ -32,6 +32,7 @@ IMGUI_API bool ImGuiCustom::ColorEdit4(const char* label, IM_COLOR* col, ImGuiCo
     col->alpha = color[3];
     return flg;
 }
+
 //
 //IMGUI_API bool ImGui::InputText(const char* label, std::string* buf, size_t buf_size, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* user_data)
 //{

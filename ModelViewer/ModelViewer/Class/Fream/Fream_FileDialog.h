@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <iostream>
 #include <unordered_map>
+#include <string>
 #include "../System/ImguiImageStb.h"
 #include "../Common/Vector2.h"
 
@@ -40,13 +41,14 @@ private:
     FileData* nowSelect;
     std::filesystem::path nowSelectPath_;
 
-
     std::vector<int> selection_mask_vector_;
 
     Vector2 mainWindowSize_;
 
     std::filesystem::path fileFullPaht_;
-    std::string nowSelectFileName_;
+    std::wstring nowSelectFileName_;
+
+    std::wstring nowSelectFile_;
 
     // シェーダ情報の作成
     ID3D11ShaderResourceView* my_shaderData = NULL;
@@ -65,22 +67,27 @@ private:
     
     void Recovery(FileData* selectData);
 
-    void MakeFileImage(std::string name);
+    void MakeFileImage(std::wstring name);
 
     void CreateImage(std::string filePath);
 
     bool IsHeaderFile(const std::string& filename,const std::string& ext);
 
-    void AppOpen();
-
-    bool IsMatch(const std::string& filepath, const std::string& target);
+    bool IsMatch(const std::string& filepath, const std::wstring& target);
 
     std::wstring StringToWideString(const std::string& str);
+
+    std::string WideStringToString(const std::wstring& wideString);
 
     // std::stringをwchar_t*に変換する関数
     std::wstring ConvertToWideString(const std::string& str);
 
     std::wstring GetAssociatedApplicationPath(const std::wstring& filePath);
 
+    std::wstring GetDefaultApplication(const std::wstring& extension);
+
+    bool LaunchApplication(const std::wstring& applicationPath, const std::wstring& filePath);
+
+    bool OpenWithDefaultApplication(const std::wstring& filePath);
 };
 
