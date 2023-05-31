@@ -4,14 +4,18 @@
 #include <iostream>
 #include <unordered_map>
 #include <string>
+#include <memory>
 #include "../System/ImguiImageStb.h"
 #include "../Common/Vector2.h"
+#include "FileDialog\FileCommon.h"
+#include "FileDialog\Fream_FileDialog_Tree.h"
+#include "FileDialog\Fream_FileDialog_Project.h"
+#include "FileDialog\Fream_FileDialog_Item.h"
 
 class Fream_FileDialog :
     public FreamBase
 {
 public:
-    struct FileData;
 
     Fream_FileDialog();
     ~Fream_FileDialog();
@@ -28,22 +32,11 @@ private:
     // 選択用マスク
     //int selection_mask_;
 
-
-    struct FileData
-    {
-        FileData(FileData*, std::string);
-        std::unordered_map<std::string,FileData> fileMap_;
-        FileData* parentFile_;
-        std::string myName;
-    };
-
     FileData fileData_;
     FileData* nowSelect;
     std::filesystem::path nowSelectPath_;
 
     std::vector<int> selection_mask_vector_;
-
-    Vector2 mainWindowSize_;
 
     std::filesystem::path fileFullPaht_;
     std::wstring nowSelectFileName_;
@@ -53,6 +46,10 @@ private:
     // シェーダ情報の作成
     ID3D11ShaderResourceView* my_shaderData = NULL;
     std::vector<ID3D11ShaderResourceView*> my_shaderData_vector_;
+
+    std::unique_ptr<Fream_FileDialog_Tree>tree_;
+    std::unique_ptr<Fream_FileDialog_Project>project_;
+    std::unique_ptr<Fream_FileDialog_Item>item_;
 
     struct Color
     {
@@ -89,5 +86,8 @@ private:
     bool LaunchApplication(const std::wstring& applicationPath, const std::wstring& filePath);
 
     bool OpenWithDefaultApplication(const std::wstring& filePath);
+
+    std::wstring ShowApplicationSelectionDialog();
+
 };
 
