@@ -48,6 +48,7 @@
     <ClCompile Include="imGui\CustomFont.cpp" />
     <ClCompile Include="imGui\ImFileDialog.cpp" />
     <ClCompile Include="imGui\imgui.cpp" />
+    <ClCompile Include="imGui\ImGuiColorTextEdit\TextEditor.cpp" />
     <ClCompile Include="imGui\ImGuiFileDialog.cpp" />
     <ClCompile Include="imGui\imgui_demo.cpp" />
     <ClCompile Include="imGui\imgui_draw.cpp" />
@@ -95,6 +96,7 @@
     <ClInclude Include="imGui\imconfig.h" />
     <ClInclude Include="imGui\ImFileDialog.h" />
     <ClInclude Include="imGui\imgui.h" />
+    <ClInclude Include="imGui\ImGuiColorTextEdit\TextEditor.h" />
     <ClInclude Include="imGui\ImGuiFileDialog.h" />
     <ClInclude Include="imGui\ImGuiFileDialogConfig.h" />
     <ClInclude Include="imGui\imgui_impl_dx11.h" />
@@ -180,7 +182,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -248,6 +250,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(DXLIB_DIR)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -267,6 +270,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -138,6 +138,9 @@
     <ClCompile Include="Class\Fream\FileDialog\Fream_FileDialog_Item.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="imGui\ImGuiColorTextEdit\TextEditor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class\System\Application.h">
@@ -276,6 +279,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Class\Fream\FileDialog\Fream_FileDialog_Item.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="imGui\ImGuiColorTextEdit\TextEditor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

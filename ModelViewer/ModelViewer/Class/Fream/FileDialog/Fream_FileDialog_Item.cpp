@@ -18,6 +18,7 @@ Fream_FileDialog_Item::~Fream_FileDialog_Item()
 
 void Fream_FileDialog_Item::Init()
 {
+	button_click_ = false;
 }
 void Fream_FileDialog_Item::Update()
 {
@@ -34,7 +35,6 @@ void Fream_FileDialog_Item::Update(FileData*& nowselect,std::filesystem::path& f
 
 	FileNameWindow();
 
-
 	// Imgui用ウィンドウクラスの作成
 	ImGuiWindowClass window_class;
 	// ウィンドウの効果の編集（今回はウィンドウの非表示を無くす設定とウィンドウタブを無くす処理）
@@ -42,14 +42,10 @@ void Fream_FileDialog_Item::Update(FileData*& nowselect,std::filesystem::path& f
 	ImGui::SetNextWindowClass(&window_class);
 	if (ImGui::Begin("ITEM"))
 	{
-		ImGui::Separator();
+		//ImGui::Separator();
 		if (nowSelect_ != nullptr)
 		{
-			fileFullPaht_.clear();
-			Recovery(nowSelect_);
-			fileFullPaht_ = fileFullPaht_.empty() ? std::filesystem::current_path() :
-				std::filesystem::current_path() /= fileFullPaht_;
-			ImGui::Separator();
+			FileLogWindow();
 
 			auto current_path = std::filesystem::current_path();
 
@@ -75,13 +71,13 @@ void Fream_FileDialog_Item::Update(FileData*& nowselect,std::filesystem::path& f
 					{
 						directoryName = fileFullPaht_.filename();
 
-						nowSelect_->fileMap_.try_emplace(WideStringToString(directoryName), FileData(nowSelect_, WideStringToString(directoryName)));
-						nowSelect_ = &nowSelect_->fileMap_.at(WideStringToString(directoryName));
+						nowSelect_->fileMap_.try_emplace(Utility::WideStringToString(directoryName), FileData(nowSelect_, Utility::WideStringToString(directoryName)));
+						nowSelect_ = &nowSelect_->fileMap_.at(Utility::WideStringToString(directoryName));
 					}
 					// ファイルの場合
 					else
 					{
-						OpenWithDefaultApplication(fileFullPaht_.wstring());
+						Utility::OpenWithDefaultApplication(fileFullPaht_.wstring());
 					}
 				}
 			}
@@ -108,11 +104,14 @@ void Fream_FileDialog_Item::DokingWindow()
 
 			ImGuiID dock_main_id = dockspace_id;
 			ImGuiID dock_id_FileDialog = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.01, NULL, &dock_main_id);
+			ImGuiID dock_id_FileLog = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.01, NULL, &dock_main_id);
 
-			ImGui::DockBuilderSetNodeSize(dock_main_id, ImVec2(300, 200));
+			ImGui::DockBuilderSetNodeSize(dock_main_id, ImVec2(300, 400));
 			ImGui::DockBuilderSetNodeSize(dock_id_FileDialog, ImVec2(ImGui::GetWindowWidth(), ImGui::GetTextLineHeight()*2));
+			ImGui::DockBuilderSetNodeSize(dock_id_FileLog, ImVec2(ImGui::GetWindowWidth(), ImGui::GetTextLineHeight()+10));
 
 			ImGui::DockBuilderDockWindow("FileNameLog", dock_id_FileDialog);
+			ImGui::DockBuilderDockWindow("FileLog", dock_id_FileLog);
 			ImGui::DockBuilderDockWindow("ITEM", dock_main_id);
 
 			ImGui::DockBuilderFinish(dockspace_id);
@@ -133,14 +132,33 @@ void Fream_FileDialog_Item::FileNameWindow()
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
 	if (ImGui::Begin("FileNameLog"))
 	{
-		//if (!std::filesystem::is_directory(nowSelect_->myName))
-		//{
-			// ウィンドウの背景色を設定
-			ImGui::Text(WideStringToString(nowSelectFile_).c_str());
-		//}
+		// ウィンドウの背景色を設定
+		ImGui::Text(Utility::WStringToUTF8(nowSelectFile_).c_str());
 		ImGui::End();
 	}
 	ImGui::PopStyleColor();
+}
+
+void Fream_FileDialog_Item::FileLogWindow()
+{
+	// Imgui用ウィンドウクラスの作成
+	ImGuiWindowClass window_class;
+	// ウィンドウの効果の編集（今回はウィンドウの非表示を無くす設定とウィンドウタブを無くす処理）
+	window_class.DockNodeFlagsOverrideSet = 
+		ImGuiDockNodeFlags_NoWindowMenuButton |
+		ImGuiDockNodeFlags_NoTabBar | 
+		ImGuiDockNodeFlags_NoResizeFlagsMask_
+		;
+	ImGui::SetNextWindowClass(&window_class);
+	ImGui::Begin("FileLog",nullptr, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar);
+
+	ImGui::Separator();
+	fileFullPaht_.clear();
+	Recovery(nowSelect_);
+	fileFullPaht_ = fileFullPaht_.empty() ? std::filesystem::current_path() :
+		std::filesystem::current_path() /= fileFullPaht_;
+
+	ImGui::End();
 }
 
 void Fream_FileDialog_Item::Recovery(FileData* selectData)
@@ -150,21 +168,23 @@ void Fream_FileDialog_Item::Recovery(FileData* selectData)
 		Recovery(selectData->parentFile_);
 		fileFullPaht_ += selectData->myName + "\\";
 		ImGui::SameLine();
-		ImGui::Button("/");
+		ImGui::SmallButton("/");
 	}
 	ImGui::SameLine();
-	if (ImGui::Button(selectData->myName.c_str()))
+	// ボタンのサイズと文字の配置を設定する
+	if (ImGui::SmallButton(selectData->myName.c_str()))
 	{
 		nowSelect_ = selectData;
 		return;
 	}
+
 }
 
 void Fream_FileDialog_Item::MakeFileImage(
 	std::wstring name)
 {
 	ImVec2 buttonPos = ImGui::GetCursorPos();
-	ImVec2 buttonSize = ImVec2(80, 100);
+	ImVec2 buttonSize = ImVec2(80, 80);
 	float buttonSpacing = 10.0f; // ボタン間のスペース
 
 	ImGui::BeginGroup();
@@ -182,14 +202,19 @@ void Fream_FileDialog_Item::MakeFileImage(
 		}
 		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
 		{
+			if (nowSelectFile_ != name.c_str())
+			{
+				button_click_ = true;
+			}
 			// ボタンが押されたときの処理
 			nowSelectFile_ = name.c_str();
+			
 		}
 		ImGui::PopID();
 
 		// テキストの幅を計算
-		std::string fileName = WideStringToString(name);
-		ImVec2 textSize = ImGui::CalcTextSize(fileName.c_str());
+		std::wstring fileName = name;
+		ImVec2 textSize = ImGui::CalcTextSize(Utility::WStringToUTF8(fileName).c_str());
 
 		// ボタンの幅と文字列の長さを比較し、ボタンの幅を超える場合は文字列を切り詰めて "..." を追加
 		if (textSize.x > buttonSize.x)
@@ -198,11 +223,11 @@ void Fream_FileDialog_Item::MakeFileImage(
 			{
 				fileName.pop_back();
 				// テキストのサイズを毎回更新する
-				textSize = ImGui::CalcTextSize(fileName.c_str());
+				textSize = ImGui::CalcTextSize(Utility::WStringToUTF8(fileName).c_str());
 			}
-			fileName += "...";
+			fileName += L"...";
 			// 合成後のサイズを取得
-			textSize = ImGui::CalcTextSize(fileName.c_str());
+			textSize = ImGui::CalcTextSize(Utility::WStringToUTF8(fileName).c_str());
 		}
 
 		float textWidth = textSize.x;
@@ -210,10 +235,10 @@ void Fream_FileDialog_Item::MakeFileImage(
 		float posX = (buttonSize.x - textWidth) * 0.5f;
 		ImGui::SetCursorPosX(posX + buttonPos.x);
 		//ImGui::Text(fileName.c_str());
-		if (!CharacterSearch(fileName, "cpp", { 0,1,1,1 }, WideStringToString(name)) &&
-			!CharacterSearch(fileName, "h", { 1,0,1,1 }, WideStringToString(name)))
+		if (!Utility::CharacterSearch(Utility::WStringToUTF8(fileName).c_str(), "cpp", { 0,1,1,1 }, Utility::WideStringToString(name)) &&
+			!Utility::CharacterSearch(Utility::WStringToUTF8(fileName).c_str(), "h", { 1,0,1,1 }, Utility::WideStringToString(name)))
 		{
-			ImGui::Text(fileName.c_str());
+			ImGui::Text(Utility::WStringToUTF8(fileName).c_str());
 		}
 
 		ImGui::EndGroup();
@@ -225,4 +250,9 @@ void Fream_FileDialog_Item::MakeFileImage(
 	{
 		ImGui::SameLine();
 	}
+}
+
+bool& Fream_FileDialog_Item::GetButton_Click()
+{
+	return button_click_;
 }

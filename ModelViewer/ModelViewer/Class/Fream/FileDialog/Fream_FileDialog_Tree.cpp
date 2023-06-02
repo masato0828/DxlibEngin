@@ -7,6 +7,7 @@
 #include "../../Common/ImGuiMyCustom.h"
 #include "../../Common/Utility.h"
 
+
 Fream_FileDialog_Tree::Fream_FileDialog_Tree()
 {
 }
@@ -25,9 +26,9 @@ void Fream_FileDialog_Tree::Update()
 
 void Fream_FileDialog_Tree::Update(
 	FileData& fileData,
-	FileData* nowSelect,
-	std::filesystem::path nowSelectPath,
-	std::wstring nowSelectFileName)
+	FileData*& nowSelect,
+	std::filesystem::path& nowSelectPath,
+	std::wstring& nowSelectFileName)
 {
 	nowSelectPath_ = nowSelectPath;
 	nowSelectFileName_ = nowSelectFileName;
@@ -49,7 +50,7 @@ void Fream_FileDialog_Tree::Update(
 
 		if (nowSelect->parentFile_ != NULL)
 		{
-			if (IsMatch(directory.string(), StringToWideString(nowSelect->parentFile_->myName)))
+			if (IsMatch(directory.string(), Utility::StringToWideString(nowSelect->parentFile_->myName)))
 			{
 				// ツリーを開く
 				ImGui::SetNextItemOpen(true);
@@ -72,9 +73,12 @@ void Fream_FileDialog_Tree::Update(
 
 		ImGui::End();
 	}
+
+	nowSelectPath = nowSelectPath_;
+	nowSelectFileName = nowSelectFileName_;
 }
 
-void Fream_FileDialog_Tree::Tree(std::filesystem::path directory, FileData& fileData, FileData* nowSelect)
+void Fream_FileDialog_Tree::Tree(std::filesystem::path directory, FileData& fileData, FileData*& nowSelect)
 {
 	// イテレータの作成
 	std::filesystem::directory_iterator itr(directory.u8string());
@@ -185,7 +189,7 @@ bool Fream_FileDialog_Tree::IsMatch(const std::string& filepath, const std::wstr
 	// }
 
 	// ファイル名に指定した文字列が含まれているかを判定する
-	if (filename.find(WideStringToString(target)) != std::string::npos) {
+	if (filename.find(Utility::WideStringToString(target)) != std::string::npos) {
 		return true;
 	}
 

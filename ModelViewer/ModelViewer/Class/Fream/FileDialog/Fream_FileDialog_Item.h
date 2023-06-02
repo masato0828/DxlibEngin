@@ -14,16 +14,20 @@ public:
 	void Init() override;
 	void Update() override;
 	void Update(FileData*& nowselect,std::filesystem::path& fileFullPath, std::wstring& nowSelectFile, std::wstring& nowSelectFileName);
-
+	bool& GetButton_Click();
 private:
 
 	void DokingWindow();
 
 	void FileNameWindow();
 
+	void FileLogWindow();
+
 	void Recovery(FileData* selectData);
 
 	void MakeFileImage(std::wstring name);
+
+	
 
 	FileData* nowSelect_;
 	std::filesystem::path fileFullPaht_;
@@ -32,5 +36,7 @@ private:
 
 	// シェーダ情報の作成
 	ID3D11ShaderResourceView* my_shaderData = NULL;
+
+	bool button_click_;
 };
 

@@ -3,25 +3,38 @@
 #include <string>
 #include "../Common/ImGuiMyCustom.h"
 
-// 度からラジアン角度に
-extern float Deg2Rad(float deg);
 
-// 最大公約数を求める
-extern int Gcd(int x, int y);
+namespace Utility
+{
+	// 度からラジアン角度に
+	float Deg2Rad(float deg);
 
-extern std::wstring StringToWideString(const std::string& str);
+	// 最大公約数を求める
+	int Gcd(int x, int y);
 
-extern std::string WideStringToString(const std::wstring& wideString);
+	std::wstring StringToWideString(const std::string& str);
 
-extern std::wstring GetDefaultApplication(const std::wstring& extension);
+	std::string WideStringToString(const std::wstring& wideString);
 
-extern bool OpenWithDefaultApplication(const std::wstring& filePath);
+	std::string WStringToUTF8(const std::wstring& wstr);
 
-extern bool LaunchApplication(const std::wstring& applicationPath, const std::wstring& filePath);
+	// マルチバイト文字列 mbStr を std::wstring
+	std::wstring MultiByteToUnicode(const std::string& mbStr);
 
-extern bool IsHeaderFile(const std::string& filename, const std::string& ext);
+	std::wstring GetDefaultApplication(const std::wstring& extension);
 
-extern bool CharacterSearch(std::string showName, std::string searchFileName, ImGuiCustom::IM_COLOR color, std::string defaultTarget);
+	bool OpenWithDefaultApplication(const std::wstring& filePath);
+
+	bool LaunchApplication(const std::wstring& applicationPath, const std::wstring& filePath);
+
+	bool IsHeaderFile(const std::string& filename, const std::string& ext);
+
+	bool CharacterSearch(std::string showName, std::string searchFileName, ImGuiCustom::IM_COLOR color, std::string defaultTarget);
+
+    // maltbyteのエンコーディングを判別する関数
+	std::string DetectMaltbyteEncoding(const std::string& maltbyte);
+
+}
 // vectorからindex番目の要素を削除する
 template<typename T>
 void remove(std::vector<T>& vector, unsigned int index)

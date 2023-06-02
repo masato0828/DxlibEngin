@@ -169,6 +169,6 @@ void Fream_Stage::PreviewTypeChange()
     else
     {
         previewData.cameraPos_ = { 0,800+(100*scale_),0 };
-        previewData.cameraRot_ = { Deg2Rad(90.0f),0.f,0.f};
+        previewData.cameraRot_ = { Utility::Deg2Rad(90.0f),0.f,0.f};
     }
 }

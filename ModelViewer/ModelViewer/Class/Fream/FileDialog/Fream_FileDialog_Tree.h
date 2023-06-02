@@ -14,9 +14,9 @@ public:
 	void Update() override;
 	void Update(
 		FileData& fileData,
-		FileData* nowSelect,
-		std::filesystem::path nowSelectPath,
-		std::wstring nowSelectFileName);
+		FileData*& nowSelect,
+		std::filesystem::path& nowSelectPath,
+		std::wstring& nowSelectFileName);
 
 private:
 
@@ -24,9 +24,14 @@ private:
 
 	std::wstring nowSelectFileName_;
 
-	void Tree(std::filesystem::path directory, FileData& fileData, FileData* nowSelect);
+	void Tree(std::filesystem::path directory, FileData& fileData, FileData*& nowSelect);
 
 	bool IsMatch(const std::string& filepath, const std::wstring& target);
+	void ShowCodeEditor(std::string& code);
+
+	void EditMainCppCode();
+
+	std::string ReadMainCppCodeFromFile(const std::string& filePath);
 
 };
 

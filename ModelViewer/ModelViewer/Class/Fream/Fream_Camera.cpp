@@ -98,22 +98,22 @@ void Fream_Camera::Angle()
 	// è„
 	if (CheckHitKey(KEY_INPUT_UP))
 	{
-		rot_.x_ -= Deg2Rad(angleSpeed);
+		rot_.x_ -= Utility::Deg2Rad(angleSpeed);
 	}
 	// â∫
 	if (CheckHitKey(KEY_INPUT_DOWN))
 	{
-		rot_.x_ += Deg2Rad(angleSpeed);
+		rot_.x_ += Utility::Deg2Rad(angleSpeed);
 	}
 	// ç∂
 	if (CheckHitKey(KEY_INPUT_LEFT))
 	{
-		rot_.y_ -= Deg2Rad(angleSpeed);
+		rot_.y_ -= Utility::Deg2Rad(angleSpeed);
 	}
 	// âE
 	if (CheckHitKey(KEY_INPUT_RIGHT))
 	{
-		rot_.y_ += Deg2Rad(angleSpeed);
+		rot_.y_ += Utility::Deg2Rad(angleSpeed);
 	}
 }
 
@@ -174,7 +174,7 @@ void Fream_Camera::Custom()
 	ImGui::SliderFloat("move speed", &moveSpeed_, 1.0f, 20.0f);
 	ImGui::SliderInt("move speed boost", &moveSpeedBoost_, 0, 10);
 	ImGui::DragFloat3("pos", &pos_);
-	ImGui::DragFloat3("rot", &rot_, Deg2Rad(1.0f));
+	ImGui::DragFloat3("rot", &rot_, Utility::Deg2Rad(1.0f));
 
 	ImGui::Text("windowHlfeSize_ = %f,%f", windowHlfeSize_.x_,windowHlfeSize_.y_);
 	ImGui::Text("beforMousePoint_ = %f:%f", beforMousePoint_.x_,beforMousePoint_.y_);

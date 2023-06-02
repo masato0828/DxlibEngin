@@ -219,6 +219,7 @@ void FreamMng::Style()
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontFromFileTTF("c:\\WINDOWS\\FONTS\\MEIRYO.TTC", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
+	io.Fonts->AddFontFromFileTTF("c:\\WINDOWS\\FONTS\\MEIRYO.TTC", 16.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
 	(void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;

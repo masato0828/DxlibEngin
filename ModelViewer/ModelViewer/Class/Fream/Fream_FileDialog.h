@@ -11,6 +11,7 @@
 #include "FileDialog\Fream_FileDialog_Tree.h"
 #include "FileDialog\Fream_FileDialog_Project.h"
 #include "FileDialog\Fream_FileDialog_Item.h"
+#include "../../imGui/ImGuiColorTextEdit/TextEditor.h"
 
 class Fream_FileDialog :
     public FreamBase
@@ -21,9 +22,9 @@ public:
     ~Fream_FileDialog();
     void Init();
     void Update();
-
-    void Tree(std::filesystem::path directory, FileData& fileData);
 private:
+
+    void EditMainCppCode();
 
     bool fileDialogFlg_;
 
@@ -51,43 +52,12 @@ private:
     std::unique_ptr<Fream_FileDialog_Project>project_;
     std::unique_ptr<Fream_FileDialog_Item>item_;
 
-    struct Color
-    {
-        float r;
-        float g;
-        float b;
-        float a;
-    };
-    bool CharacterSearch(std::string showName, std::string searchFileName,Color color, std::string defaultTarget);
+    std::vector<std::string> lines;  // 文字列を行ごとに分割するためのベクター
 
-    void ItemWindow();
-    
-    void Recovery(FileData* selectData);
 
-    void MakeFileImage(std::wstring name);
+    bool is_update_;
 
-    void CreateImage(std::string filePath);
 
-    bool IsHeaderFile(const std::string& filename,const std::string& ext);
-
-    bool IsMatch(const std::string& filepath, const std::wstring& target);
-
-    std::wstring StringToWideString(const std::string& str);
-
-    std::string WideStringToString(const std::wstring& wideString);
-
-    // std::stringをwchar_t*に変換する関数
-    std::wstring ConvertToWideString(const std::string& str);
-
-    std::wstring GetAssociatedApplicationPath(const std::wstring& filePath);
-
-    std::wstring GetDefaultApplication(const std::wstring& extension);
-
-    bool LaunchApplication(const std::wstring& applicationPath, const std::wstring& filePath);
-
-    bool OpenWithDefaultApplication(const std::wstring& filePath);
-
-    std::wstring ShowApplicationSelectionDialog();
-
+    int fontNum_;
 };
 

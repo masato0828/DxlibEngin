@@ -29,7 +29,7 @@ void PostEffect_Transition_OuterCircumference::Init()
     pram_.direction = 0.0f;
     pram_.rotation = 0.0f;
 
-    int num = Gcd(ww,wh);
+    int num = Utility::Gcd(ww,wh);
 
     pram_.aspect.x_ = ww / num;
     pram_.aspect.y_ = wh / num;
