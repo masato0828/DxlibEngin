@@ -36,6 +36,8 @@ public:
 		CurrentLineFill,
 		CurrentLineFillInactive,
 		CurrentLineEdge,
+		Custom1_Function,
+		Custom2_Include,
 		Max
 	};
 

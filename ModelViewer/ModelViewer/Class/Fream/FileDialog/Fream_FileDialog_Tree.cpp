@@ -81,7 +81,7 @@ void Fream_FileDialog_Tree::Update(
 void Fream_FileDialog_Tree::Tree(std::filesystem::path directory, FileData& fileData, FileData*& nowSelect)
 {
 	// イテレータの作成
-	std::filesystem::directory_iterator itr(directory.u8string());
+	std::filesystem::directory_iterator itr(Utility::WideStringToString((Utility::StringToWideString(directory.string()))));
 	std::filesystem::directory_iterator end{};
 
 	for (; itr != end; ++itr)

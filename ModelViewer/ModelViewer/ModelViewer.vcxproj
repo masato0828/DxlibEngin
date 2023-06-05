@@ -31,6 +31,7 @@
     <ClCompile Include="Class\Common\Utility.cpp" />
     <ClCompile Include="Class\Fream\FileDialog\Fream_FileDialog_Item.cpp" />
     <ClCompile Include="Class\Fream\FileDialog\Fream_FileDialog_Tree.cpp" />
+    <ClCompile Include="Class\Fream\FileDialog\TextEditerSetUp.cpp" />
     <ClCompile Include="Class\Fream\FreamBase.cpp" />
     <ClCompile Include="Class\Fream\FreamMng.cpp" />
     <ClCompile Include="Class\Fream\Fream_Camera.cpp" />
@@ -78,6 +79,7 @@
     <ClInclude Include="Class\Fream\FileDialog\FileCommon.h" />
     <ClInclude Include="Class\Fream\FileDialog\Fream_FileDialog_Item.h" />
     <ClInclude Include="Class\Fream\FileDialog\Fream_FileDialog_Tree.h" />
+    <ClInclude Include="Class\Fream\FileDialog\TextEditerSetUp.h" />
     <ClInclude Include="Class\Fream\FreamBase.h" />
     <ClInclude Include="Class\Fream\FreamMng.h" />
     <ClInclude Include="Class\Fream\Fream_Camera.h" />
