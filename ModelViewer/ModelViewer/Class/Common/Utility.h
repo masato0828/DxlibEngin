@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <filesystem>
 #include "../Common/ImGuiMyCustom.h"
 
 
@@ -33,6 +34,8 @@ namespace Utility
 
     // maltbyteのエンコーディングを判別する関数
 	std::string DetectMaltbyteEncoding(const std::string& maltbyte);
+
+	bool RenameFile(const std::filesystem::path& filePath, const std::filesystem::path& newFileName);
 
 }
 // vectorからindex番目の要素を削除する

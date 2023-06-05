@@ -42,6 +42,29 @@ void Fream_FileDialog::Init()
 	fontNum_ = 0;
 
 	is_update_ = false;
+
+	editor.SetLanguageDefinition(TextEditor::LanguageDefinition::CPlusPlus());
+
+	// ルールを追加するための正規表現と色のインデックスのペアを作成
+	TextEditor::LanguageDefinition::TokenRegexStrings customRegexStrings;
+
+	//// キーワードのルールを追加
+	customRegexStrings.push_back(std::make_pair("\\b(if|else|while|for)\\b", TextEditor::PaletteIndex::Custom2_Include));
+
+	// カスタムのシンタックスハイライトルールをテキストエディタに設定
+	TextEditor::LanguageDefinition customLanguage = editor.GetLanguageDefinition();
+	customLanguage.mTokenRegexStrings = customRegexStrings;
+
+	// 関数名の色を設定
+	TextEditor::Palette customPalette = editor.GetDarkPalette();
+	customPalette[(unsigned)TextEditor::PaletteIndex::Custom1_Function] = 0xff7070e0;		// 
+	customPalette[(unsigned)TextEditor::PaletteIndex::MultiLineComment] = 0xffaaffaa;
+	customPalette[(unsigned)TextEditor::PaletteIndex::Comment] = 0xffaaffaa;
+	// パレットをテキストエディタに設定
+	editor.SetPalette(customPalette);
+
+	editor.SetLanguageDefinition(customLanguage);
+	//TextEditerSetUp::SetUp(editor);
 }
 
 void Fream_FileDialog::Update()
@@ -65,6 +88,17 @@ void Fream_FileDialog::Update()
 
 	std::string maltbyteEncoding = Utility::DetectMaltbyteEncoding(code);
 
+	// Imgui用ウィンドウクラスの作成
+	ImGuiWindowClass window_classview;
+	// ウィンドウの効果の編集(ウィンドウのドッキングは切っておく)
+	window_classview.DockNodeFlagsOverrideSet =
+		ImGuiDockNodeFlags_NoDocking |
+		ImGuiDockNodeFlags_NoDockingSplitMe |
+		ImGuiDockNodeFlags_NoDockingSplitOther |
+		ImGuiDockNodeFlags_NoDockingOverMe |
+		ImGuiDockNodeFlags_NoDockingOverOther |
+		ImGuiDockNodeFlags_NoDockingOverEmpty;
+	ImGui::SetNextWindowClass(&window_classview);
 	ImGui::SetNextWindowSize(ImVec2(500,700),ImGuiCond_Once);
 	ImGui::Begin("Code Editor");
 
@@ -75,79 +109,76 @@ void Fream_FileDialog::Update()
 		is_update_ = true;
 	}
 
-	static TextEditor editor;
-	editor.SetLanguageDefinition(TextEditor::LanguageDefinition::CPlusPlus());
-
-	// ルールを追加するための正規表現と色のインデックスのペアを作成
-	TextEditor::LanguageDefinition::TokenRegexStrings customRegexStrings;
-
-	// 識別子のルールを追加
-	customRegexStrings.push_back(std::make_pair("\\b[a-zA-Z_][a-zA-Z0-9_]*\\b", TextEditor::PaletteIndex::Identifier));
-
-	// キーワードのルールを追加
-	customRegexStrings.push_back(std::make_pair("\\b(if|else|while|for)\\b", TextEditor::PaletteIndex::Keyword));
-
-	// 関数名のルールを追加
-	customRegexStrings.push_back(std::make_pair("\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(", TextEditor::PaletteIndex::Custom1_Function));
-
-	// インクルード文のルールを追加
-	customRegexStrings.push_back(std::make_pair("#include\\s*<([^>]*)>", TextEditor::PaletteIndex::Identifier));
-
-	// 他のルールも追加する場合は、同様の方法で行います
-
-	// カスタムのシンタックスハイライトルールをテキストエディタに設定
-	TextEditor::LanguageDefinition customLanguage = editor.GetLanguageDefinition();
-	customLanguage.mTokenRegexStrings = customRegexStrings;
-
-	// 関数名の色を設定
-	TextEditor::Palette customPalette = editor.GetDarkPalette();
-	editor.SetPalette(customPalette);
-
-	editor.SetLanguageDefinition(customLanguage);
-	//TextEditerSetUp::SetUp(editor);
-
-	
-
-	if (maltbyteEncoding == "UTF-8")
+	if (is_update_)
 	{
-		if (is_update_)
+		if (maltbyteEncoding == "UTF-8")
 		{
 			editor.SetText(code);
 			is_update_ = false;
 		}
-	}
-	else
-	{
-		if (is_update_)
+		else
 		{
-			auto w_maltbyte = Utility::MultiByteToUnicode(code);
-			auto maltbyte = Utility::WStringToUTF8(w_maltbyte);
-			editor.SetText(maltbyte);
-			is_update_ = false;
+
+			auto fileName = fileFullPaht_ /= nowSelectFile_;
+
+
+
+			if (Utility::IsHeaderFile(fileName.u8string(), "cpp") ||
+				Utility::IsHeaderFile(fileName.u8string(), "h"))
+			{
+				auto w_maltbyte = Utility::MultiByteToUnicode(code);
+				auto maltbyte = Utility::WStringToUTF8(w_maltbyte);
+				editor.SetText(maltbyte);
+				is_update_ = false;
+			}
+			else if (Utility::IsHeaderFile(fileName.u8string(), "hlsl"))
+			{
+				auto w_maltbyte = Utility::MultiByteToUnicode(code);
+				auto maltbyte = Utility::WStringToUTF8(w_maltbyte);
+				editor.SetLanguageDefinition(TextEditor::LanguageDefinition::HLSL());
+
+				// 関数名の色を設定
+				TextEditor::Palette customPalette = editor.GetDarkPalette();
+				customPalette[(unsigned)TextEditor::PaletteIndex::Custom1_Function] = 0xff7070e0;
+				// パレットをテキストエディタに設定
+				editor.SetPalette(customPalette);
+
+
+				editor.SetText(maltbyte);
+				is_update_ = false;
+			}
+			else
+			{
+				auto w_maltbyte = Utility::MultiByteToUnicode(code);
+				auto maltbyte = Utility::WStringToUTF8(w_maltbyte);
+				editor.SetText(maltbyte);
+				is_update_ = false;
+			}
+
 		}
 	}
 
 	editor.Render("##codeEditor", ImVec2(-1, -1));
 
-	if (ImGui::Button("Apply"))
-	{
-		// テキストエディタの内容を適用して、linesベクターを更新する
-		lines.clear();
+	//if (ImGui::Button("Apply"))
+	//{
+	//	// テキストエディタの内容を適用して、linesベクターを更新する
+	//	lines.clear();
 
-		std::string text = editor.GetText();
-		std::istringstream iss(text);
-		std::string line;
-		while (std::getline(iss, line))
-		{
-			lines.push_back(line);
-		}
-	}
+	//	std::string text = editor.GetText();
+	//	std::istringstream iss(text);
+	//	std::string line;
+	//	while (std::getline(iss, line))
+	//	{
+	//		lines.push_back(line);
+	//	}
+	//}
 
-	for (const auto& line : lines)
-	{
-		ImVec4 color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-		ImGui::TextColored(color, line.c_str());
-	}
+	//for (const auto& line : lines)
+	//{
+	//	ImVec4 color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+	//	ImGui::TextColored(color, line.c_str());
+	//}
 
 	item_->GetButton_Click() = false;
 	ImGui::End();

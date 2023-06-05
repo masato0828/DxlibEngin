@@ -57,6 +57,8 @@ private:
 
     bool is_update_;
 
+    TextEditor editor;
+
 
     int fontNum_;
 };

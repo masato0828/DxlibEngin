@@ -222,4 +222,20 @@ std::string Utility::DetectMaltbyteEncoding(const std::string& maltbyte)
 	return "Unknown";
 }
 
+bool Utility::RenameFile(const std::filesystem::path& filePath, const std::filesystem::path& newFileName)
+{
+	try
+	{
+		// ファイルの名前を変更する
+		std::filesystem::rename(filePath, filePath.parent_path() / newFileName);
+		return true;
+	}
+	catch (const std::filesystem::filesystem_error& ex)
+	{
+		// 変更に失敗した場合のエラーハンドリング
+		std::cout << "Failed to rename file: " << ex.what() << std::endl;
+		return false;
+	}
+}
+
 

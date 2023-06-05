@@ -210,6 +210,12 @@ void FreamMng::SysNewFream()
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+
+    ImGuiIO& io = ImGui::GetIO();
+    io.NavInputs[ImGuiNavInput_DpadUp] = 0.0f;
+    io.NavInputs[ImGuiNavInput_DpadDown] = 0.0f;
+    io.NavInputs[ImGuiNavInput_DpadLeft] = 0.0f;
+    io.NavInputs[ImGuiNavInput_DpadRight] = 0.0f;
 }
 
 void FreamMng::Style()
@@ -219,11 +225,13 @@ void FreamMng::Style()
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontFromFileTTF("c:\\WINDOWS\\FONTS\\MEIRYO.TTC", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
-	io.Fonts->AddFontFromFileTTF("c:\\WINDOWS\\FONTS\\MEIRYO.TTC", 16.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
-	(void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    (void)io;
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+    //こうなのか…？うまくいかず
+    ImGui::GetMainViewport()->PlatformHandleRaw = (void*)GetMainWindowHandle();
 
 	// 全てのウィンドウでのビューポートを表示
 	io.ConfigViewportsNoAutoMerge = true;

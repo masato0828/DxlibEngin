@@ -1124,10 +1124,18 @@ void TextEditor::Render(const char* aTitle, const ImVec2& aSize, bool aBorder)
 	mTextChanged = false;
 	mCursorPositionChanged = false;
 
+	ImGuiWindowFlags windowflags =
+		ImGuiWindowFlags_None;
+		
+		//ImGuiWindowFlags_NoMove;
+		
+	//windowflags |= ImGuiWindowFlags_HorizontalScrollbar;
+	//windowflags |= ImGuiWindowFlags_AlwaysHorizontalScrollbar;
+
 	ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::ColorConvertU32ToFloat4(mPalette[(int)PaletteIndex::Background]));
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
 	if (!mIgnoreImGuiChild)
-		ImGui::BeginChild(aTitle, aSize, aBorder, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_NoMove);
+		ImGui::BeginChild(aTitle, aSize, aBorder, windowflags);
 
 	if (mHandleKeyboardInputs)
 	{
@@ -2027,6 +2035,8 @@ const TextEditor::Palette & TextEditor::GetDarkPalette()
 			0x40000000, // Current line fill
 			0x40808080, // Current line fill (inactive)
 			0x40a0a0a0, // Current line edge
+			0xFFCE9178,
+			0xFFCE9178,
 		} };
 	return p;
 }
@@ -2264,6 +2274,7 @@ void TextEditor::ColorizeInternal()
 		auto concatenate = false;		// '\' on the very end of the line
 		auto currentLine = 0;
 		auto currentIndex = 0;
+
 		while (currentLine < endLine || currentIndex < endIndex)
 		{
 			auto& line = mLines[currentLine];
@@ -2282,6 +2293,8 @@ void TextEditor::ColorizeInternal()
 				auto& g = line[currentIndex];
 				auto c = g.mChar;
 
+				
+
 				if (c != mLanguageDefinition.mPreprocChar && !isspace(c))
 					firstChar = false;
 
@@ -2297,6 +2310,17 @@ void TextEditor::ColorizeInternal()
 					if (c == '\"')
 					{
 						if (currentIndex + 1 < (int)line.size() && line[currentIndex + 1].mChar == '\"')
+						{
+							currentIndex += 1;
+							if (currentIndex < (int)line.size())
+								line[currentIndex].mMultiLineComment = inComment;
+						}
+						else
+							withinString = false;
+					}
+					else if(c == '<')
+					{
+						if (currentIndex + 1 < (int)line.size() && line[currentIndex + 1].mChar == '>')
 						{
 							currentIndex += 1;
 							if (currentIndex < (int)line.size())
@@ -2547,6 +2571,45 @@ static bool TokenizeCStyleString(const char * in_begin, const char * in_end, con
 	return false;
 }
 
+static bool TokenizeCStyleFunctional(const char* in_begin, const char* in_end, const char*& out_begin, const char*& out_end)
+{
+	const char* p = in_begin;
+
+	if (*p == '#' && (in_end - p) >= 8 && strncmp(p, "#include", 8) == 0)
+	{
+		p += 8;
+
+		// Skip leading whitespace
+		while (p < in_end && isspace(*p))
+			p++;
+
+		if (p < in_end && *p == '<')
+		{
+			const char* include_begin = p;
+			p++;
+
+			// Find the end of the include
+			while (p < in_end && *p != '>')
+			{
+				// handle escape character for "
+				if (*p == '\\' && p + 1 < in_end && p[1] == '>')
+					p++;
+
+				p++;
+			}
+
+			if (p < in_end && *p == '>')
+			{
+				const char* include_end = p + 1;
+				out_begin = include_begin;
+				out_end = include_end;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 static bool TokenizeCStyleCharacterLiteral(const char * in_begin, const char * in_end, const char *& out_begin, const char *& out_end)
 {
 	const char * p = in_begin;
@@ -2697,7 +2760,7 @@ static bool TokenizeCStyleNumber(const char * in_begin, const char * in_end, con
 	return true;
 }
 
-static bool TokenizeCStylePunctuation(const char * in_begin, const char * in_end, const char *& out_begin, const char *& out_end)
+static bool TokenizeCStylePunctuation(const char* in_begin, const char* in_end, const char*& out_begin, const char*& out_end)
 {
 	(void)in_end;
 
@@ -2719,8 +2782,8 @@ static bool TokenizeCStylePunctuation(const char * in_begin, const char * in_end
 	case '=':
 	case '~':
 	case '|':
-	case '<':
-	case '>':
+	/*case '<':
+	case '>':*/
 	case '?':
 	case ':':
 	case '/':
@@ -2746,7 +2809,7 @@ const TextEditor::LanguageDefinition& TextEditor::LanguageDefinition::CPlusPlus(
 			"compl", "concept", "const", "constexpr", "const_cast", "continue", "decltype", "default", "delete", "do", "double", "dynamic_cast", "else", "enum", "explicit", "export", "extern", "false", "float",
 			"for", "friend", "goto", "if", "import", "inline", "int", "long", "module", "mutable", "namespace", "new", "noexcept", "not", "not_eq", "nullptr", "operator", "or", "or_eq", "private", "protected", "public",
 			"register", "reinterpret_cast", "requires", "return", "short", "signed", "sizeof", "static", "static_assert", "static_cast", "struct", "switch", "synchronized", "template", "this", "thread_local",
-			"throw", "true", "try", "typedef", "typeid", "typename", "union", "unsigned", "using", "virtual", "void", "volatile", "wchar_t", "while", "xor", "xor_eq"
+			"throw", "true", "try", "typedef", "typeid", "typename", "union", "unsigned", "using", "virtual", "void", "volatile", "wchar_t", "while", "xor", "xor_eq","override","virtual"
 		};
 		for (auto& k : cppKeywords)
 			langDef.mKeywords.insert(k);
@@ -2754,7 +2817,7 @@ const TextEditor::LanguageDefinition& TextEditor::LanguageDefinition::CPlusPlus(
 		static const char* const identifiers[] = {
 			"abort", "abs", "acos", "asin", "atan", "atexit", "atof", "atoi", "atol", "ceil", "clock", "cosh", "ctime", "div", "exit", "fabs", "floor", "fmod", "getchar", "getenv", "isalnum", "isalpha", "isdigit", "isgraph",
 			"ispunct", "isspace", "isupper", "kbhit", "log10", "log2", "log", "memcmp", "modf", "pow", "printf", "sprintf", "snprintf", "putchar", "putenv", "puts", "rand", "remove", "rename", "sinh", "sqrt", "srand", "strcat", "strcmp", "strerror", "time", "tolower", "toupper",
-			"std", "string", "vector", "map", "unordered_map", "set", "unordered_set", "min", "max"
+			/*"std",*/ "string", "vector", "map", "unordered_map", "set", "unordered_set", "min", "max","HWND","HINSTANCE", "HINSTANCE","LPSTR"
 		};
 		for (auto& k : identifiers)
 		{
@@ -2786,6 +2849,8 @@ const TextEditor::LanguageDefinition& TextEditor::LanguageDefinition::CPlusPlus(
 				paletteIndex = PaletteIndex::Number;
 			else if (TokenizeCStylePunctuation(in_begin, in_end, out_begin, out_end))
 				paletteIndex = PaletteIndex::Punctuation;
+			else if (TokenizeCStyleFunctional(in_begin, in_end, out_begin, out_end))
+				paletteIndex = PaletteIndex::Custom1_Function;
 
 			return paletteIndex != PaletteIndex::Max;
 		};

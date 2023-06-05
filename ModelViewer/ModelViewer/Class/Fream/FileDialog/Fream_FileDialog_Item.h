@@ -16,6 +16,7 @@ public:
 	void Update(FileData*& nowselect,std::filesystem::path& fileFullPath, std::wstring& nowSelectFile, std::wstring& nowSelectFileName);
 	bool& GetButton_Click();
 private:
+	void Popup();
 
 	void DokingWindow();
 
@@ -27,16 +28,22 @@ private:
 
 	void MakeFileImage(std::wstring name);
 
-	
+	void RenameWindow();
 
 	FileData* nowSelect_;
 	std::filesystem::path fileFullPaht_;
 	std::wstring nowSelectFileName_;
 	std::wstring nowSelectFile_;
 
+	bool contextMenuFlg_;
+
 	// シェーダ情報の作成
 	ID3D11ShaderResourceView* my_shaderData = NULL;
 
 	bool button_click_;
+
+	std::wstring fileName_;
+
+	bool context_renameFlg_;
 };
 

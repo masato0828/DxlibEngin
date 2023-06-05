@@ -29,6 +29,7 @@
     <ClCompile Include="Class\Common\Shader\PostEffect_ScanLine.cpp" />
     <ClCompile Include="Class\Common\Shader\PostEffect_Transition_Circle.cpp" />
     <ClCompile Include="Class\Common\Utility.cpp" />
+    <ClCompile Include="Class\Fream\FileDialog\Fream_FileDialog_CodeEditer.cpp" />
     <ClCompile Include="Class\Fream\FileDialog\Fream_FileDialog_Item.cpp" />
     <ClCompile Include="Class\Fream\FileDialog\Fream_FileDialog_Tree.cpp" />
     <ClCompile Include="Class\Fream\FileDialog\TextEditerSetUp.cpp" />
@@ -77,6 +78,7 @@
     <ClInclude Include="Class\Common\Utility.h" />
     <ClInclude Include="Class\Common\Vector2.h" />
     <ClInclude Include="Class\Fream\FileDialog\FileCommon.h" />
+    <ClInclude Include="Class\Fream\FileDialog\Fream_FileDialog_CodeEditer.h" />
     <ClInclude Include="Class\Fream\FileDialog\Fream_FileDialog_Item.h" />
     <ClInclude Include="Class\Fream\FileDialog\Fream_FileDialog_Tree.h" />
     <ClInclude Include="Class\Fream\FileDialog\TextEditerSetUp.h" />

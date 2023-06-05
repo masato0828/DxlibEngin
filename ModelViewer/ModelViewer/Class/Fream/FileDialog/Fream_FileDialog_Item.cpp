@@ -7,6 +7,17 @@
 #include "../../Common/ImGuiMyCustom.h"
 #include "../../Common/Utility.h"
 
+// IME入力位置を取得するコールバック関数
+void ImeSetInputScreenPos(const ImVec2& position)
+{
+	// IMEの入力位置を設定する処理を実装する
+	// 例えば、ウィンドウハンドルを持っている場合はSetCaretPosなどでIMEの入力位置を設定する
+	HWND hwnd = (HWND)ImGui::GetIO().ImeWindowHandle;
+	POINT caretPos = { (int)position.x, (int)position.y };
+	ClientToScreen(hwnd, &caretPos);
+	SetCaretPos(caretPos.x, caretPos.y);
+}
+
 Fream_FileDialog_Item::Fream_FileDialog_Item()
 {
 	Init();
@@ -19,6 +30,8 @@ Fream_FileDialog_Item::~Fream_FileDialog_Item()
 void Fream_FileDialog_Item::Init()
 {
 	button_click_ = false;
+	contextMenuFlg_ = false;
+	context_renameFlg_ = false;
 }
 void Fream_FileDialog_Item::Update()
 {
@@ -82,6 +95,21 @@ void Fream_FileDialog_Item::Update(FileData*& nowselect,std::filesystem::path& f
 				}
 			}
 		}
+		
+		if (contextMenuFlg_)
+		{
+			// ボタン上で右クリックされたときの処理
+			ImGui::OpenPopup("ContextMenu");
+
+			Popup();
+		}
+
+		if (context_renameFlg_)
+		{
+			RenameWindow();
+		}
+
+
 		ImGui::End();
 	}
 
@@ -210,7 +238,24 @@ void Fream_FileDialog_Item::MakeFileImage(
 			nowSelectFile_ = name.c_str();
 			
 		}
+		if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
+		{
+			fileName_ = name.c_str();
+			contextMenuFlg_ = true;
+		}
+
+		// 他の場所をクリックしたらコンテキストメニューを閉じる
+		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) || ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+		{
+			if (!ImGui::IsAnyItemHovered() && !ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow))
+			{
+				contextMenuFlg_ = false;
+			}
+		}
+
 		ImGui::PopID();
+
+		
 
 		// テキストの幅を計算
 		std::wstring fileName = name;
@@ -252,7 +297,66 @@ void Fream_FileDialog_Item::MakeFileImage(
 	}
 }
 
+void Fream_FileDialog_Item::RenameWindow()
+{
+	//auto path = fileFullPaht_ /= fileName_;
+			//Utility::RenameFile(path,);
+			// 
+	ImGui::Begin(u8"名前の変更");
+
+	
+	static char text_buffer[256] = { 0 };
+	char buffer[256] = ""; // 入力されたテキストを格納するバッファ
+	auto pos = ImGui::GetCursorPos();
+	ImeSetInputScreenPos(pos);
+	ImGui::InputText(u8"テキスト入力", buffer, sizeof(buffer));
+	//ImGui::InputText("日本語入力", text_buffer, sizeof(text_buffer),
+	//	ImGuiInputTextFlags_Multiline | ImGuiInputTextFlags_CallbackCharFilter,
+	//	[](ImGuiInputTextCallbackData* data) {
+	//		// 日本語の入力を制限する
+	//		if (data->EventChar < 0x3000 || data->EventChar > 0x9FFF)
+	//			return 1;
+	//		return 0;
+	//	});
+
+	ImGui::End();
+}
+
 bool& Fream_FileDialog_Item::GetButton_Click()
 {
 	return button_click_;
+}
+
+void Fream_FileDialog_Item::Popup()
+{
+	if (ImGui::BeginPopup("ContextMenu"))
+	{
+		// コンテキストメニューの内容をここに記述
+
+		if (ImGui::MenuItem(u8"切り取り")) // ユニークなIDを指定する
+		{
+			// オプション1が選択されたときの処理
+			contextMenuFlg_ = false;
+		}
+
+		if (ImGui::MenuItem(u8"コピー")) // ユニークなIDを指定する
+		{
+			// オプション2が選択されたときの処理
+			contextMenuFlg_ = false;
+		}
+
+		if (ImGui::MenuItem(u8"貼り付け")) // ユニークなIDを指定する
+		{
+			// オプション2が選択されたときの処理
+			contextMenuFlg_ = false;
+		}
+
+		if (ImGui::MenuItem(u8"名前の変更")) // ユニークなIDを指定する
+		{
+			context_renameFlg_ = true;
+			// オプション2が選択されたときの処理
+			contextMenuFlg_ = false;
+		}
+		ImGui::EndPopup();
+	}
 }
