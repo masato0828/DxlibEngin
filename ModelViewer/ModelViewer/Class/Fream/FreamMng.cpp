@@ -55,6 +55,7 @@ void FreamMng::Init()
 
 void FreamMng::Update(bool window_open_flg)
 {
+
     postEffect_->Update();
 	SysNewFream();
 
@@ -207,6 +208,7 @@ void FreamMng::ShutDown()
 
 void FreamMng::SysNewFream()
 {
+
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();

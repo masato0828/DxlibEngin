@@ -7,17 +7,6 @@
 #include "../../Common/ImGuiMyCustom.h"
 #include "../../Common/Utility.h"
 
-// IME入力位置を取得するコールバック関数
-void ImeSetInputScreenPos(const ImVec2& position)
-{
-	// IMEの入力位置を設定する処理を実装する
-	// 例えば、ウィンドウハンドルを持っている場合はSetCaretPosなどでIMEの入力位置を設定する
-	HWND hwnd = (HWND)ImGui::GetIO().ImeWindowHandle;
-	POINT caretPos = { (int)position.x, (int)position.y };
-	ClientToScreen(hwnd, &caretPos);
-	SetCaretPos(caretPos.x, caretPos.y);
-}
-
 Fream_FileDialog_Item::Fream_FileDialog_Item()
 {
 	Init();
@@ -302,24 +291,45 @@ void Fream_FileDialog_Item::RenameWindow()
 	//auto path = fileFullPaht_ /= fileName_;
 			//Utility::RenameFile(path,);
 			// 
-	ImGui::Begin(u8"名前の変更");
+	// キーボードの入力状態を更新
+	memcpy(prevKeyState, currentKeyState, sizeof(currentKeyState));
+	GetHitKeyStateAll(currentKeyState);
+
+	// 「かな」キー（VK_KANA）の押下状態を確認
+	bool isKanaKeyPressed = (currentKeyState[VK_KANA] != 0) && (prevKeyState[VK_KANA] == 0);
+	static bool isKanaInputMode = false; // かな入力モードが有効かどうかを表すフラグ
+	static char buffer[256] = "";
+	// かな入力モードが有効かどうかを判断
+	if (isKanaKeyPressed)
+	{
+		isKanaInputMode = true;
+	}
+	else
+	{
+		isKanaInputMode = false;
+	}
 
 	
-	static char text_buffer[256] = { 0 };
-	char buffer[256] = ""; // 入力されたテキストを格納するバッファ
-	auto pos = ImGui::GetCursorPos();
-	ImeSetInputScreenPos(pos);
-	ImGui::InputText(u8"テキスト入力", buffer, sizeof(buffer));
-	//ImGui::InputText("日本語入力", text_buffer, sizeof(text_buffer),
-	//	ImGuiInputTextFlags_Multiline | ImGuiInputTextFlags_CallbackCharFilter,
-	//	[](ImGuiInputTextCallbackData* data) {
-	//		// 日本語の入力を制限する
-	//		if (data->EventChar < 0x3000 || data->EventChar > 0x9FFF)
-	//			return 1;
-	//		return 0;
-	//	});
 
+	static char buffer[256] = "";
+	// ImGuiのウィンドウを作成
+	ImGui::Begin(u8"文字入力");
+	
+	if (ImGui::InputTextMultiline(u8"入力", buffer, sizeof(buffer)))
+	{
+	}
+
+	if (isKanaInputMode)
+	{
+		// かな入力モードが有効な場合は InputText で入力された文字数分を削除
+		int inputTextLength = strlen(buffer);
+		memset(buffer, 0, sizeof(buffer));
+		ImGui::GetIO().ClearInputCharacters();
+	}
+	// ImGuiのウィンドウの終了
 	ImGui::End();
+	//SetUseIMEFlag(false);
+
 }
 
 bool& Fream_FileDialog_Item::GetButton_Click()

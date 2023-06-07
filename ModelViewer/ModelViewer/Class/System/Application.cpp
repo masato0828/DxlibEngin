@@ -10,41 +10,32 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	static bool window_open = false;
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
 
-	switch (msg) {
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		return 0;
-	case WM_LBUTTONDOWN:
-		SendMessage(hWnd, WM_CLOSE, 0, 0);
-		return 0;
-		// タスクバーでアイコンがクリックされたときの処理
-	case WM_ACTIVATEAPP:
-	{
-		// wParam が 0 の場合は非アクティブ状態（タスクバーでクリックされた）
-		if (wParam == 0)
-		{
-			// ImGui ウィンドウを非表示にするなどの処理を行う
-			if (window_open)
-			{
-				window_open = true;
-			}
-		}
-		else
-		{
-			// ImGui ウィンドウを再表示するなどの処理を行う
-			if (!window_open)
-			{
-				window_open = true;
-			}
-		}
-		break;
+		SetUseHookWinProcReturnValue(TRUE);
+		return true;
 	}
 
-	};
-	//return DefWindowProc(hwnd, msg, wp, lp);
-	ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
+	////IME関連はOSに任せる
+	//switch (msg)
+	//{
+	//case WM_IME_SETCONTEXT:
+	//case WM_IME_STARTCOMPOSITION:
+	//case WM_IME_ENDCOMPOSITION:
+	//case WM_IME_COMPOSITION:
+	//case WM_IME_NOTIFY:
+	//case WM_IME_REQUEST:
+	//	SetUseHookWinProcReturnValue(TRUE);
+	//	return DefWindowProc(hWnd, msg, wParam, lParam);
+
+	//case WM_SYSCOMMAND:
+	//	if ((wParam & 0xfff0) == SC_KEYMENU) { // Disable ALT application menu
+	//		SetUseHookWinProcReturnValue(TRUE);
+	//		return 0;
+	//	}
+	//	break;
+	//}
+
 	return 0;
 }
 
@@ -63,6 +54,8 @@ bool Application::Run()
 	{
 		return false;
 	}
+
+	
 
 	// 各クラス＆各変数初期化
 	if (!Init())
@@ -113,6 +106,10 @@ bool Application::SysInit()
 	SetWindowVisibleFlag(false);
 	// アプリが非アクティブ状態でも処理を実行するかどうかを設定する( TRUE:実行する  FALSE:停止する( デフォルト ) )
 	SetAlwaysRunFlag(true);
+
+	//SetUseTSFFlag(false);
+
+	SetUseIMEFlag(true);
 
 	// Dxlibの初期化
 	if (DxLib_Init() == -1)
