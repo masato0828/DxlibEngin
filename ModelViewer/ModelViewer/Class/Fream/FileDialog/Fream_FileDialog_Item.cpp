@@ -288,48 +288,42 @@ void Fream_FileDialog_Item::MakeFileImage(
 
 void Fream_FileDialog_Item::RenameWindow()
 {
-	//auto path = fileFullPaht_ /= fileName_;
-			//Utility::RenameFile(path,);
-			// 
-	// キーボードの入力状態を更新
-	memcpy(prevKeyState, currentKeyState, sizeof(currentKeyState));
-	GetHitKeyStateAll(currentKeyState);
-
-	// 「かな」キー（VK_KANA）の押下状態を確認
-	bool isKanaKeyPressed = (currentKeyState[VK_KANA] != 0) && (prevKeyState[VK_KANA] == 0);
-	static bool isKanaInputMode = false; // かな入力モードが有効かどうかを表すフラグ
-	static char buffer[256] = "";
-	// かな入力モードが有効かどうかを判断
-	if (isKanaKeyPressed)
-	{
-		isKanaInputMode = true;
-	}
-	else
-	{
-		isKanaInputMode = false;
-	}
-
-	
+	auto path = fileFullPaht_ /= fileName_;
 
 	static char buffer[256] = "";
+
 	// ImGuiのウィンドウを作成
 	ImGui::Begin(u8"文字入力");
-	
-	if (ImGui::InputTextMultiline(u8"入力", buffer, sizeof(buffer)))
-	{
-	}
 
-	if (isKanaInputMode)
+	ImGui::Text(u8"新しい名前の入力");
+	// ImGuiのInputTextを使用してテキスト入力を処理
+	ImGui::InputText("##テキスト入力", buffer, sizeof(buffer));
+	ImGui::SameLine();
+	ImGuiCustom::HelpMarker(
+	u8"すいません日本語入力対応してないです、なるべく実装できるようにします"
+	);
+
+	if (ImGui::Button(u8"変更の確定"))
 	{
-		// かな入力モードが有効な場合は InputText で入力された文字数分を削除
-		int inputTextLength = strlen(buffer);
-		memset(buffer, 0, sizeof(buffer));
-		ImGui::GetIO().ClearInputCharacters();
+		// 入力文字列が変更された場合の処理を行う
+		std::string newFileName = buffer;
+
+		// ファイル名の変更処理を実行する
+		bool success = Utility::RenameFile(path.u8string(), newFileName);
+		if (success)
+		{
+			// ファイル名の変更が成功した場合の処理を行う
+			ImGui::Text(u8"ファイル名が変更されました");
+		}
+		else
+		{
+			// ファイル名の変更が失敗した場合の処理を行う
+			ImGui::Text(u8"ファイル名の変更に失敗しました");
+		}
 	}
+	
 	// ImGuiのウィンドウの終了
 	ImGui::End();
-	//SetUseIMEFlag(false);
-
 }
 
 bool& Fream_FileDialog_Item::GetButton_Click()

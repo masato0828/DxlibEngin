@@ -28,9 +28,13 @@
     <ClCompile Include="Class\Common\Shader\PostEffect_Noise.cpp" />
     <ClCompile Include="Class\Common\Shader\PostEffect_ScanLine.cpp" />
     <ClCompile Include="Class\Common\Shader\PostEffect_Transition_Circle.cpp" />
+    <ClCompile Include="Class\Common\Shader\PostEffect_Transition_OuterCircumference.cpp" />
+    <ClCompile Include="Class\Common\Shader\ShaderMng.cpp" />
     <ClCompile Include="Class\Common\Utility.cpp" />
+    <ClCompile Include="Class\Device\Device_Mouse.cpp" />
     <ClCompile Include="Class\Fream\FileDialog\Fream_FileDialog_CodeEditer.cpp" />
     <ClCompile Include="Class\Fream\FileDialog\Fream_FileDialog_Item.cpp" />
+    <ClCompile Include="Class\Fream\FileDialog\Fream_FileDialog_Project.cpp" />
     <ClCompile Include="Class\Fream\FileDialog\Fream_FileDialog_Tree.cpp" />
     <ClCompile Include="Class\Fream\FileDialog\TextEditerSetUp.cpp" />
     <ClCompile Include="Class\Fream\FreamBase.cpp" />
@@ -38,15 +42,13 @@
     <ClCompile Include="Class\Fream\Fream_Camera.cpp" />
     <ClCompile Include="Class\Fream\Fream_DokingArea.cpp" />
     <ClCompile Include="Class\Fream\Fream_FileDialog.cpp" />
-    <ClCompile Include="Class\Fream\FileDialog\Fream_FileDialog_Project.cpp" />
     <ClCompile Include="Class\Fream\Fream_Item.cpp" />
     <ClCompile Include="Class\Fream\Fream_Model.cpp" />
     <ClCompile Include="Class\Fream\Fream_SceneView.cpp" />
-    <ClCompile Include="Class\Common\Shader\ShaderMng.cpp" />
     <ClCompile Include="Class\Fream\Fream_Stage.cpp" />
-    <ClCompile Include="Class\Device\Device_Mouse.cpp" />
     <ClCompile Include="Class\System\Application.cpp" />
     <ClCompile Include="Class\System\ImguiImageStb.cpp" />
+    <ClCompile Include="Class\System\System_FileCreate.cpp" />
     <ClCompile Include="imGui\CustomFont.cpp" />
     <ClCompile Include="imGui\ImFileDialog.cpp" />
     <ClCompile Include="imGui\imgui.cpp" />
@@ -61,7 +63,6 @@
     <ClCompile Include="imGui\imgui_tables.cpp" />
     <ClCompile Include="imGui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Class\Common\Shader\PostEffect_Transition_OuterCircumference.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class\Common\FileDialog.h" />
@@ -75,11 +76,15 @@
     <ClInclude Include="Class\Common\Shader\PostEffect_Noise.h" />
     <ClInclude Include="Class\Common\Shader\PostEffect_ScanLine.h" />
     <ClInclude Include="Class\Common\Shader\PostEffect_Transition_Circle.h" />
+    <ClInclude Include="Class\Common\Shader\PostEffect_Transition_OuterCircumference.h" />
+    <ClInclude Include="Class\Common\Shader\ShaderMng.h" />
     <ClInclude Include="Class\Common\Utility.h" />
     <ClInclude Include="Class\Common\Vector2.h" />
+    <ClInclude Include="Class\Device\Device_Mouse.h" />
     <ClInclude Include="Class\Fream\FileDialog\FileCommon.h" />
     <ClInclude Include="Class\Fream\FileDialog\Fream_FileDialog_CodeEditer.h" />
     <ClInclude Include="Class\Fream\FileDialog\Fream_FileDialog_Item.h" />
+    <ClInclude Include="Class\Fream\FileDialog\Fream_FileDialog_Project.h" />
     <ClInclude Include="Class\Fream\FileDialog\Fream_FileDialog_Tree.h" />
     <ClInclude Include="Class\Fream\FileDialog\TextEditerSetUp.h" />
     <ClInclude Include="Class\Fream\FreamBase.h" />
@@ -87,15 +92,13 @@
     <ClInclude Include="Class\Fream\Fream_Camera.h" />
     <ClInclude Include="Class\Fream\Fream_DokingArea.h" />
     <ClInclude Include="Class\Fream\Fream_FileDialog.h" />
-    <ClInclude Include="Class\Fream\FileDialog\Fream_FileDialog_Project.h" />
     <ClInclude Include="Class\Fream\Fream_Item.h" />
     <ClInclude Include="Class\Fream\Fream_Model.h" />
     <ClInclude Include="Class\Fream\Fream_SceneView.h" />
-    <ClInclude Include="Class\Common\Shader\ShaderMng.h" />
     <ClInclude Include="Class\Fream\Fream_Stage.h" />
-    <ClInclude Include="Class\Device\Device_Mouse.h" />
     <ClInclude Include="Class\System\Application.h" />
     <ClInclude Include="Class\System\ImguiImageStb.h" />
+    <ClInclude Include="Class\System\System_FileCreate.h" />
     <ClInclude Include="imGui\CustomFont.h" />
     <ClInclude Include="imGui\imconfig.h" />
     <ClInclude Include="imGui\ImFileDialog.h" />
@@ -112,7 +115,6 @@
     <ClInclude Include="imGui\imstb_textedit.h" />
     <ClInclude Include="imGui\imstb_truetype.h" />
     <ClInclude Include="imGui\stb_image.h" />
-    <ClInclude Include="Class\Common\Shader\PostEffect_Transition_OuterCircumference.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\hlsl\Circle_ps.hlsl">

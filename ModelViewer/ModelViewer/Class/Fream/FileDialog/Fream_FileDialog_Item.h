@@ -48,10 +48,6 @@ private:
 	bool context_renameFlg_;
 
 	int inputHandle_;
-
-	// キーボードの入力状態を保存する変数
-	char prevKeyState[KEY_NUM] = {};
-	char currentKeyState[KEY_NUM] = {};
 		
 };
 

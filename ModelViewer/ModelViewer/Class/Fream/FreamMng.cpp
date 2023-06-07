@@ -29,6 +29,8 @@ void FreamMng::Init()
 		(ID3D11Device*)GetUseDirect3D11Device(),
 		(ID3D11DeviceContext*)GetUseDirect3D11DeviceContext());
 
+    system_FileCreate_ = std::make_unique<System_FileCreate>();
+
     sceneView_ = std::make_unique<Fream_SceneView>();
     dokingArea_ = std::make_unique<Fream_DokingArea>();
     stage_ = std::make_unique<Fream_Stage>();
@@ -37,6 +39,7 @@ void FreamMng::Init()
     items_ = std::make_unique<Fream_Item>();
     fileDialog_ = std::make_unique<Fream_FileDialog>();
     postEffect_ = std::make_unique<PostEffectMng>();
+
     optionWindowFlg_ = false;
     demoWindowActivFlg_ = false;
     firstWindowFlg_ = false;
@@ -58,6 +61,11 @@ void FreamMng::Update(bool window_open_flg)
 
     postEffect_->Update();
 	SysNewFream();
+
+    if (system_FileCreate_->IsMainFile())
+    {
+
+    }
 
     if (firstWindowFlg_)
     {

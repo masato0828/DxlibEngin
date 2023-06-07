@@ -222,20 +222,28 @@ std::string Utility::DetectMaltbyteEncoding(const std::string& maltbyte)
 	return "Unknown";
 }
 
-bool Utility::RenameFile(const std::filesystem::path& filePath, const std::filesystem::path& newFileName)
+bool Utility::RenameFile(const std::string& filePath, const std::string& newFileName)
 {
-	try
+	// 現在のファイルパスと新しいファイル名から新しいファイルパスを作成
+	std::string newFilePath = filePath;
+	size_t lastSlash = newFilePath.find_last_of("/\\");
+	if (lastSlash != std::string::npos)
 	{
-		// ファイルの名前を変更する
-		std::filesystem::rename(filePath, filePath.parent_path() / newFileName);
-		return true;
+		newFilePath = newFilePath.substr(0, lastSlash + 1) + newFileName;
 	}
-	catch (const std::filesystem::filesystem_error& ex)
+	else
 	{
-		// 変更に失敗した場合のエラーハンドリング
-		std::cout << "Failed to rename file: " << ex.what() << std::endl;
+		newFilePath = newFileName;
+	}
+
+	// ファイルの名前を変更する
+	if (std::rename(filePath.c_str(), newFilePath.c_str()) != 0)
+	{
 		return false;
 	}
+
+	// ファイル名の変更に成功した場合の処理
+	return true;
 }
 
 

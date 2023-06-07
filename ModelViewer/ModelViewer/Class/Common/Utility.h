@@ -35,7 +35,7 @@ namespace Utility
     // maltbyteのエンコーディングを判別する関数
 	std::string DetectMaltbyteEncoding(const std::string& maltbyte);
 
-	bool RenameFile(const std::filesystem::path& filePath, const std::filesystem::path& newFileName);
+	bool RenameFile(const std::string& filePath, const std::string& newFileName);
 
 }
 // vectorからindex番目の要素を削除する

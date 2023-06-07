@@ -8,35 +8,51 @@
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT WINAPI DefaultWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) {
 
 		SetUseHookWinProcReturnValue(TRUE);
 		return true;
 	}
-
-	////IME関連はOSに任せる
-	//switch (msg)
-	//{
-	//case WM_IME_SETCONTEXT:
-	//case WM_IME_STARTCOMPOSITION:
-	//case WM_IME_ENDCOMPOSITION:
-	//case WM_IME_COMPOSITION:
-	//case WM_IME_NOTIFY:
-	//case WM_IME_REQUEST:
-	//	SetUseHookWinProcReturnValue(TRUE);
-	//	return DefWindowProc(hWnd, msg, wParam, lParam);
-
-	//case WM_SYSCOMMAND:
-	//	if ((wParam & 0xfff0) == SC_KEYMENU) { // Disable ALT application menu
-	//		SetUseHookWinProcReturnValue(TRUE);
-	//		return 0;
-	//	}
-	//	break;
-	//}
-
 	return 0;
+}
+
+LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	
+
+	switch (msg)
+	{
+		// IME関連のメッセージを処理する
+	case WM_IME_STARTCOMPOSITION:
+	case WM_IME_COMPOSITION:
+	{
+		// IMEの文字列を取得する
+		std::wstring imeText = L"";
+		DWORD dwSize = 0;
+		if (ImmGetCompositionStringW(ImmGetContext(hWnd), GCS_RESULTSTR, NULL, 0) > 0)
+		{
+			dwSize = ImmGetCompositionStringW(ImmGetContext(hWnd), GCS_RESULTSTR, NULL, 0);
+			std::vector<wchar_t> buffer(dwSize);
+			ImmGetCompositionStringW(ImmGetContext(hWnd), GCS_RESULTSTR, &buffer[0], dwSize);
+			imeText = std::wstring(&buffer[0]);
+		}
+
+		// ImGuiにIMEの入力文字列を追加する
+		for (wchar_t c : imeText)
+		{
+			ImGui::GetIO().AddInputCharacter(c);
+		}
+
+		break;
+	}
+	default:
+		break;
+	}
+
+	// DxLibのデフォルトのウィンドウプロシージャを呼び出す
+	return DefaultWndProc(hWnd, msg, wParam, lParam);
 }
 
 Application::Application()
@@ -109,7 +125,7 @@ bool Application::SysInit()
 
 	//SetUseTSFFlag(false);
 
-	SetUseIMEFlag(true);
+	//SetUseIMEFlag(true);
 
 	// Dxlibの初期化
 	if (DxLib_Init() == -1)
