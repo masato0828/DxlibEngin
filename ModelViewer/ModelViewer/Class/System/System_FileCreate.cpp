@@ -41,51 +41,16 @@ bool System_FileCreate::IsMainFile()
 
     ImGui::Begin(u8"データの読み込み");
 
-    if(fileDialog_open)
-    {
-        basePath_ = L"UseEngin";
-        // UseEnginフォルダがあるかどうか
-        std::ifstream file(basePath_);
-        if (file.is_open())
-        {
-            // UseEnginフォルダがある
-            //return true;
-        }
-        else
-        {
-            // UseEnginフォルダがない
-            // ファイルダイアログの表示
-            auto result = CreateDirectoryFromFileDialog();
-
-            if (result == "Null")
-            {
-                return false;
-            }
-           
-            // UseEnginフォルダの作成
-            result /= basePath_;
-            std::filesystem::create_directories(result);
-            systemFullPath_ = result;
-
-            //return true;
-        }
-        
-
-        fileDialog_open = false;
-    }
-    std::string utf8Str = Utility::WStringToUTF8(systemFullPath_);
+   
+    SeachFolder();
 
     ImGui::Text(u8"ファイルの参照");
-    char buffer[256]; // 適切なサイズに調整してください
-    strncpy_s(buffer, sizeof(buffer), utf8Str.c_str(), _TRUNCATE);
-    ImGui::InputText("##label", buffer, 1060);
 
-    std::string spath = buffer;
-    systemFullPath_ = Utility::StringToWideString(spath);
-    ImGui::SameLine();
-    if (ImGui::SmallButton(u8"参照"))
+    InputFolderName(systemFullPath_,fileDialog_open);
+
+    if(ImGui::Button("OK"))
     {
-        fileDialog_open = true;
+        std::filesystem::create_directories(systemFullPath_);
     }
 
     ImGui::End();
@@ -146,7 +111,7 @@ std::filesystem::path System_FileCreate::CreateDirectoryFromFileDialog()
     HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pFileDialog));
     if (FAILED(hr))
     {
-        // エラーメッセージを表示するか、エラーログに記録するなどの処理を行う
+        // エラーメッセージを表示するか、エラーログに記録するなどの処理
         return "Null";
     }
 
@@ -159,7 +124,7 @@ std::filesystem::path System_FileCreate::CreateDirectoryFromFileDialog()
     hr = pFileDialog->Show(NULL);
     if (FAILED(hr))
     {
-        // エラーメッセージを表示するか、エラーログに記録するなどの処理を行う
+        // エラーメッセージを表示するか、エラーログに記録するなどの処理
         pFileDialog->Release();
         return "Null";
     }
@@ -169,7 +134,7 @@ std::filesystem::path System_FileCreate::CreateDirectoryFromFileDialog()
     hr = pFileDialog->GetResult(&pShellItem);
     if (FAILED(hr))
     {
-        // エラーメッセージを表示するか、エラーログに記録するなどの処理を行う
+        // エラーメッセージを表示するか、エラーログに記録するなどの処理
         pFileDialog->Release();
         return "Null";
     }
@@ -178,7 +143,7 @@ std::filesystem::path System_FileCreate::CreateDirectoryFromFileDialog()
     hr = pShellItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFolderPath);
     if (FAILED(hr))
     {
-        // エラーメッセージを表示するか、エラーログに記録するなどの処理を行う
+        // エラーメッセージを表示するか、エラーログに記録するなどの処理
         pShellItem->Release();
         pFileDialog->Release();
         return "Null";
@@ -190,5 +155,56 @@ std::filesystem::path System_FileCreate::CreateDirectoryFromFileDialog()
     pFileDialog->Release();
 
     return folderPath;
+}
+
+bool System_FileCreate::SeachFolder()
+{
+    if (fileDialog_open)
+    {
+        basePath_ = L"UseEngin";
+        // UseEnginフォルダがあるかどうか
+        std::ifstream file(basePath_);
+        if (file.is_open())
+        {
+            // UseEnginフォルダがある
+            //return true;
+        }
+        else
+        {
+            // UseEnginフォルダがない
+            // ファイルダイアログの表示
+            auto result = CreateDirectoryFromFileDialog();
+
+            if (result == "Null")
+            {
+                return false;
+            }
+
+            // UseEnginフォルダの作成
+            result /= basePath_;
+            systemFullPath_ = result;
+
+            //return true;
+        }
+
+
+        fileDialog_open = false;
+    }
+}
+
+void System_FileCreate::InputFolderName(std::wstring& text, bool& seacthFolderOpen)
+{
+    std::string utf8Str = Utility::WStringToUTF8(text);
+    char buffer[256]; // 適切なサイズに調整
+    strncpy_s(buffer, sizeof(buffer), utf8Str.c_str(), _TRUNCATE);
+    ImGui::InputText("##label", buffer, 1060);
+
+    std::string spath = buffer;
+    text = Utility::StringToWideString(spath);
+    ImGui::SameLine();
+    if (ImGui::SmallButton(u8"参照"))
+    {
+        seacthFolderOpen = true;
+    }
 }
 

@@ -13,6 +13,10 @@ public:
 private:
 	std::filesystem::path CreateDirectoryFromFileDialog();
 
+	bool SeachFolder();
+
+	void InputFolderName(std::wstring& text,bool& seacthFolderOpen);
+
 	std::wstring basePath_;
 	std::wstring userFileName_;
 
