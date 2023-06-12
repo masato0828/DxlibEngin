@@ -50,7 +50,10 @@ bool System_FileCreate::IsMainFile()
 
     if(ImGui::Button("OK"))
     {
-        std::filesystem::create_directories(systemFullPath_);
+        // 指定した場所にフォルダの作成
+        //std::filesystem::create_directories(systemFullPath_);
+        
+        CreateFolderCheck(systemFullPath_);
     }
 
     ImGui::End();
@@ -206,5 +209,14 @@ void System_FileCreate::InputFolderName(std::wstring& text, bool& seacthFolderOp
     {
         seacthFolderOpen = true;
     }
+}
+
+bool System_FileCreate::CreateFolderCheck(const std::wstring folderPath)
+{
+    if (std::filesystem::create_directories(folderPath))
+    {
+        return true;
+    }
+    return false;
 }
 

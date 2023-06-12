@@ -17,6 +17,8 @@ private:
 
 	void InputFolderName(std::wstring& text,bool& seacthFolderOpen);
 
+	bool CreateFolderCheck(const std::wstring folderPath);
+
 	std::wstring basePath_;
 	std::wstring userFileName_;
 
