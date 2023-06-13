@@ -8,11 +8,15 @@
 
 #include "../../imGui/imgui.h"
 
+using  json = nlohmann::json;
+
 System_FileCreate::System_FileCreate()
 {
     basePath_ = L"D:/UseEngin";
     fileDialog_open = false;
     systemFullPath_ = basePath_;
+
+    appOpenFlg_ = false;
 }
 
 System_FileCreate::~System_FileCreate()
@@ -34,28 +38,39 @@ void System_FileCreate::Is_CreateFile(const std::wstring& filePath)
     }
 }
 
-bool System_FileCreate::IsMainFile()
+void System_FileCreate::IsMainFile()
 {
     // フォルダ名
-
-
-    ImGui::Begin(u8"データの読み込み");
-
-   
-    SeachFolder();
-
-    ImGui::Text(u8"ファイルの参照");
-
-    InputFolderName(systemFullPath_,fileDialog_open);
-
-    if(ImGui::Button("OK"))
+    if (appOpenFlg_)
     {
-        // 指定した場所にフォルダの作成
-        //std::filesystem::create_directories(systemFullPath_);
-        
-        CreateFolderCheck(systemFullPath_);
+        return;
     }
 
+    if (basePath_ == mainFilePath_)
+    {
+        return;
+    }
+
+    if (ImGui::Begin(u8"データの読み込み"))
+    {
+
+        SeachFolder();
+
+        ImGui::Text(u8"ファイルの参照");
+
+        InputFolderName(systemFullPath_, fileDialog_open);
+
+        if (ImGui::Button("OK"))
+        {
+            // 指定した場所にフォルダの作成
+            //std::filesystem::create_directories(systemFullPath_);
+
+            CreateFolderCheck(systemFullPath_);
+
+            appOpenFlg_ = true;
+        }
+
+    }
     ImGui::End();
 
     //再度開くときのため、
@@ -76,8 +91,11 @@ bool System_FileCreate::IsMainFile()
     //{
     //    // 既存のデータの読み込み処理
     //}
+}
 
-    return true;
+bool System_FileCreate::GetAppOpenFlg()
+{
+    return appOpenFlg_;
 }
 
 void System_FileCreate::CreateFilesInDirectory(const std::wstring& directoryPath)
@@ -218,5 +236,26 @@ bool System_FileCreate::CreateFolderCheck(const std::wstring folderPath)
         return true;
     }
     return false;
+}
+
+void System_FileCreate::DataCreate()
+{
+    std::string fileName = Utility::WideStringToString(basePath_);
+
+    std::ofstream writing_file;
+    writing_file.open(fileName, std::ios::out);
+
+    json j;
+
+    j["MainFolderPath"] = basePath_;
+
+    writing_file << std::setw(4) << j << std::endl;
+
+    writing_file.close();
+}
+
+void System_FileCreate::FileLoad(const std::wstring fileName)
+{
+
 }
 

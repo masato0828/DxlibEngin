@@ -62,10 +62,13 @@ void FreamMng::Update(bool window_open_flg)
     postEffect_->Update();
 	SysNewFream();
 
-    if (system_FileCreate_->IsMainFile())
-    {
+    system_FileCreate_->IsMainFile();
 
+    if (!system_FileCreate_->GetAppOpenFlg())
+    {
+        return;
     }
+
 
     if (firstWindowFlg_)
     {
