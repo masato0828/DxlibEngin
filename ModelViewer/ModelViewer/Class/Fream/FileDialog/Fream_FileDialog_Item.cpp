@@ -21,6 +21,15 @@ void Fream_FileDialog_Item::Init()
 	button_click_ = false;
 	contextMenuFlg_ = false;
 	context_renameFlg_ = false;
+	fileImageShaderDatas_.emplace("non",nullptr);
+	fileImageShaderDatas_.emplace("cpp",nullptr);
+
+	int textureSizeX;
+	int textureSizeY;
+	ImguiSup::LoadBackGroundTextureFromFile(&fileImageShaderDatas_.at("non"),&textureSizeX,&textureSizeY);
+
+	ImguiSup::LoadTextureFromFile("data/iconData/PNGアイコン.png", &fileImageShaderDatas_.at("cpp"), &textureSizeX, &textureSizeY);
+
 }
 void Fream_FileDialog_Item::Update()
 {
@@ -42,6 +51,17 @@ void Fream_FileDialog_Item::Update(FileData*& nowselect,std::filesystem::path& f
 	// ウィンドウの効果の編集（今回はウィンドウの非表示を無くす設定とウィンドウタブを無くす処理）
 	window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoTabBar;
 	ImGui::SetNextWindowClass(&window_class);
+
+	//// カスタムスタイルの設定
+	//ImGuiStyle& style = ImGui::GetStyle();
+	//ImVec4 originalButtonBgColor = style.Colors[ImGuiCol_Button];
+	//style.Colors[ImGuiCol_Button] = ImVec4(0, 0, 0, 0); // ボタンの背景色を透明にする
+	//style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.5f, 0.5f, 0.5f, 0);
+	//style.Colors[ImGuiCol_ButtonHovered] = ImVec4(1, 1, 1, 1);
+	////style.Colors[ImGuiCol_Border] = ImVec4(0.5f, 0.5f, 0.5f, 1.0f); // ボタンのフレームを灰色にする
+
+	
+
 	if (ImGui::Begin("ITEM"))
 	{
 		//ImGui::Separator();
@@ -57,6 +77,7 @@ void Fream_FileDialog_Item::Update(FileData*& nowselect,std::filesystem::path& f
 			std::wstring directoryName;
 
 			auto copySelectPath = nowSelectFileName_;
+			
 			for (; itr != end; ++itr)
 			{
 				directoryName = itr->path().filename();
@@ -102,6 +123,7 @@ void Fream_FileDialog_Item::Update(FileData*& nowselect,std::filesystem::path& f
 		ImGui::End();
 	}
 
+	
 	fileFullPath = fileFullPaht_;
 	nowSelectFile = nowSelectFile_;
 	nowSelectFileName = nowSelectFileName_;
@@ -203,7 +225,7 @@ void Fream_FileDialog_Item::MakeFileImage(
 	ImVec2 buttonPos = ImGui::GetCursorPos();
 	ImVec2 buttonSize = ImVec2(80, 80);
 	float buttonSpacing = 10.0f; // ボタン間のスペース
-
+	
 	ImGui::BeginGroup();
 	{
 		// ユニークなIDを作成
@@ -211,7 +233,10 @@ void Fream_FileDialog_Item::MakeFileImage(
 
 		// ボタンを生成
 		ImGui::PushID(buttonID);
-		bool buttonPressed = ImGui::ImageButton((void*)my_shaderData, buttonSize);
+		bool buttonPressed;
+		
+		FileAssignments(name, buttonPressed, {buttonSize.x,buttonSize.y});
+		
 		if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
 		{
 			// ボタンがダブルクリックされたときの処理
@@ -286,6 +311,36 @@ void Fream_FileDialog_Item::MakeFileImage(
 	}
 }
 
+void Fream_FileDialog_Item::FileAssignments(std::wstring& name, bool& buttonPressed, Vector2Flt buttonSize)
+{
+	if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "cpp"))
+	{
+		ImGuiCustom::SetCustomButtonStyle(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+		ImGuiCustom::SetCustomButtonStyle(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, 1));
+		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("cpp"), ImVec2(buttonSize.x_, buttonSize.y_));
+	}
+	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "h"))
+	{
+		// Windowsの規定アイコンをロードする
+		HICON hIcon = LoadIcon(NULL, IDI_APPLICATION);
+
+		ImGuiCustom::SetCustomButtonStyle(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, 1));
+		buttonPressed = ImGui::ImageButton((ImTextureID)hIcon, ImVec2(buttonSize.x_, buttonSize.y_));
+
+		// アイコンを解放する
+		DestroyIcon(hIcon);
+	}
+	else
+	{
+		ImGuiCustom::SetCustomButtonStyle(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, 1));
+		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("non"), ImVec2(buttonSize.x_,buttonSize.y_));
+	}
+
+	// カスタムスタイルを元に戻す
+	ImGui::StyleColorsClassic();
+
+}
+
 void Fream_FileDialog_Item::RenameWindow()
 {
 	auto path = fileFullPaht_ /= fileName_;
@@ -313,12 +368,14 @@ void Fream_FileDialog_Item::RenameWindow()
 		if (success)
 		{
 			// ファイル名の変更が成功した場合の処理を行う
-			ImGui::Text(u8"ファイル名が変更されました");
+			MessageBox(NULL,"ファイル名の変更に成功しました。","ファイル名の変更",MB_OK);
+			context_renameFlg_ = false;
 		}
 		else
 		{
 			// ファイル名の変更が失敗した場合の処理を行う
-			ImGui::Text(u8"ファイル名の変更に失敗しました");
+			MessageBox(NULL, "ファイル名の変更に失敗しました。", "ファイル名の変更", MB_OK);
+			context_renameFlg_ = false;
 		}
 	}
 	

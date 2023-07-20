@@ -33,6 +33,14 @@ IMGUI_API bool ImGuiCustom::ColorEdit4(const char* label, IM_COLOR* col, ImGuiCo
     return flg;
 }
 
+void ImGuiCustom::SetCustomButtonStyle(ImGuiCol colType, ImVec4 colorStyle)
+{
+    // カスタムスタイルの設定
+    ImGuiStyle& style = ImGui::GetStyle();
+    // 各色の変更
+    style.Colors[colType] = colorStyle;
+}
+
 //
 //IMGUI_API bool ImGui::InputText(const char* label, std::string* buf, size_t buf_size, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* user_data)
 //{

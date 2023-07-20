@@ -15,6 +15,7 @@ System_FileCreate::System_FileCreate()
     basePath_ = L"D:/UseEngin";
     fileDialog_open = false;
     systemFullPath_ = basePath_;
+    enginFile_ = L"D:/";
 
     appOpenFlg_ = false;
 }
@@ -51,9 +52,30 @@ void System_FileCreate::IsMainFile()
         return;
     }
 
-    if (ImGui::Begin(u8"データの読み込み"))
+    // 初回起動時に指定したファイルの中にuseEnginがあれば
+#ifdef DEBUG
+    if (systemFullPath_ != L"")
     {
+        appOpenFlg_ = true;
+        return;
+    }
+#endif // DEBUG
 
+    
+
+    // 画面のサイズを取得する
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN); // 横方向の画面サイズ
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN); // 縦方向の画面サイズ
+
+    //screenSize
+    ImVec2 windowSize = { 500,200 };
+    ImGui::SetNextWindowSize(windowSize);
+    // ウィンドウの位置を計算して設定する
+    ImVec2 windowPos((screenWidth - windowSize.x) * 0.5f, (screenHeight - windowSize.y) * 0.5f);
+    ImGui::SetNextWindowPos(windowPos);
+
+    if (ImGui::Begin(u8"管理データ作成"), NULL,ImGuiWindowFlags_NoCollapse)
+    {
         SeachFolder();
 
         ImGui::Text(u8"ファイルの参照");
@@ -133,7 +155,7 @@ std::filesystem::path System_FileCreate::CreateDirectoryFromFileDialog()
     if (FAILED(hr))
     {
         // エラーメッセージを表示するか、エラーログに記録するなどの処理
-        return "Null";
+        return "Error";
     }
 
     // ファイルダイアログをフォルダ選択モードに設定
@@ -145,9 +167,18 @@ std::filesystem::path System_FileCreate::CreateDirectoryFromFileDialog()
     hr = pFileDialog->Show(NULL);
     if (FAILED(hr))
     {
-        // エラーメッセージを表示するか、エラーログに記録するなどの処理
-        pFileDialog->Release();
-        return "Null";
+        // キャンセルもしくはバツを押した場合の処理
+        if (hr == HRESULT_FROM_WIN32(ERROR_CANCELLED))
+        {
+            pFileDialog->Release();
+            return ""; // 空文字列を返す（キャンセルorバツ）
+        }
+        else
+        {
+            // エラーメッセージを表示、エラーログに記録するなどの処理
+            pFileDialog->Release();
+            return "Error";
+        }
     }
 
     // 選択されたフォルダのパスを取得
@@ -157,7 +188,7 @@ std::filesystem::path System_FileCreate::CreateDirectoryFromFileDialog()
     {
         // エラーメッセージを表示するか、エラーログに記録するなどの処理
         pFileDialog->Release();
-        return "Null";
+        return "Error";
     }
 
     PWSTR pszFolderPath;
@@ -167,7 +198,7 @@ std::filesystem::path System_FileCreate::CreateDirectoryFromFileDialog()
         // エラーメッセージを表示するか、エラーログに記録するなどの処理
         pShellItem->Release();
         pFileDialog->Release();
-        return "Null";
+        return "Error";
     }
 
     std::filesystem::path folderPath(pszFolderPath);
@@ -187,17 +218,28 @@ bool System_FileCreate::SeachFolder()
         std::ifstream file(basePath_);
         if (file.is_open())
         {
-            // UseEnginフォルダがある
-            //return true;
+            // UseEnginフォルダが現在開いている
+            return true;
         }
         else
         {
-            // UseEnginフォルダがない
+            // UseEnginフォルダが現在開いていない
             // ファイルダイアログの表示
             auto result = CreateDirectoryFromFileDialog();
+            
 
-            if (result == "Null")
+            if (result == ""&&addFileName_ == L"")
             {
+                result = enginFile_;
+            }
+            else
+            {
+                addFileName_ = result;
+            }
+
+            if (result == "Error")
+            {
+                MessageBox(NULL,"ファイルの指定に失敗しました","ファイルデータ作成",MB_OK);
                 return false;
             }
 
@@ -206,10 +248,11 @@ bool System_FileCreate::SeachFolder()
             systemFullPath_ = result;
 
             //return true;
+            fileDialog_open = false;
         }
 
 
-        fileDialog_open = false;
+       
     }
 }
 

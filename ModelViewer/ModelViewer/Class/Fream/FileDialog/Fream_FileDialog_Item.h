@@ -3,7 +3,9 @@
 #include "FileCommon.h"
 #include <filesystem>
 #include <string>
+#include <map>
 #include "../../System/ImguiImageStb.h"
+#include "../../Common/Vector2.h"
 
 class Fream_FileDialog_Item :
     public FreamBase
@@ -29,6 +31,8 @@ private:
 
 	void MakeFileImage(std::wstring name);
 
+	void FileAssignments(std::wstring& name, bool& buttonPressed, Vector2Flt buttonSize);
+
 	void RenameWindow();
 
 	FileData* nowSelect_;
@@ -40,6 +44,8 @@ private:
 
 	// シェーダ情報の作成
 	ID3D11ShaderResourceView* my_shaderData = NULL;
+	std::map<std::string, ID3D11ShaderResourceView*> fileImageShaderDatas_;
+
 
 	bool button_click_;
 

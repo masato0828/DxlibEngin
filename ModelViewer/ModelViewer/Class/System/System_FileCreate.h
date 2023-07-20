@@ -41,5 +41,8 @@ private:
 	bool appOpenFlg_;
 
 	std::wstring mainFilePath_;
+
+	std::wstring enginFile_;
+	std::wstring addFileName_;
 };
 
