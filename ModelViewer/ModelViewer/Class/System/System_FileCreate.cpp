@@ -92,6 +92,8 @@ void System_FileCreate::IsMainFile()
             appOpenFlg_ = true;
         }
 
+       
+
     }
     ImGui::End();
 

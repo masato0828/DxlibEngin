@@ -245,5 +245,3 @@ bool Utility::RenameFile(const std::string& filePath, const std::string& newFile
 	// ファイル名の変更に成功した場合の処理
 	return true;
 }
-
-

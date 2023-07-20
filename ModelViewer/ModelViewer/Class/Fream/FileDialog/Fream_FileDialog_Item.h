@@ -35,6 +35,8 @@ private:
 
 	void RenameWindow();
 
+	bool SettingIcon(std::wstring& name, bool& buttonPressed, Vector2Flt buttonSize,std::string ext);
+
 	FileData* nowSelect_;
 	std::filesystem::path fileFullPaht_;
 	std::wstring nowSelectFileName_;

@@ -21,15 +21,33 @@ void Fream_FileDialog_Item::Init()
 	button_click_ = false;
 	contextMenuFlg_ = false;
 	context_renameFlg_ = false;
-	fileImageShaderDatas_.emplace("non",nullptr);
-	fileImageShaderDatas_.emplace("cpp",nullptr);
+
+	fileImageShaderDatas_ = {
+		{"non",nullptr},
+		{"cpp",nullptr},
+		{"h",nullptr},
+		{"hlsl",nullptr},
+		{"hlsli",nullptr},
+		{"txt",nullptr},
+		{"hpp",nullptr},
+		{"vs",nullptr},
+		{"ps",nullptr},
+		{"file",nullptr},
+	};
 
 	int textureSizeX;
 	int textureSizeY;
 	ImguiSup::LoadBackGroundTextureFromFile(&fileImageShaderDatas_.at("non"),&textureSizeX,&textureSizeY);
 
-	ImguiSup::LoadTextureFromFile("data/iconData/PNGアイコン.png", &fileImageShaderDatas_.at("cpp"), &textureSizeX, &textureSizeY);
-
+	ImguiSup::LoadTextureFromFile("data/iconData/CPP.png", &fileImageShaderDatas_.at("cpp"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/h.png", &fileImageShaderDatas_.at("h"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/hlsl.png", &fileImageShaderDatas_.at("hlsl"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/hlsli.png", &fileImageShaderDatas_.at("hlsli"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/txt.png", &fileImageShaderDatas_.at("txt"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/file.png", &fileImageShaderDatas_.at("file"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/HPP.png", &fileImageShaderDatas_.at("hpp"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/vs.png", &fileImageShaderDatas_.at("vs"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/ps.png", &fileImageShaderDatas_.at("ps"), &textureSizeX, &textureSizeY);
 }
 void Fream_FileDialog_Item::Update()
 {
@@ -51,16 +69,6 @@ void Fream_FileDialog_Item::Update(FileData*& nowselect,std::filesystem::path& f
 	// ウィンドウの効果の編集（今回はウィンドウの非表示を無くす設定とウィンドウタブを無くす処理）
 	window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoTabBar;
 	ImGui::SetNextWindowClass(&window_class);
-
-	//// カスタムスタイルの設定
-	//ImGuiStyle& style = ImGui::GetStyle();
-	//ImVec4 originalButtonBgColor = style.Colors[ImGuiCol_Button];
-	//style.Colors[ImGuiCol_Button] = ImVec4(0, 0, 0, 0); // ボタンの背景色を透明にする
-	//style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.5f, 0.5f, 0.5f, 0);
-	//style.Colors[ImGuiCol_ButtonHovered] = ImVec4(1, 1, 1, 1);
-	////style.Colors[ImGuiCol_Border] = ImVec4(0.5f, 0.5f, 0.5f, 1.0f); // ボタンのフレームを灰色にする
-
-	
 
 	if (ImGui::Begin("ITEM"))
 	{
@@ -234,7 +242,7 @@ void Fream_FileDialog_Item::MakeFileImage(
 		// ボタンを生成
 		ImGui::PushID(buttonID);
 		bool buttonPressed;
-		
+
 		FileAssignments(name, buttonPressed, {buttonSize.x,buttonSize.y});
 		
 		if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
@@ -294,6 +302,8 @@ void Fream_FileDialog_Item::MakeFileImage(
 		float posX = (buttonSize.x - textWidth) * 0.5f;
 		ImGui::SetCursorPosX(posX + buttonPos.x);
 		//ImGui::Text(fileName.c_str());
+
+		// 名前の色変更
 		if (!Utility::CharacterSearch(Utility::WStringToUTF8(fileName).c_str(), "cpp", { 0,1,1,1 }, Utility::WideStringToString(name)) &&
 			!Utility::CharacterSearch(Utility::WStringToUTF8(fileName).c_str(), "h", { 1,0,1,1 }, Utility::WideStringToString(name)))
 		{
@@ -313,32 +323,63 @@ void Fream_FileDialog_Item::MakeFileImage(
 
 void Fream_FileDialog_Item::FileAssignments(std::wstring& name, bool& buttonPressed, Vector2Flt buttonSize)
 {
+	ImGuiCustom::SetCustomButtonStyle(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+	ImGuiCustom::SetCustomButtonStyle(ImGuiCol_ButtonHovered, ImVec4(0.5, 0.5, 0.7, 1));
+
 	if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "cpp"))
 	{
-		ImGuiCustom::SetCustomButtonStyle(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		ImGuiCustom::SetCustomButtonStyle(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, 1));
 		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("cpp"), ImVec2(buttonSize.x_, buttonSize.y_));
 	}
 	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "h"))
 	{
-		// Windowsの規定アイコンをロードする
-		HICON hIcon = LoadIcon(NULL, IDI_APPLICATION);
-
-		ImGuiCustom::SetCustomButtonStyle(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, 1));
-		buttonPressed = ImGui::ImageButton((ImTextureID)hIcon, ImVec2(buttonSize.x_, buttonSize.y_));
-
-		// アイコンを解放する
-		DestroyIcon(hIcon);
+		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("h"), ImVec2(buttonSize.x_, buttonSize.y_));
+	}
+	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "txt"))
+	{
+		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("txt"), ImVec2(buttonSize.x_, buttonSize.y_));
+	}
+	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "hlsl"))
+	{
+		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("hlsl"), ImVec2(buttonSize.x_, buttonSize.y_));
+	}
+	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "hlsli"))
+	{
+		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("hlsli"), ImVec2(buttonSize.x_, buttonSize.y_));
+	}
+	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "file"))
+	{
+		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("file"), ImVec2(buttonSize.x_, buttonSize.y_));
+	}
+	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "hpp"))
+	{
+		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("hpp"), ImVec2(buttonSize.x_, buttonSize.y_));
+	}
+	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "ps"))
+	{
+		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("ps"), ImVec2(buttonSize.x_, buttonSize.y_));
+	}
+	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "vs"))
+	{
+		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("vs"), ImVec2(buttonSize.x_, buttonSize.y_));
 	}
 	else
 	{
-		ImGuiCustom::SetCustomButtonStyle(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, 1));
-		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("non"), ImVec2(buttonSize.x_,buttonSize.y_));
+		std::size_t dotPos = Utility::WStringToUTF8(name).find_last_of(".");
+		if (dotPos == std::string::npos)
+		{
+			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("file"), ImVec2(buttonSize.x_, buttonSize.y_));
+		}
+		else
+		{
+			ImGuiCustom::SetCustomButtonStyle(ImGuiCol_Button, ImVec4(0.2, 0.2, 0.4, 1));
+			buttonPressed = ImGui::ImageButton((void*)my_shaderData, ImVec2(buttonSize.x_, buttonSize.y_));
+			//ImGuiCustom::SetCustomButtonStyle(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, 1));
+			/*buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("non"), ImVec2(buttonSize.x_, buttonSize.y_));*/
+		}
 	}
 
 	// カスタムスタイルを元に戻す
 	ImGui::StyleColorsClassic();
-
 }
 
 void Fream_FileDialog_Item::RenameWindow()
@@ -381,6 +422,17 @@ void Fream_FileDialog_Item::RenameWindow()
 	
 	// ImGuiのウィンドウの終了
 	ImGui::End();
+}
+
+bool Fream_FileDialog_Item::SettingIcon(std::wstring& name, bool& buttonPressed, Vector2Flt buttonSize, std::string ext)
+{
+	if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(),ext))
+	{
+		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(ext), ImVec2(buttonSize.x_, buttonSize.y_));
+		return true;
+	}
+
+	return false;
 }
 
 bool& Fream_FileDialog_Item::GetButton_Click()

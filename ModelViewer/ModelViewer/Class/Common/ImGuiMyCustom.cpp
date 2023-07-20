@@ -41,12 +41,31 @@ void ImGuiCustom::SetCustomButtonStyle(ImGuiCol colType, ImVec4 colorStyle)
     style.Colors[colType] = colorStyle;
 }
 
-//
-//IMGUI_API bool ImGui::InputText(const char* label, std::string* buf, size_t buf_size, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* user_data)
-//{
-//
-//	return ImGui::InputText(label, buf, buf_size, flags, callback, user_data);
-//}
+void ImGuiCustom::ShowWindowsIconImageButton()
+{
+    // Windowsの規定アイコンをロードする
+    HICON hIcon = LoadIcon(NULL, IDI_APPLICATION);
+
+    // アイコンのサイズを取得する
+    ICONINFO iconInfo;
+    GetIconInfo(hIcon, &iconInfo);
+    int iconWidth = iconInfo.xHotspot * 2;
+    int iconHeight = iconInfo.yHotspot * 2;
+
+    // アイコンをDxLibのテクスチャに変換する
+    int iconTexture = MakeGraph(iconWidth, iconHeight);
+    SetDrawScreen(iconTexture);
+    HDC hdc = GetDC(NULL);
+    DrawIcon(hdc, 0, 0, hIcon);
+    ReleaseDC(NULL, hdc);
+    SetDrawScreen(DX_SCREEN_BACK);
+
+    // アイコンのテクスチャを解放する
+    //DxLib::DeleteGraph(iconTexture);
+
+    // アイコンを解放する
+    //DestroyIcon(hIcon);
+}
 
 void ImGuiCustom::CreateDokingArea(std::string areaName)
 {

@@ -37,4 +37,6 @@ namespace ImGuiCustom
     IMGUI_API bool  ColorEdit4(const char* label, IM_COLOR* col, ImGuiColorEditFlags flags = 0);
 
     void SetCustomButtonStyle(ImGuiCol colType,ImVec4 colorStyle);
+
+    void ShowWindowsIconImageButton();
 }

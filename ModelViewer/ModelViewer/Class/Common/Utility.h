@@ -37,6 +37,7 @@ namespace Utility
 
 	bool RenameFile(const std::string& filePath, const std::string& newFileName);
 
+
 }
 // vector‚©‚çindex”Ô–Ú‚Ì—v‘f‚ğíœ‚·‚é
 template<typename T>
