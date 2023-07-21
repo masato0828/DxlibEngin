@@ -53,7 +53,7 @@ void System_FileCreate::IsMainFile()
     }
 
     // 初回起動時に指定したファイルの中にuseEnginがあれば
-#ifdef DEBUG
+#ifdef _DEBUG
     if (systemFullPath_ != L"")
     {
         appOpenFlg_ = true;

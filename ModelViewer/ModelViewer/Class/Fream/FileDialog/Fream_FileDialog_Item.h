@@ -6,6 +6,7 @@
 #include <map>
 #include "../../System/ImguiImageStb.h"
 #include "../../Common/Vector2.h"
+#include "../Fream_Stage.h"
 
 class Fream_FileDialog_Item :
     public FreamBase
@@ -29,13 +30,16 @@ private:
 
 	void Recovery(FileData* selectData);
 
-	void MakeFileImage(std::wstring name);
+	void MakeFileImage(std::filesystem::path name);
 
-	void FileAssignments(std::wstring& name, bool& buttonPressed, Vector2Flt buttonSize);
+	void FileAssignments(std::filesystem::path& name, bool& buttonPressed, Vector2Flt buttonSize);
 
 	void RenameWindow();
 
 	bool SettingIcon(std::wstring& name, bool& buttonPressed, Vector2Flt buttonSize,std::string ext);
+
+	bool CreateIcon(std::filesystem::path path,std::string key);
+
 
 	FileData* nowSelect_;
 	std::filesystem::path fileFullPaht_;
@@ -48,6 +52,7 @@ private:
 	ID3D11ShaderResourceView* my_shaderData = NULL;
 	std::map<std::string, ID3D11ShaderResourceView*> fileImageShaderDatas_;
 
+	std::unique_ptr<Fream_Stage> stage_;
 
 	bool button_click_;
 

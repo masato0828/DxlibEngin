@@ -33,7 +33,10 @@ void Fream_FileDialog_Item::Init()
 		{"vs",nullptr},
 		{"ps",nullptr},
 		{"file",nullptr},
+		{"test",nullptr},
 	};
+
+
 
 	int textureSizeX;
 	int textureSizeY;
@@ -48,6 +51,13 @@ void Fream_FileDialog_Item::Init()
 	ImguiSup::LoadTextureFromFile("data/iconData/HPP.png", &fileImageShaderDatas_.at("hpp"), &textureSizeX, &textureSizeY);
 	ImguiSup::LoadTextureFromFile("data/iconData/vs.png", &fileImageShaderDatas_.at("vs"), &textureSizeX, &textureSizeY);
 	ImguiSup::LoadTextureFromFile("data/iconData/ps.png", &fileImageShaderDatas_.at("ps"), &textureSizeX, &textureSizeY);
+
+
+
+	stage_ = std::make_unique<Fream_Stage>();
+
+	CreateIcon("data/Bomber_2.mv1","test");
+	
 }
 void Fream_FileDialog_Item::Update()
 {
@@ -90,7 +100,7 @@ void Fream_FileDialog_Item::Update(FileData*& nowselect,std::filesystem::path& f
 			{
 				directoryName = itr->path().filename();
 
-				MakeFileImage(directoryName/*現在フォルダの下の階層のファイル及びフォルダの名前*/);
+				MakeFileImage(itr->path()/*現在フォルダの下の階層のファイル及びフォルダの名前*/);
 
 				if (nowSelectFileName_ != copySelectPath)
 				{
@@ -228,7 +238,7 @@ void Fream_FileDialog_Item::Recovery(FileData* selectData)
 }
 
 void Fream_FileDialog_Item::MakeFileImage(
-	std::wstring name)
+	std::filesystem::path name)
 {
 	ImVec2 buttonPos = ImGui::GetCursorPos();
 	ImVec2 buttonSize = ImVec2(80, 80);
@@ -252,7 +262,7 @@ void Fream_FileDialog_Item::MakeFileImage(
 		}
 		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
 		{
-			if (nowSelectFile_ != name.c_str())
+			//if (nowSelectFile_ != name.c_str())
 			{
 				button_click_ = true;
 			}
@@ -280,7 +290,7 @@ void Fream_FileDialog_Item::MakeFileImage(
 		
 
 		// テキストの幅を計算
-		std::wstring fileName = name;
+		std::wstring fileName = name.filename();
 		ImVec2 textSize = ImGui::CalcTextSize(Utility::WStringToUTF8(fileName).c_str());
 
 		// ボタンの幅と文字列の長さを比較し、ボタンの幅を超える場合は文字列を切り詰めて "..." を追加
@@ -321,64 +331,47 @@ void Fream_FileDialog_Item::MakeFileImage(
 	}
 }
 
-void Fream_FileDialog_Item::FileAssignments(std::wstring& name, bool& buttonPressed, Vector2Flt buttonSize)
+void Fream_FileDialog_Item::FileAssignments(std::filesystem::path& name, bool& buttonPressed, Vector2Flt buttonSize)
 {
 	ImGuiCustom::SetCustomButtonStyle(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 	ImGuiCustom::SetCustomButtonStyle(ImGuiCol_ButtonHovered, ImVec4(0.5, 0.5, 0.7, 1));
 
-	if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "cpp"))
-	{
-		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("cpp"), ImVec2(buttonSize.x_, buttonSize.y_));
-	}
-	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "h"))
-	{
-		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("h"), ImVec2(buttonSize.x_, buttonSize.y_));
-	}
-	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "txt"))
-	{
-		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("txt"), ImVec2(buttonSize.x_, buttonSize.y_));
-	}
-	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "hlsl"))
-	{
-		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("hlsl"), ImVec2(buttonSize.x_, buttonSize.y_));
-	}
-	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "hlsli"))
-	{
-		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("hlsli"), ImVec2(buttonSize.x_, buttonSize.y_));
-	}
-	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "file"))
+	
+	auto u8name = name.u8string();
+
+	if (std::filesystem::is_directory(name))
 	{
 		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("file"), ImVec2(buttonSize.x_, buttonSize.y_));
 	}
-	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "hpp"))
-	{
-		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("hpp"), ImVec2(buttonSize.x_, buttonSize.y_));
-	}
-	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "ps"))
-	{
-		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("ps"), ImVec2(buttonSize.x_, buttonSize.y_));
-	}
-	else if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), "vs"))
-	{
-		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("vs"), ImVec2(buttonSize.x_, buttonSize.y_));
-	}
 	else
 	{
-		std::size_t dotPos = Utility::WStringToUTF8(name).find_last_of(".");
-		if (dotPos == std::string::npos)
+		auto ext = name.extension().u8string().substr(1);
+		if (fileImageShaderDatas_.count(ext))
 		{
-			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("file"), ImVec2(buttonSize.x_, buttonSize.y_));
+			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(ext), ImVec2(buttonSize.x_, buttonSize.y_));
+		}
+		else if (fileImageShaderDatas_.count(u8name))
+		{
+			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(u8name), ImVec2(buttonSize.x_, buttonSize.y_));
+		}
+		else if (ext == "mv1")
+		{
+			fileImageShaderDatas_.emplace(u8name, nullptr);
+			auto IconDataPath = fileFullPaht_ / name;
+			CreateIcon(IconDataPath, u8name);
+
+			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(u8name), ImVec2(buttonSize.x_, buttonSize.y_));
 		}
 		else
 		{
 			ImGuiCustom::SetCustomButtonStyle(ImGuiCol_Button, ImVec4(0.2, 0.2, 0.4, 1));
 			buttonPressed = ImGui::ImageButton((void*)my_shaderData, ImVec2(buttonSize.x_, buttonSize.y_));
-			//ImGuiCustom::SetCustomButtonStyle(ImGuiCol_ButtonHovered, ImVec4(1, 1, 1, 1));
-			/*buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("non"), ImVec2(buttonSize.x_, buttonSize.y_));*/
 		}
 	}
 
+
 	// カスタムスタイルを元に戻す
+	//ImGui::StyleColorsDark();
 	ImGui::StyleColorsClassic();
 }
 
@@ -432,6 +425,58 @@ bool Fream_FileDialog_Item::SettingIcon(std::wstring& name, bool& buttonPressed,
 		return true;
 	}
 
+	return false;
+}
+
+bool Fream_FileDialog_Item::CreateIcon(std::filesystem::path path, std::string key)
+{
+	std::wstring wstrPath = path;
+	
+	auto model = MV1LoadModel(Utility::WStringToUTF8(wstrPath).c_str());
+
+	MV1_REF_POLYGONLIST RefPoly;
+
+	// モデルの全フレームのポリゴンの情報を取得
+	RefPoly = MV1GetReferenceMesh(model, -1, TRUE);
+
+	RefPoly.MaxPosition;
+	RefPoly.MaxPosition;
+
+	/*for ()
+	{
+		if (CheckCameraViewClip(RefPoly.MaxPosition) || CheckCameraViewClip(RefPoly.MaxPosition))
+		{
+
+		}
+	}*/
+
+
+	// アンチエイリアシング処理
+	SetCreateDrawValidGraphMultiSample(4, 4);
+	// 20x20サイズのアルファチャンネルなしの描画可能画像を作成する
+	auto handle = MakeScreen(256, 256, true);
+
+	// 作成した画像を描画対象にする
+	SetDrawScreen(handle);
+
+	// クリップ距離を設定する(SetDrawScreenでリセットされる)
+	// カメラのクリッピング距離を設定
+	SetCameraNearFar(10.0f, 300000.0f);
+	// クリップ距離を設定する(SetDrawScreenでリセットされる)
+	SetCameraPositionAndAngle(VGet(-293.486, 185, -279.488), 0.264, 0.808, 0.0f);
+
+	DrawBox(0, 0, 1000, 1000, 0xffffff, true);
+	stage_->Update();
+	stage_->Draw();
+	MV1SetScale(model, VGet(1, 1, 1));
+	MV1DrawModel(model);
+
+	int textureSizeX;
+	int textureSizeY;
+	ImguiSup::LoadTextureFromFile(handle, &fileImageShaderDatas_.at(key), &textureSizeX, &textureSizeY);
+
+	MV1DeleteModel(model);
+	DeleteGraph(handle);
 	return false;
 }
 
