@@ -36,8 +36,6 @@ void Fream_FileDialog_Item::Init()
 		{"test",nullptr},
 	};
 
-
-
 	int textureSizeX;
 	int textureSizeY;
 	ImguiSup::LoadBackGroundTextureFromFile(&fileImageShaderDatas_.at("non"),&textureSizeX,&textureSizeY);
@@ -69,9 +67,12 @@ void Fream_FileDialog_Item::Update(FileData*& nowselect,std::filesystem::path& f
 	fileFullPaht_ = fileFullPath;
 	nowSelectFile_ = nowSelectFile;
 	nowSelectFileName_ = nowSelectFileName;
+	fileFullPaht_.clear();
 
+	// DockSpaceの生成処理
 	DokingWindow();
 
+	// ファイル名表示ウィンドウの生成処理
 	FileNameWindow();
 
 	// Imgui用ウィンドウクラスの作成
@@ -82,66 +83,16 @@ void Fream_FileDialog_Item::Update(FileData*& nowselect,std::filesystem::path& f
 
 	if (ImGui::Begin("ITEM"))
 	{
-		//ImGui::Separator();
 		if (nowSelect_ != nullptr)
 		{
-			FileLogWindow();
-
-			auto current_path = std::filesystem::current_path();
-
-			// イテレータの作成
-			std::filesystem::directory_iterator itr(fileFullPaht_);
-			std::filesystem::directory_iterator end{};
-			std::wstring directoryName;
-
-			auto copySelectPath = nowSelectFileName_;
-			
-			for (; itr != end; ++itr)
-			{
-				directoryName = itr->path().filename();
-
-				MakeFileImage(itr->path()/*現在フォルダの下の階層のファイル及びフォルダの名前*/);
-
-				if (nowSelectFileName_ != copySelectPath)
-				{
-					fileFullPaht_ /= nowSelectFileName_;
-					copySelectPath = nowSelectFileName_;
-
-					// フォルダの場合
-					if (std::filesystem::is_directory(fileFullPaht_))
-					{
-						directoryName = fileFullPaht_.filename();
-
-						nowSelect_->fileMap_.try_emplace(Utility::WideStringToString(directoryName), FileData(nowSelect_, Utility::WideStringToString(directoryName)));
-						nowSelect_ = &nowSelect_->fileMap_.at(Utility::WideStringToString(directoryName));
-					}
-					// ファイルの場合
-					else
-					{
-						Utility::OpenWithDefaultApplication(fileFullPaht_.wstring());
-					}
-				}
-			}
+			IterateFilesAndFolders();
 		}
-		
-		if (contextMenuFlg_)
-		{
-			// ボタン上で右クリックされたときの処理
-			ImGui::OpenPopup("ContextMenu");
-
-			Popup();
-		}
-
-		if (context_renameFlg_)
-		{
-			RenameWindow();
-		}
-
+		HandleContextMenu();
+		HandleFileRenamingWindow();
 
 		ImGui::End();
 	}
 
-	
 	fileFullPath = fileFullPaht_;
 	nowSelectFile = nowSelectFile_;
 	nowSelectFileName = nowSelectFileName_;
@@ -210,10 +161,8 @@ void Fream_FileDialog_Item::FileLogWindow()
 	ImGui::Begin("FileLog",nullptr, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar);
 
 	ImGui::Separator();
-	fileFullPaht_.clear();
+	
 	Recovery(nowSelect_);
-	fileFullPaht_ = fileFullPaht_.empty() ? std::filesystem::current_path() :
-		std::filesystem::current_path() /= fileFullPaht_;
 
 	ImGui::End();
 }
@@ -246,39 +195,46 @@ void Fream_FileDialog_Item::MakeFileImage(
 	
 	ImGui::BeginGroup();
 	{
-		// ユニークなIDを作成
+		// ボタンの識別子を取得
 		ImGuiID buttonID = ImGui::GetID(name.c_str());
 
-		// ボタンを生成
+		// ボタンの識別子をPushして、その中で処理を行う
 		ImGui::PushID(buttonID);
+
+		// ボタンが押されたかを示す変数
 		bool buttonPressed;
 
+		// FileAssignments関数を呼び出し、ファイルの割り当てとボタンの表示を行う
 		FileAssignments(name, buttonPressed, {buttonSize.x,buttonSize.y});
 		
+		// ボタンが左ダブルクリックされ、かつアイテムの上にカーソルがある場合
 		if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
 		{
-			// ボタンがダブルクリックされたときの処理
 			nowSelectFileName_ = name.c_str();
 		}
+		// ボタンが左クリックされ、かつアイテムの上にカーソルがある場合
 		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
 		{
-			//if (nowSelectFile_ != name.c_str())
+			// 現在選択されているファイルが変更された場合
+			if (nowSelectFile_ != name.c_str())
 			{
 				button_click_ = true;
 			}
-			// ボタンが押されたときの処理
 			nowSelectFile_ = name.c_str();
 			
 		}
+		// ボタンが右クリックされ、かつアイテムの上にカーソルがある場合
 		if (ImGui::IsMouseReleased(ImGuiMouseButton_Right) && ImGui::IsItemHovered())
 		{
+			// 右クリックされたファイル名を保持し、コンテキストメニューのフラグを立てる
 			fileName_ = name.c_str();
 			contextMenuFlg_ = true;
 		}
 
-		// 他の場所をクリックしたらコンテキストメニューを閉じる
+		// 左クリックまたは右クリックされた場合
 		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) || ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 		{
+			// 他のアイテムやウィンドウがホバーされておらず、カーソルがどこにもない場合、コンテキストメニューのフラグを解除する
 			if (!ImGui::IsAnyItemHovered() && !ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow))
 			{
 				contextMenuFlg_ = false;
@@ -289,11 +245,11 @@ void Fream_FileDialog_Item::MakeFileImage(
 
 		
 
-		// テキストの幅を計算
+		// ボタンのテキスト部分の処理を行う
 		std::wstring fileName = name.filename();
 		ImVec2 textSize = ImGui::CalcTextSize(Utility::WStringToUTF8(fileName).c_str());
 
-		// ボタンの幅と文字列の長さを比較し、ボタンの幅を超える場合は文字列を切り詰めて "..." を追加
+		// テキストがボタンの幅を超える場合は省略して表示する
 		if (textSize.x > buttonSize.x)
 		{
 			while (textSize.x > buttonSize.x && fileName.length() > 0)
@@ -313,7 +269,7 @@ void Fream_FileDialog_Item::MakeFileImage(
 		ImGui::SetCursorPosX(posX + buttonPos.x);
 		//ImGui::Text(fileName.c_str());
 
-		// 名前の色変更
+		// 拡張子が"cpp"または"h"でない場合、テキストを表示する(色も変更する)
 		if (!Utility::CharacterSearch(Utility::WStringToUTF8(fileName).c_str(), "cpp", { 0,1,1,1 }, Utility::WideStringToString(name)) &&
 			!Utility::CharacterSearch(Utility::WStringToUTF8(fileName).c_str(), "h", { 1,0,1,1 }, Utility::WideStringToString(name)))
 		{
@@ -337,7 +293,8 @@ void Fream_FileDialog_Item::FileAssignments(std::filesystem::path& name, bool& b
 	ImGuiCustom::SetCustomButtonStyle(ImGuiCol_ButtonHovered, ImVec4(0.5, 0.5, 0.7, 1));
 
 	
-	auto u8name = name.u8string();
+	//auto u8name = name.u8string();
+	auto u8fileName = name.filename().u8string();
 
 	if (std::filesystem::is_directory(name))
 	{
@@ -350,17 +307,17 @@ void Fream_FileDialog_Item::FileAssignments(std::filesystem::path& name, bool& b
 		{
 			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(ext), ImVec2(buttonSize.x_, buttonSize.y_));
 		}
-		else if (fileImageShaderDatas_.count(u8name))
+		else if (fileImageShaderDatas_.count(u8fileName))
 		{
-			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(u8name), ImVec2(buttonSize.x_, buttonSize.y_));
+			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(u8fileName), ImVec2(buttonSize.x_, buttonSize.y_));
 		}
 		else if (ext == "mv1")
 		{
-			fileImageShaderDatas_.emplace(u8name, nullptr);
-			auto IconDataPath = fileFullPaht_ / name;
-			CreateIcon(IconDataPath, u8name);
+			fileImageShaderDatas_.emplace(u8fileName, nullptr);
+			auto IconDataPath = fileFullPaht_ / u8fileName;
+			CreateIcon(IconDataPath, u8fileName);
 
-			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(u8name), ImVec2(buttonSize.x_, buttonSize.y_));
+			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(u8fileName), ImVec2(buttonSize.x_, buttonSize.y_));
 		}
 		else
 		{
@@ -417,6 +374,72 @@ void Fream_FileDialog_Item::RenameWindow()
 	ImGui::End();
 }
 
+void Fream_FileDialog_Item::IterateFilesAndFolders()
+{
+	// ファイル履歴表示ウィンドウを生成する処理
+	FileLogWindow();
+	// fileFullPaht_が空であれば現在の作業ディレクトリ(std::filesystem::current_path())を代入
+	// 空でなければ現在の作業ディレクトリの後にfileFullPaht_を追加して新しいパスを作成
+	fileFullPaht_ = fileFullPaht_.empty() ? std::filesystem::current_path() :
+		std::filesystem::current_path() /= fileFullPaht_;
+
+
+	auto current_path = std::filesystem::current_path();
+
+	// イテレータの作成
+	std::filesystem::directory_iterator itr(fileFullPaht_);
+	std::filesystem::directory_iterator end{};
+	std::wstring directoryName;
+
+	auto copySelectPath = nowSelectFileName_;
+
+	for (; itr != end; ++itr)
+	{
+		directoryName = itr->path().filename();
+
+		MakeFileImage(itr->path()/*現在フォルダの下の階層のファイル及びフォルダの名前*/);
+
+		if (nowSelectFileName_ != copySelectPath)
+		{
+			fileFullPaht_ /= nowSelectFileName_;
+			copySelectPath = nowSelectFileName_;
+
+			// フォルダの場合
+			if (std::filesystem::is_directory(fileFullPaht_))
+			{
+				directoryName = fileFullPaht_.filename();
+
+				nowSelect_->fileMap_.try_emplace(Utility::WideStringToString(directoryName), FileData(nowSelect_, Utility::WideStringToString(directoryName)));
+				nowSelect_ = &nowSelect_->fileMap_.at(Utility::WideStringToString(directoryName));
+			}
+			// ファイルの場合
+			else
+			{
+				Utility::OpenWithDefaultApplication(fileFullPaht_.wstring());
+			}
+		}
+	}
+}
+
+void Fream_FileDialog_Item::HandleContextMenu()
+{
+	if (contextMenuFlg_)
+	{
+		// ボタン上で右クリックされたときの処理
+		ImGui::OpenPopup("ContextMenu");
+
+		Popup();
+	}
+}
+
+void Fream_FileDialog_Item::HandleFileRenamingWindow()
+{
+	if (context_renameFlg_)
+	{
+		RenameWindow();
+	}
+}
+
 bool Fream_FileDialog_Item::SettingIcon(std::wstring& name, bool& buttonPressed, Vector2Flt buttonSize, std::string ext)
 {
 	if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(),ext))
@@ -430,26 +453,20 @@ bool Fream_FileDialog_Item::SettingIcon(std::wstring& name, bool& buttonPressed,
 
 bool Fream_FileDialog_Item::CreateIcon(std::filesystem::path path, std::string key)
 {
-	std::wstring wstrPath = path;
+	auto filePath = path.string();
 	
-	auto model = MV1LoadModel(Utility::WStringToUTF8(wstrPath).c_str());
+	auto model = MV1LoadModel(filePath.c_str());
 
 	MV1_REF_POLYGONLIST RefPoly;
+
+	
+	Vector3 scl = { 1.f,1.f,1.f };
 
 	// モデルの全フレームのポリゴンの情報を取得
 	RefPoly = MV1GetReferenceMesh(model, -1, TRUE);
 
-	RefPoly.MaxPosition;
-	RefPoly.MaxPosition;
-
-	/*for ()
-	{
-		if (CheckCameraViewClip(RefPoly.MaxPosition) || CheckCameraViewClip(RefPoly.MaxPosition))
-		{
-
-		}
-	}*/
-
+	auto minRP = RefPoly.MinPosition;
+	auto maxRP = RefPoly.MaxPosition;
 
 	// アンチエイリアシング処理
 	SetCreateDrawValidGraphMultiSample(4, 4);
@@ -460,23 +477,75 @@ bool Fream_FileDialog_Item::CreateIcon(std::filesystem::path path, std::string k
 	SetDrawScreen(handle);
 
 	// クリップ距離を設定する(SetDrawScreenでリセットされる)
-	// カメラのクリッピング距離を設定
+		// カメラのクリッピング距離を設定
 	SetCameraNearFar(10.0f, 300000.0f);
 	// クリップ距離を設定する(SetDrawScreenでリセットされる)
 	SetCameraPositionAndAngle(VGet(-293.486, 185, -279.488), 0.264, 0.808, 0.0f);
 
+	while (true)
+	{
+		// モデルの全フレームのポリゴンの情報を取得
+		RefPoly = MV1GetReferenceMesh(model, -1, TRUE);
+		// 頂点を更新
+		maxRP = RefPoly.MaxPosition;
+		minRP = RefPoly.MinPosition;
+		
+		// カメラ内に入りき　っているか
+		if (!CheckCameraViewClip(maxRP)&&
+			!CheckCameraViewClip(minRP))
+		{
+			break;
+		}
+		else
+		{
+			scl *= 0.9f;
+			MV1SetScale(model, scl.toVECTOR());
+			MV1RefreshReferenceMesh(model, -1, TRUE);
+		}
+	}
+
+	// 背景
 	DrawBox(0, 0, 1000, 1000, 0xffffff, true);
+
+	// ステージの描画
 	stage_->Update();
 	stage_->Draw();
-	MV1SetScale(model, VGet(1, 1, 1));
+
+	// モデルの大きさボックスの点
+	VECTOR a1 = { minRP.x,minRP.y,minRP.z };
+	VECTOR a2 = { maxRP.x,minRP.y,minRP.z };
+	VECTOR a3 = { minRP.x,maxRP.y,minRP.z };
+	VECTOR a4 = { maxRP.x,maxRP.y,minRP.z };
+	VECTOR a5 = { minRP.x,minRP.y,maxRP.z };
+	VECTOR a6 = { maxRP.x,minRP.y,maxRP.z };
+	VECTOR a7 = { minRP.x,maxRP.y,maxRP.z };
+	VECTOR a8 = { maxRP.x,maxRP.y,maxRP.z };
+
+	// 色の変更
+	int lineCol = 0x000000;
+	// モデルの大きさボックスの描画
+	DrawLine3D(a1,a3,lineCol);
+	DrawLine3D(a1,a2,lineCol);
+	DrawLine3D(a2,a4,lineCol);
+	DrawLine3D(a2,a6,lineCol);
+	DrawLine3D(a3,a7,lineCol);
+	DrawLine3D(a3,a4,lineCol);
+	DrawLine3D(a4,a8,lineCol);
+	DrawLine3D(a5,a6,lineCol);
+	DrawLine3D(a6,a8,lineCol);
+	DrawLine3D(a7,a8,lineCol);
+	
+	// モデルの描画
 	MV1DrawModel(model);
 
 	int textureSizeX;
 	int textureSizeY;
+	// テクスチャ描画
 	ImguiSup::LoadTextureFromFile(handle, &fileImageShaderDatas_.at(key), &textureSizeX, &textureSizeY);
 
 	MV1DeleteModel(model);
 	DeleteGraph(handle);
+	MV1TerminateReferenceMesh(model, -1, TRUE);
 	return false;
 }
 

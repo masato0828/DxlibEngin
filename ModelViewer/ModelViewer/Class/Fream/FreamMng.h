@@ -41,6 +41,12 @@ private:
     
 	void CreateMenuBer();
 
+	void ObjectDrawField();
+
+	void ConsoleWindow();
+	// コンソールにテキストを追加する関数
+	void AddConsoleText(const std::string& text);
+
 	std::unique_ptr<Fream_SceneView> sceneView_;
 	std::unique_ptr<Fream_DokingArea> dokingArea_;
 	std::unique_ptr<Fream_Stage> stage_;
@@ -66,5 +72,9 @@ private:
 
 	int screen_;
 
+
+	int testModel_;
+	std::string consoleTextBuffer_;
+	Vector3 scl = { 1.f,1.f,1.f };
 };
 
