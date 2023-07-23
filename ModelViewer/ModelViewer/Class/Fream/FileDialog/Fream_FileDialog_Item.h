@@ -87,15 +87,23 @@ private:
 	/// <param name="buttonSize"></param>
 	/// <param name="ext"></param>
 	/// <returns></returns>
-	bool SettingIcon(std::wstring& name, bool& buttonPressed, Vector2Flt buttonSize, std::string ext);
+	bool SettingIcon(std::wstring& name, bool& buttonPressed, Vector2Flt buttonSize, std::wstring ext);
 
 	/// <summary>
-	/// アイコンを生成する処理
+	/// 3Dモデルのアイコンを生成する処理
 	/// </summary>
 	/// <param name="path"></param>
 	/// <param name="key"></param>
 	/// <returns></returns>
-	bool CreateIcon(std::filesystem::path path, std::string key);
+	bool CreateModelIcon(std::filesystem::path path, std::wstring key);
+
+	/// <summary>
+	/// ２D画像のアイコンを生成する処理
+	/// </summary>
+	/// <param name="path"></param>
+	/// <param name="key"></param>
+	/// <returns></returns>
+	bool CreateImageIcon(std::filesystem::path path, std::wstring key);
 
 	/// <summary>
 	/// ファイル名変更ウィンドウを生成する処理
@@ -128,7 +136,7 @@ private:
 
 	// シェーダ情報の作成
 	ID3D11ShaderResourceView* my_shaderData = NULL;
-	std::map<std::string, ID3D11ShaderResourceView*> fileImageShaderDatas_;
+	std::map<std::wstring, ID3D11ShaderResourceView*> fileImageShaderDatas_;
 
 	std::unique_ptr<Fream_Stage> stage_;
 

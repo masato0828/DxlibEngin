@@ -23,38 +23,38 @@ void Fream_FileDialog_Item::Init()
 	context_renameFlg_ = false;
 
 	fileImageShaderDatas_ = {
-		{"non",nullptr},
-		{"cpp",nullptr},
-		{"h",nullptr},
-		{"hlsl",nullptr},
-		{"hlsli",nullptr},
-		{"txt",nullptr},
-		{"hpp",nullptr},
-		{"vs",nullptr},
-		{"ps",nullptr},
-		{"file",nullptr},
-		{"test",nullptr},
+		{L"non",nullptr},
+		{L"cpp",nullptr},
+		{L"h",nullptr},
+		{L"hlsl",nullptr},
+		{L"hlsli",nullptr},
+		{L"txt",nullptr},
+		{L"hpp",nullptr},
+		{L"vs",nullptr},
+		{L"ps",nullptr},
+		{L"file",nullptr},
+		{L"test",nullptr},
 	};
 
 	int textureSizeX;
 	int textureSizeY;
-	ImguiSup::LoadBackGroundTextureFromFile(&fileImageShaderDatas_.at("non"),&textureSizeX,&textureSizeY);
+	ImguiSup::LoadBackGroundTextureFromFile(&fileImageShaderDatas_.at(L"non"),&textureSizeX,&textureSizeY);
 
-	ImguiSup::LoadTextureFromFile("data/iconData/CPP.png", &fileImageShaderDatas_.at("cpp"), &textureSizeX, &textureSizeY);
-	ImguiSup::LoadTextureFromFile("data/iconData/h.png", &fileImageShaderDatas_.at("h"), &textureSizeX, &textureSizeY);
-	ImguiSup::LoadTextureFromFile("data/iconData/hlsl.png", &fileImageShaderDatas_.at("hlsl"), &textureSizeX, &textureSizeY);
-	ImguiSup::LoadTextureFromFile("data/iconData/hlsli.png", &fileImageShaderDatas_.at("hlsli"), &textureSizeX, &textureSizeY);
-	ImguiSup::LoadTextureFromFile("data/iconData/txt.png", &fileImageShaderDatas_.at("txt"), &textureSizeX, &textureSizeY);
-	ImguiSup::LoadTextureFromFile("data/iconData/file.png", &fileImageShaderDatas_.at("file"), &textureSizeX, &textureSizeY);
-	ImguiSup::LoadTextureFromFile("data/iconData/HPP.png", &fileImageShaderDatas_.at("hpp"), &textureSizeX, &textureSizeY);
-	ImguiSup::LoadTextureFromFile("data/iconData/vs.png", &fileImageShaderDatas_.at("vs"), &textureSizeX, &textureSizeY);
-	ImguiSup::LoadTextureFromFile("data/iconData/ps.png", &fileImageShaderDatas_.at("ps"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/CPP.png", &fileImageShaderDatas_.at(L"cpp"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/h.png", &fileImageShaderDatas_.at(L"h"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/hlsl.png", &fileImageShaderDatas_.at(L"hlsl"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/hlsli.png", &fileImageShaderDatas_.at(L"hlsli"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/txt.png", &fileImageShaderDatas_.at(L"txt"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/file.png", &fileImageShaderDatas_.at(L"file"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/HPP.png", &fileImageShaderDatas_.at(L"hpp"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/vs.png", &fileImageShaderDatas_.at(L"vs"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/ps.png", &fileImageShaderDatas_.at(L"ps"), &textureSizeX, &textureSizeY);
 
 
 
 	stage_ = std::make_unique<Fream_Stage>();
 
-	CreateIcon("data/Bomber_2.mv1","test");
+	CreateModelIcon("data/Bomber_2.mv1",L"test");
 	
 }
 void Fream_FileDialog_Item::Update()
@@ -302,15 +302,27 @@ void Fream_FileDialog_Item::FileAssignments(std::filesystem::path& name, bool& b
 
 	
 	//auto u8name = name.u8string();
-	auto u8fileName = name.filename().u8string();
+	auto u8fileName = name.filename().wstring();
+	auto wfileName = Utility::WideStringToString(name.filename());
 
 	if (std::filesystem::is_directory(name))
 	{
-		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at("file"), ImVec2(buttonSize.x_, buttonSize.y_));
+		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(L"file"), ImVec2(buttonSize.x_, buttonSize.y_));
 	}
 	else
 	{
-		auto ext = name.extension().u8string().substr(1);
+		// 拡張子がない場合
+		if (name.extension() == "")
+		{
+			ImGuiCustom::SetCustomButtonStyle(ImGuiCol_Button, ImVec4(0.2, 0.2, 0.4, 1));
+			buttonPressed = ImGui::ImageButton((void*)my_shaderData, ImVec2(buttonSize.x_, buttonSize.y_));
+			// カスタムスタイルを元に戻す
+			//ImGui::StyleColorsDark();
+			ImGui::StyleColorsClassic();
+			return;
+		}
+
+		auto ext = name.extension().wstring().substr(1);
 		if (fileImageShaderDatas_.count(ext))
 		{
 			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(ext), ImVec2(buttonSize.x_, buttonSize.y_));
@@ -319,11 +331,19 @@ void Fream_FileDialog_Item::FileAssignments(std::filesystem::path& name, bool& b
 		{
 			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(u8fileName), ImVec2(buttonSize.x_, buttonSize.y_));
 		}
-		else if (ext == "mv1")
+		else if (ext == L"mv1")
 		{
 			fileImageShaderDatas_.emplace(u8fileName, nullptr);
 			auto IconDataPath = fileFullPaht_ / u8fileName;
-			CreateIcon(IconDataPath, u8fileName);
+			CreateModelIcon(IconDataPath, u8fileName);
+
+			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(u8fileName), ImVec2(buttonSize.x_, buttonSize.y_));
+		}
+		else if (ext == L"png")
+		{
+			fileImageShaderDatas_.emplace(u8fileName, nullptr);
+			auto IconDataPath = fileFullPaht_ / u8fileName;
+			CreateImageIcon(IconDataPath, u8fileName);
 
 			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(u8fileName), ImVec2(buttonSize.x_, buttonSize.y_));
 		}
@@ -338,6 +358,58 @@ void Fream_FileDialog_Item::FileAssignments(std::filesystem::path& name, bool& b
 	// カスタムスタイルを元に戻す
 	//ImGui::StyleColorsDark();
 	ImGui::StyleColorsClassic();
+}
+
+bool Fream_FileDialog_Item::CreateImageIcon(std::filesystem::path path, std::wstring key)
+{
+	auto filePath = path.string();
+
+	auto image = LoadGraph(filePath.c_str());
+
+	if (image == -1)
+	{
+		return false;
+	}
+
+	int x, y;
+	GetGraphSize(image,&x,&y);
+
+	int thickness = 2;
+	Vector2 thicknessXY = {0,0};
+
+	if (x > 64)
+	{
+		thicknessXY.x_ += 2;
+	}
+	if (y > 64)
+	{
+		thicknessXY.y_ += 2;
+	}
+
+	// 20x20サイズのアルファチャンネルなしの描画可能画像を作成する
+	auto handle = MakeScreen(x, y, true);
+
+	// 作成した画像を描画対象にする
+	SetDrawScreen(handle);
+
+	//画像の描画
+	DrawGraph(0,0,image,true);
+
+	// 画像を囲む枠の描画
+	DrawLine(thicknessXY.x_, 0, thicknessXY.x_, y , 0xffffff, thickness);
+	DrawLine(0, thicknessXY.y_, x, thicknessXY.y_, 0xffffff, thickness);
+	DrawLine(x - thicknessXY.x_, 0, x - thicknessXY.x_, y, 0xffffff, thickness);
+	DrawLine(x, y - thicknessXY.y_, 0, y - thicknessXY.y_, 0xffffff, thickness);
+
+
+	int textureSizeX;
+	int textureSizeY;
+	// テクスチャ描画
+	ImguiSup::LoadTextureFromFile(handle, &fileImageShaderDatas_.at(key), &textureSizeX, &textureSizeY);
+
+	DeleteGraph(image);
+	DeleteGraph(handle);
+	return true;
 }
 
 void Fream_FileDialog_Item::RenameWindow()
@@ -449,9 +521,9 @@ void Fream_FileDialog_Item::HandleFileRenamingWindow()
 	}
 }
 
-bool Fream_FileDialog_Item::SettingIcon(std::wstring& name, bool& buttonPressed, Vector2Flt buttonSize, std::string ext)
+bool Fream_FileDialog_Item::SettingIcon(std::wstring& name, bool& buttonPressed, Vector2Flt buttonSize, std::wstring ext)
 {
-	if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(),ext))
+	if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(),Utility::WideStringToString(ext)))
 	{
 		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(ext), ImVec2(buttonSize.x_, buttonSize.y_));
 		return true;
@@ -460,11 +532,16 @@ bool Fream_FileDialog_Item::SettingIcon(std::wstring& name, bool& buttonPressed,
 	return false;
 }
 
-bool Fream_FileDialog_Item::CreateIcon(std::filesystem::path path, std::string key)
+bool Fream_FileDialog_Item::CreateModelIcon(std::filesystem::path path, std::wstring key)
 {
 	auto filePath = path.string();
 	
 	auto model = MV1LoadModel(filePath.c_str());
+
+	if (model == -1)
+	{
+		return false;
+	}
 
 	MV1_REF_POLYGONLIST RefPoly;
 
@@ -555,7 +632,7 @@ bool Fream_FileDialog_Item::CreateIcon(std::filesystem::path path, std::string k
 	MV1DeleteModel(model);
 	DeleteGraph(handle);
 	MV1TerminateReferenceMesh(model, -1, TRUE);
-	return false;
+	return true;
 }
 
 bool& Fream_FileDialog_Item::GetButton_Click()
