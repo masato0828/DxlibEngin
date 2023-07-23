@@ -180,7 +180,15 @@ void Fream_FileDialog_Item::Recovery(FileData* selectData)
 	// ボタンのサイズと文字の配置を設定する
 	if (ImGui::SmallButton(selectData->myName.c_str()))
 	{
+		std::wstring find = L"\\";
+		std::wstring findName = find + Utility::StringToWideString(nowSelect_->myName);
+
+		size_t found = nowSelectFileName_.find(findName);
+		if (found != std::wstring::npos) {
+			nowSelectFileName_.erase(found, findName.length());
+		}
 		nowSelect_ = selectData;
+		
 		return;
 	}
 
@@ -398,6 +406,7 @@ void Fream_FileDialog_Item::IterateFilesAndFolders()
 		directoryName = itr->path().filename();
 
 		MakeFileImage(itr->path()/*現在フォルダの下の階層のファイル及びフォルダの名前*/);
+
 
 		if (nowSelectFileName_ != copySelectPath)
 		{
