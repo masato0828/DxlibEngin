@@ -242,7 +242,7 @@ void Fream_FileDialog::EditMainCppCode()
 		}
 	}
 
-	for (const auto& line : lines)//aaaaaaaaaaaaaaaaa
+	for (const auto& line : lines)
 	{
 		ImVec4 color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 		ImGui::TextColored(color, line.c_str());

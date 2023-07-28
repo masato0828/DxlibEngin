@@ -4,6 +4,7 @@
 #include <shlwapi.h>
 #include <fstream>
 #include <regex>
+#include <Shlwapi.h>
 
 // 度からラジアン角度に
 float Utility::Deg2Rad(float deg)

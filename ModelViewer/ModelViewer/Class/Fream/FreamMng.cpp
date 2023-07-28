@@ -149,7 +149,7 @@ void FreamMng::Update(bool window_open_flg)
                 sceneView_->GetDefaultImageSize());
 
             // カメラの更新
-            camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());
+            //camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());
 
             // オプション項目を開いているかどうか
             if (optionWindowFlg_) { OptionWindow(); };
@@ -182,8 +182,13 @@ void FreamMng::Update(bool window_open_flg)
 
 void FreamMng::Draw()
 {
+    // ゲーム内Update処理
+    {
 
+        // カメラの更新
+        camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());
 
+    }
     stage_->PreviewMake();
 
     SetDrawScreen(screen_);
@@ -474,23 +479,53 @@ void FreamMng::ConsoleWindow()
 {
     ImGui::SetNextWindowSize(ImVec2{ 400, 100 }, ImGuiCond_Once);
     ImGui::Begin("Console");
-    if (ImGui::Button("clear"))
+
+    if (ImGui::SmallButton("clear"))
     {
+        consoleTextBufferCnt_ = 0;
         consoleTextBuffer_.clear();
     }
 
+    // セパレーター1つ＋入力テキスト1つ分の高さを確保する
+    const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
+    const float footer_with_to_reserve = ImGui::GetStyle().ItemSpacing.x;
+    ImGui::BeginChild("debuglog", ImVec2(-footer_with_to_reserve, -footer_height_to_reserve), true,ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
+    
     ImGui::Separator();
-
+ 
     // コンソールテキストを表示
     ImGui::TextUnformatted(consoleTextBuffer_.c_str());
+
+    
+
+    // 操作していない時スクロールバーを固定
+    if ((ImGui::GetScrollY() >= ImGui::GetScrollMaxY()))
+    {
+        ImGui::SetScrollHereY(1.0f);
+    }
+
+    
+
+    ImGui::EndChild();
+
+    static char buffer[256] = "";
+
+    ImGui::Text(u8"テキスト入力"); ImGui::SameLine();
+    ImGui::InputText("##", buffer, 256); ImGui::SameLine();
+
+    if (ImGui::SmallButton(u8"出力"))
+    {
+        AddConsoleText(buffer);
+    }
 
     ImGui::End();
 }
 
 void FreamMng::AddConsoleText(const std::string& text)
 {
+    consoleTextBufferCnt_++;
     // テキストをバッファに追加
-    consoleTextBuffer_ += text + "\n";
+    consoleTextBuffer_ += "["+std::to_string(consoleTextBufferCnt_)+"]:" + text + "\n";
 }
 
 void FreamMng::OptionWindow()

@@ -135,7 +135,6 @@ private:
 	bool contextMenuFlg_;
 
 	// シェーダ情報の作成
-	ID3D11ShaderResourceView* my_shaderData = NULL;
 	std::map<std::wstring, ID3D11ShaderResourceView*> fileImageShaderDatas_;
 
 	std::unique_ptr<Fream_Stage> stage_;

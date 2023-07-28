@@ -1,5 +1,6 @@
 struct PixelInput
 {
+    float4 pos : SV_Position;
     float4 dif : COLOR; // ディフューズ
     float4 spc : COLOR1; // スペキュラ
     float2 uv : TEXCOORD0;
@@ -86,6 +87,7 @@ float4 main(PixelInput input) : SV_Target
 
     // 領域ごとに値を増加させる
     float a = 0.0;
+    [unroll(4)]
     for (int i = 0; i < _div * 0.5; i++)
     {
         a = min(a + trs(f_st, time, _div, i), 1);

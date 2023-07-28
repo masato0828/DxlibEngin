@@ -32,7 +32,6 @@ float WhiteNoise(float2 coord)
 //float4 main(Pixel_UV pixel) : SV_TARGET
 float4 main(PS_INPUT pixel) : SV_TARGET
 {
-
     float2 samplePoint = pixel.uv;
     float4 Tex = mainTexture.Sample(mainSampler, samplePoint);
     float noise = WhiteNoise(pixel.uv * time) - 0.5;

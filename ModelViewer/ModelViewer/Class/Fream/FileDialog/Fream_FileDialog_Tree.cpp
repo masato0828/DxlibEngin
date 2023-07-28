@@ -112,7 +112,7 @@ void Fream_FileDialog_Tree::Tree(std::filesystem::path directory, FileData& file
 
 		// データの作成　自分の
 		//auto[dataItr,empFlag] = fileData.fileMap_.try_emplace(directoryName, FileData());
-		auto data = fileData.fileMap_.try_emplace(directoryName.c_str(), FileData(&fileData, directoryName.c_str())).first;
+		auto data = fileData.fileMap_.try_emplace(directoryName.c_str(), FileData( & fileData, directoryName.c_str() )).first;
 
 		// 選択しているかどうか
 		//const bool is_selected = &dataItr->second == nowSelect;

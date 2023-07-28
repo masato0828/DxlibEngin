@@ -75,6 +75,7 @@ private:
 
 	int testModel_;
 	std::string consoleTextBuffer_;
+	int consoleTextBufferCnt_;
 	Vector3 scl = { 1.f,1.f,1.f };
 };
 

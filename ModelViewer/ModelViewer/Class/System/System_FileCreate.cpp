@@ -266,7 +266,7 @@ void System_FileCreate::InputFolderName(std::wstring& text, bool& seacthFolderOp
     ImGui::InputText("##label", buffer, 1060);
 
     std::string spath = buffer;
-    text = Utility::StringToWideString(spath);
+    text = Utility::MultiByteToUnicode(spath);
     ImGui::SameLine();
     if (ImGui::SmallButton(u8"éQè∆"))
     {

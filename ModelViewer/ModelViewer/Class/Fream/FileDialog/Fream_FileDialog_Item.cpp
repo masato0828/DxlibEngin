@@ -34,6 +34,7 @@ void Fream_FileDialog_Item::Init()
 		{L"ps",nullptr},
 		{L"file",nullptr},
 		{L"test",nullptr},
+		{L"unknown",nullptr},
 	};
 
 	int textureSizeX;
@@ -49,6 +50,7 @@ void Fream_FileDialog_Item::Init()
 	ImguiSup::LoadTextureFromFile("data/iconData/HPP.png", &fileImageShaderDatas_.at(L"hpp"), &textureSizeX, &textureSizeY);
 	ImguiSup::LoadTextureFromFile("data/iconData/vs.png", &fileImageShaderDatas_.at(L"vs"), &textureSizeX, &textureSizeY);
 	ImguiSup::LoadTextureFromFile("data/iconData/ps.png", &fileImageShaderDatas_.at(L"ps"), &textureSizeX, &textureSizeY);
+	ImguiSup::LoadTextureFromFile("data/iconData/unknown.png", &fileImageShaderDatas_.at(L"unknown"), &textureSizeX, &textureSizeY);
 
 
 
@@ -181,7 +183,7 @@ void Fream_FileDialog_Item::Recovery(FileData* selectData)
 	if (ImGui::SmallButton(selectData->myName.c_str()))
 	{
 		std::wstring find = L"\\";
-		std::wstring findName = find + Utility::StringToWideString(nowSelect_->myName);
+		std::wstring findName = find + Utility::MultiByteToUnicode(nowSelect_->myName);
 
 		size_t found = nowSelectFileName_.find(findName);
 		if (found != std::wstring::npos) {
@@ -315,7 +317,7 @@ void Fream_FileDialog_Item::FileAssignments(std::filesystem::path& name, bool& b
 		if (name.extension() == "")
 		{
 			ImGuiCustom::SetCustomButtonStyle(ImGuiCol_Button, ImVec4(0.2, 0.2, 0.4, 1));
-			buttonPressed = ImGui::ImageButton((void*)my_shaderData, ImVec2(buttonSize.x_, buttonSize.y_));
+			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(L"unknown"), ImVec2(buttonSize.x_, buttonSize.y_));
 			// カスタムスタイルを元に戻す
 			//ImGui::StyleColorsDark();
 			ImGui::StyleColorsClassic();
@@ -349,8 +351,7 @@ void Fream_FileDialog_Item::FileAssignments(std::filesystem::path& name, bool& b
 		}
 		else
 		{
-			ImGuiCustom::SetCustomButtonStyle(ImGuiCol_Button, ImVec4(0.2, 0.2, 0.4, 1));
-			buttonPressed = ImGui::ImageButton((void*)my_shaderData, ImVec2(buttonSize.x_, buttonSize.y_));
+			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(L"unknown"), ImVec2(buttonSize.x_, buttonSize.y_));
 		}
 	}
 
@@ -545,10 +546,10 @@ bool Fream_FileDialog_Item::CreateModelIcon(std::filesystem::path path, std::wst
 
 	MV1_REF_POLYGONLIST RefPoly;
 
-	
+	//
 	Vector3 scl = { 1.f,1.f,1.f };
 
-	// モデルの全フレームのポリゴンの情報を取得
+	//// モデルの全フレームのポリゴンの情報を取得
 	RefPoly = MV1GetReferenceMesh(model, -1, TRUE);
 
 	auto minRP = RefPoly.MinPosition;
@@ -597,30 +598,30 @@ bool Fream_FileDialog_Item::CreateModelIcon(std::filesystem::path path, std::wst
 	stage_->Update();
 	stage_->Draw();
 
-	// モデルの大きさボックスの点
-	VECTOR a1 = { minRP.x,minRP.y,minRP.z };
-	VECTOR a2 = { maxRP.x,minRP.y,minRP.z };
-	VECTOR a3 = { minRP.x,maxRP.y,minRP.z };
-	VECTOR a4 = { maxRP.x,maxRP.y,minRP.z };
-	VECTOR a5 = { minRP.x,minRP.y,maxRP.z };
-	VECTOR a6 = { maxRP.x,minRP.y,maxRP.z };
-	VECTOR a7 = { minRP.x,maxRP.y,maxRP.z };
-	VECTOR a8 = { maxRP.x,maxRP.y,maxRP.z };
+	//// モデルの大きさボックスの点
+	//VECTOR a1 = { minRP.x,minRP.y,minRP.z };
+	//VECTOR a2 = { maxRP.x,minRP.y,minRP.z };
+	//VECTOR a3 = { minRP.x,maxRP.y,minRP.z };
+	//VECTOR a4 = { maxRP.x,maxRP.y,minRP.z };
+	//VECTOR a5 = { minRP.x,minRP.y,maxRP.z };
+	//VECTOR a6 = { maxRP.x,minRP.y,maxRP.z };
+	//VECTOR a7 = { minRP.x,maxRP.y,maxRP.z };
+	//VECTOR a8 = { maxRP.x,maxRP.y,maxRP.z };
 
-	// 色の変更
-	int lineCol = 0x000000;
-	// モデルの大きさボックスの描画
-	DrawLine3D(a1,a3,lineCol);
-	DrawLine3D(a1,a2,lineCol);
-	DrawLine3D(a2,a4,lineCol);
-	DrawLine3D(a2,a6,lineCol);
-	DrawLine3D(a3,a7,lineCol);
-	DrawLine3D(a3,a4,lineCol);
-	DrawLine3D(a4,a8,lineCol);
-	DrawLine3D(a5,a6,lineCol);
-	DrawLine3D(a6,a8,lineCol);
-	DrawLine3D(a7,a8,lineCol);
-	
+	//// 色の変更
+	//int lineCol = 0x000000;
+	//// モデルの大きさボックスの描画
+	//DrawLine3D(a1,a3,lineCol);
+	//DrawLine3D(a1,a2,lineCol);
+	//DrawLine3D(a2,a4,lineCol);
+	//DrawLine3D(a2,a6,lineCol);
+	//DrawLine3D(a3,a7,lineCol);
+	//DrawLine3D(a3,a4,lineCol);
+	//DrawLine3D(a4,a8,lineCol);
+	//DrawLine3D(a5,a6,lineCol);
+	//DrawLine3D(a6,a8,lineCol);
+	//DrawLine3D(a7,a8,lineCol);
+	//
 	// モデルの描画
 	MV1DrawModel(model);
 
