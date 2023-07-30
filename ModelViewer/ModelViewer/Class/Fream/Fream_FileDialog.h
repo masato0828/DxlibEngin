@@ -12,6 +12,7 @@
 #include "FileDialog\Fream_FileDialog_Project.h"
 #include "FileDialog\Fream_FileDialog_Item.h"
 #include "../../imGui/ImGuiColorTextEdit/TextEditor.h"
+#include "FileDialog\Fream_FileDialog_CodeEditer.h"
 
 class Fream_FileDialog :
     public FreamBase
@@ -22,6 +23,8 @@ public:
     ~Fream_FileDialog();
     void Init();
     void Update();
+
+    std::filesystem::path GetNowFile();
 private:
 
     void EditMainCppCode();
@@ -44,13 +47,10 @@ private:
 
     std::wstring nowSelectFile_;
 
-    // シェーダ情報の作成
-    ID3D11ShaderResourceView* my_shaderData = NULL;
-    std::vector<ID3D11ShaderResourceView*> my_shaderData_vector_;
-
     std::unique_ptr<Fream_FileDialog_Tree>tree_;
     std::unique_ptr<Fream_FileDialog_Project>project_;
     std::unique_ptr<Fream_FileDialog_Item>item_;
+    std::unique_ptr<Fream_FileDialog_CodeEditer>codeEditer_;
 
     std::vector<std::string> lines;  // 文字列を行ごとに分割するためのベクター
 

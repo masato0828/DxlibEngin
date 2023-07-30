@@ -18,6 +18,8 @@ public:
 		std::filesystem::path& nowSelectPath,
 		std::wstring& nowSelectFileName);
 
+
+
 private:
 
 	std::filesystem::path nowSelectPath_;

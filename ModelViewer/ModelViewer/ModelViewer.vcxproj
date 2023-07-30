@@ -49,6 +49,7 @@
     <ClCompile Include="Class\System\Application.cpp" />
     <ClCompile Include="Class\System\ImguiImageStb.cpp" />
     <ClCompile Include="Class\System\System_FileCreate.cpp" />
+    <ClCompile Include="Class\Fream\FileDialog\CreateIcon\CreateIcons.cpp" />
     <ClCompile Include="imGui\CustomFont.cpp" />
     <ClCompile Include="imGui\ImFileDialog.cpp" />
     <ClCompile Include="imGui\imgui.cpp" />
@@ -99,6 +100,7 @@
     <ClInclude Include="Class\System\Application.h" />
     <ClInclude Include="Class\System\ImguiImageStb.h" />
     <ClInclude Include="Class\System\System_FileCreate.h" />
+    <ClInclude Include="Class\Fream\FileDialog\CreateIcon\CreateIcons.h" />
     <ClInclude Include="imGui\CustomFont.h" />
     <ClInclude Include="imGui\imconfig.h" />
     <ClInclude Include="imGui\ImFileDialog.h" />

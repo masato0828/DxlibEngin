@@ -7,6 +7,7 @@
 #include "../../System/ImguiImageStb.h"
 #include "../../Common/Vector2.h"
 #include "../Fream_Stage.h"
+#include "CreateIcon\CreateIcons.h"
 
 // ファイルダイアログ作成クラス
 class Fream_FileDialog_Item :
@@ -66,44 +67,9 @@ private:
 	void Recovery(FileData* selectData);
 
 	/// <summary>
-	/// ファイルアイコンを生成する処理 
+	/// ファイルの作成
 	/// </summary>
-	/// <param name="name"></param>
-	void MakeFileImage(std::filesystem::path name);
-
-	/// <summary>
-	/// ファイルアイコンを表示する処理 
-	/// </summary>
-	/// <param name="name"></param>
-	/// <param name="buttonPressed"></param>
-	/// <param name="buttonSize"></param>
-	void FileAssignments(std::filesystem::path& name, bool& buttonPressed, Vector2Flt buttonSize);
-
-	/// <summary>
-	/// アイコン設定の処理
-	/// </summary>
-	/// <param name="name"></param>
-	/// <param name="buttonPressed"></param>
-	/// <param name="buttonSize"></param>
-	/// <param name="ext"></param>
-	/// <returns></returns>
-	bool SettingIcon(std::wstring& name, bool& buttonPressed, Vector2Flt buttonSize, std::wstring ext);
-
-	/// <summary>
-	/// 3Dモデルのアイコンを生成する処理
-	/// </summary>
-	/// <param name="path"></param>
-	/// <param name="key"></param>
-	/// <returns></returns>
-	bool CreateModelIcon(std::filesystem::path path, std::wstring key);
-
-	/// <summary>
-	/// ２D画像のアイコンを生成する処理
-	/// </summary>
-	/// <param name="path"></param>
-	/// <param name="key"></param>
-	/// <returns></returns>
-	bool CreateImageIcon(std::filesystem::path path, std::wstring key);
+	void CreateFiles(std::filesystem::path name);
 
 	/// <summary>
 	/// ファイル名変更ウィンドウを生成する処理
@@ -134,10 +100,7 @@ private:
 
 	bool contextMenuFlg_;
 
-	// シェーダ情報の作成
-	std::map<std::wstring, ID3D11ShaderResourceView*> fileImageShaderDatas_;
-
-	std::unique_ptr<Fream_Stage> stage_;
+	
 
 	bool button_click_;
 
@@ -145,9 +108,7 @@ private:
 
 	bool context_renameFlg_;
 
-	int inputHandle_;
-		
-
+	std::unique_ptr<CreateIcons> icon_;
 	
 };
 

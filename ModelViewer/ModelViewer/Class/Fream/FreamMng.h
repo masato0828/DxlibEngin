@@ -1,5 +1,7 @@
 #pragma once
 #include <memory>
+#include <sstream>
+
 #include "../Common/Vector2.h"
 #include "Fream_DokingArea.h"
 #include "Fream_Stage.h"
@@ -77,5 +79,10 @@ private:
 	std::string consoleTextBuffer_;
 	int consoleTextBufferCnt_;
 	Vector3 scl = { 1.f,1.f,1.f };
+
+	// nŒ…‚Ìƒ[ƒ–„‚ß‚ğs‚¤Û‚Ì”’l
+	const int ZERO_PADDING_DIGITS = 4;
+
+
 };
 

@@ -1,6 +1,7 @@
 ﻿#include <Dxlib.h>
 #include <memory>
 #include <string>
+
 #include "FreamMng.h"
 #include "../../imGui/imgui.h"
 #include "../../imGui/imgui_impl_dx11.h"
@@ -523,9 +524,20 @@ void FreamMng::ConsoleWindow()
 
 void FreamMng::AddConsoleText(const std::string& text)
 {
+    std::string formattedText;
+    std::stringstream ss;
+    // n桁のゼロ埋め形式で文字列を生成
+    ss << std::setw(4) << std::setfill('0') << consoleTextBufferCnt_;
+
     consoleTextBufferCnt_++;
+
+    // n桁のゼロ埋め形式で文字列を生成
+    ss.str("");
+    ss << std::setw(4) << std::setfill('0') << consoleTextBufferCnt_;
+    formattedText = ss.str();
+
     // テキストをバッファに追加
-    consoleTextBuffer_ += "["+std::to_string(consoleTextBufferCnt_)+"]:" + text + "\n";
+    consoleTextBuffer_ += "["+formattedText+"]:" + text + "\n";
 }
 
 void FreamMng::OptionWindow()

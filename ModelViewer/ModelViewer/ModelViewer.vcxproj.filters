@@ -237,6 +237,9 @@
     <ClCompile Include="Class\System\System_FileCreate.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Class\Fream\FileDialog\CreateIcon\CreateIcons.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class\System\Application.h">
@@ -486,6 +489,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Class\System\System_FileCreate.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Class\Fream\FileDialog\CreateIcon\CreateIcons.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
