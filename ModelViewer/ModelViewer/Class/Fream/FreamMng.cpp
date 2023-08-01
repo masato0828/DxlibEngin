@@ -100,8 +100,8 @@ void FreamMng::Update(bool window_open_flg)
         ImGuiWindowFlags_MenuBar |
         ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoBringToFrontOnFocus |
-        ImGuiWindowFlags_NoNavFocus
-        |ImGuiWindowFlags_NoTitleBar;
+        ImGuiWindowFlags_NoNavFocus|
+        ImGuiWindowFlags_NoTitleBar;
 
     // Imgui用ウィンドウクラスの作成
     ImGuiWindowClass window_class;

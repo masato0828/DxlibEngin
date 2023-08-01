@@ -36,6 +36,8 @@ void Fream_FileDialog_Item::Update(FileData*& nowselect,std::filesystem::path& f
 	nowSelectFileName_ = nowSelectFileName;
 	fileFullPaht_.clear();
 
+	
+
 	// DockSpaceの生成処理
 	DokingWindow();
 
@@ -75,7 +77,7 @@ void Fream_FileDialog_Item::DokingWindow()
 		if (ImGui::DockBuilderGetNode(dockspace_id) == NULL)
 		{
 			ImGui::DockBuilderRemoveNode(dockspace_id); // Clear out existing layout
-			ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace); // Add empty node
+			ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_NoDockingSplitMe); // Add empty node
 
 			ImGuiID dock_main_id = dockspace_id;
 			ImGuiID dock_id_FileDialog = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.01, NULL, &dock_main_id);
@@ -316,7 +318,6 @@ void Fream_FileDialog_Item::IterateFilesAndFolders()
 	// 空でなければ現在の作業ディレクトリの後にfileFullPaht_を追加して新しいパスを作成
 	fileFullPaht_ = fileFullPaht_.empty() ? std::filesystem::current_path() :
 		std::filesystem::current_path() /= fileFullPaht_;
-
 
 	auto current_path = std::filesystem::current_path();
 
