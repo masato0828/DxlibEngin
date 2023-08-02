@@ -92,10 +92,10 @@ void System_FileCreate::IsMainFile()
             appOpenFlg_ = true;
         }
 
-       
+        ImGui::End();
 
     }
-    ImGui::End();
+   
 
     //再度開くときのため、
     //systemFullPath_　を取得しておかなければならない
