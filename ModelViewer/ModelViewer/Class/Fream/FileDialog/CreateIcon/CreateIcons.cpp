@@ -156,30 +156,34 @@ bool CreateIcons::SettingIcon(std::wstring& name, bool& buttonPressed, Vector2Fl
 
 bool CreateIcons::CreateModelIcon(std::filesystem::path path, std::wstring key)
 {
+	// 画像のサイズ
+	Vector2 ImageSize = { 256 ,256};
+	// 画像の背景色
+	auto backImageColor = 0xfafafa;
+	// 画像に表示する文字の色
+	auto extensionColor = 0xff0000;
+	//Samples:マルチサンプル処理に使用するドット数(多いほど重くなります)  Quality : マルチサンプル処理の品質
+	auto samples = 4;
+	auto quality = 4;
+	// モデルのサイズ
+	Vector3 scl = { 1.f,1.f,1.f };
+
 	auto filePath = path.string();
-
 	auto model = MV1LoadModel(filePath.c_str());
-
 	if (model == -1)
 	{
 		return false;
 	}
-
 	MV1_REF_POLYGONLIST RefPoly;
-
-	//
-	Vector3 scl = { 1.f,1.f,1.f };
-
 	//// モデルの全フレームのポリゴンの情報を取得
 	RefPoly = MV1GetReferenceMesh(model, -1, TRUE);
-
 	auto minRP = RefPoly.MinPosition;
 	auto maxRP = RefPoly.MaxPosition;
 
 	// アンチエイリアシング処理
-	SetCreateDrawValidGraphMultiSample(4, 4);
-	// 20x20サイズのアルファチャンネルなしの描画可能画像を作成する
-	auto handle = MakeScreen(256, 256, true);
+	SetCreateDrawValidGraphMultiSample(samples, quality);
+	// ImageSizeのアルファチャンネルなしの描画可能画像を作成する
+	auto handle = MakeScreen(ImageSize.x_, ImageSize.y_, true);
 
 	// 作成した画像を描画対象にする
 	SetDrawScreen(handle);
@@ -187,7 +191,7 @@ bool CreateIcons::CreateModelIcon(std::filesystem::path path, std::wstring key)
 	// クリップ距離を設定する(SetDrawScreenでリセットされる)
 		// カメラのクリッピング距離を設定
 	SetCameraNearFar(10.0f, 300000.0f);
-	// クリップ距離を設定する(SetDrawScreenでリセットされる)
+	// クリップ距離を設定する(SetDrawScreenでリセットされる)(カメラの位置、カメラの回転)
 	SetCameraPositionAndAngle(VGet(-293.486, 185, -279.488), 0.264, 0.808, 0.0f);
 
 	while (true)
@@ -213,7 +217,7 @@ bool CreateIcons::CreateModelIcon(std::filesystem::path path, std::wstring key)
 	}
 
 	// 背景
-	DrawBox(0, 0, 1000, 1000, 0xfafafa, true);
+	DrawBox(0, 0, ImageSize.x_, ImageSize.y_, backImageColor, true);
 
 	// ステージの描画
 	stage_->Update();
@@ -223,7 +227,7 @@ bool CreateIcons::CreateModelIcon(std::filesystem::path path, std::wstring key)
 	MV1DrawModel(model);
 
 	SetFontSize(64);
-	DrawString(0,0, path.extension().string().c_str(), 0xff0000);
+	DrawString(0,0, path.extension().string().c_str(), extensionColor);
 	SetFontSize(8);
 
 	int textureSizeX;
