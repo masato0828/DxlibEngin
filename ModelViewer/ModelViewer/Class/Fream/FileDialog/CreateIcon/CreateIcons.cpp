@@ -76,6 +76,17 @@ void CreateIcons::MakeFileImage(std::filesystem::path name, std::filesystem::pat
 	// FileAssignments関数を呼び出し、ファイルの割り当てとボタンの表示を行う
 	FileAssignments(name, buttonPressed, { buttonSize.x,buttonSize.y }, fileFullPath);
 
+	if (buttonPressed)
+	{
+
+		const char* payload_type = "CUSTOM_IMAGE_PAYLOAD"; // ドロップの識別子
+		// ドラッグの開始
+		ImGui::BeginDragDropSource();
+		ImGui::SetDragDropPayload(payload_type, "path_to_image.png", strlen("path_to_image.png") + 1, ImGuiCond_Once); // ドロップのデータを設定
+		ImGui::Text("Dragging Image...");
+		ImGui::EndDragDropSource();
+	}
+
 	
 }
 

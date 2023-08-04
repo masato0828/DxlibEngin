@@ -20,6 +20,8 @@ public:
 	FreamMng();
 	~FreamMng();
 
+	// ImGuiのダイレクトXとウィンドウの更新
+	void SysNewFream();
 	// 更新処理
 	void Update(bool window_open_flg);
 	// 描画処理
@@ -32,8 +34,7 @@ private:
 
 	// 初期化
 	void Init();
-	// ImGuiのダイレクトXとウィンドウの更新
-	void SysNewFream();
+	
 	// ウィンドウのスタイル
 	void Style();
 

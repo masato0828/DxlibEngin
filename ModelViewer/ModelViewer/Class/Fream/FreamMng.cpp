@@ -64,7 +64,7 @@ void FreamMng::Update(bool window_open_flg)
 {
 
     postEffect_->Update();
-	SysNewFream();
+    
 
     system_FileCreate_->IsMainFile();
 
@@ -100,8 +100,8 @@ void FreamMng::Update(bool window_open_flg)
         ImGuiWindowFlags_MenuBar |
         ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoBringToFrontOnFocus |
-        ImGuiWindowFlags_NoNavFocus
-        |ImGuiWindowFlags_NoTitleBar;
+        ImGuiWindowFlags_NoNavFocus|
+        ImGuiWindowFlags_NoTitleBar;
 
     // Imgui用ウィンドウクラスの作成
     ImGuiWindowClass window_class;
@@ -473,7 +473,7 @@ void FreamMng::ObjectDrawField()
     MV1DrawModel(testModel_);
     MV1RefreshReferenceMesh(testModel_, -1, TRUE);
 
-    ConsoleWindow();
+    
 }
 
 void FreamMng::ConsoleWindow()
@@ -604,4 +604,6 @@ void FreamMng::OptionWindow()
 
         ImGui::End();
     }
+
+    ConsoleWindow();
 }

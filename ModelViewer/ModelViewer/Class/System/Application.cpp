@@ -82,6 +82,8 @@ bool Application::Run()
 	// メインループ
 	while (!ProcessMessage() && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 	{
+
+		freamMng_->SysNewFream();
 		// 更新
 		freamMng_->Update(true);
 

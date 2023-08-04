@@ -20,14 +20,15 @@ void Fream_FileDialog_Project::Init()
 
 void Fream_FileDialog_Project::Update()
 {
-	if (ImGui::Begin("Project"))
+
+	if (ImGui::Begin("Project",0, ImGuiDockNodeFlags_NoDockingSplitMe))
 	{
 		// 強制ドッキング設定
 		ImGuiID dockspace_id = ImGui::GetID("projectDock");
 		if (ImGui::DockBuilderGetNode(dockspace_id) == NULL)
 		{
 			ImGui::DockBuilderRemoveNode(dockspace_id); // Clear out existing layout
-			ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace); // Add empty node
+			ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace| ImGuiDockNodeFlags_NoDockingSplitMe); // Add empty node
 
 			ImGuiID dock_main_id = dockspace_id;
 			ImGuiID dock_id_FileDialog = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 1.f, NULL, &dock_main_id);
