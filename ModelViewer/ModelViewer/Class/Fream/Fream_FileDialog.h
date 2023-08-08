@@ -31,16 +31,9 @@ private:
 
     bool fileDialogFlg_;
 
-    // 選択している数
-    int selected_;
-    // 選択用マスク
-    //int selection_mask_;
-
     FileData fileData_;
     FileData* nowSelect;
     std::filesystem::path nowSelectPath_;
-
-    std::vector<int> selection_mask_vector_;
 
     std::filesystem::path fileFullPaht_;
     std::wstring nowSelectFileName_;

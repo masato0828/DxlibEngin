@@ -50,7 +50,7 @@ void Fream_FileDialog_Tree::Update(
 
 		if (nowSelect->parentFile_ != NULL)
 		{
-			if (IsMatch(directory.string(), Utility::StringToWideString(nowSelect->parentFile_->myName)))
+			if (Utility::IsMatch(directory.string(), Utility::StringToWideString(nowSelect->parentFile_->myName)))
 			{
 				// ツリーを開く
 				ImGui::SetNextItemOpen(true);
@@ -134,7 +134,7 @@ void Fream_FileDialog_Tree::Tree(std::filesystem::path directory, FileData& file
 			node_flags |= ImGuiTreeNodeFlags_Leaf;
 		}
 
-		if (IsMatch(directoryName.c_str(), nowSelectFileName_))
+		if (Utility::IsMatch(directoryName.c_str(), nowSelectFileName_))
 		{
 			// ツリーを開く
 			ImGui::SetNextItemOpen(true);
@@ -168,30 +168,3 @@ void Fream_FileDialog_Tree::Tree(std::filesystem::path directory, FileData& file
 
 }
 
-bool Fream_FileDialog_Tree::IsMatch(const std::string& filepath, const std::wstring& target)
-{
-	std::filesystem::path pathObj(filepath);
-	std::string filename = pathObj.filename().string();
-
-	if (target.empty())
-	{
-		return false;
-	}
-
-	// 大文字と小文字を区別せずに比較する場合
-	/*if (filename == target) {
-		return true;
-	}*/
-
-	// 大文字と小文字を区別して比較する場合
-	// if (filename.compare(target) == 0) {
-	//     return true;
-	// }
-
-	// ファイル名に指定した文字列が含まれているかを判定する
-	if (filename.find(Utility::WideStringToString(target)) != std::string::npos) {
-		return true;
-	}
-
-	return false;
-}

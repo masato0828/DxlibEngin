@@ -40,6 +40,7 @@ void FreamMng::Init()
     items_ = std::make_unique<Fream_Item>();
     fileDialog_ = std::make_unique<Fream_FileDialog>();
     postEffect_ = std::make_unique<PostEffectMng>();
+    models_ = std::make_unique<Fream_Model>();
 
     optionWindowFlg_ = false;
     demoWindowActivFlg_ = false;
@@ -53,16 +54,13 @@ void FreamMng::Init()
     GetWindowSize(&ww,&wh);
     screen_ = MakeScreen(ww,wh,true);
 
-    
-
-
     //////
     testModel_ = MV1LoadModel("data/Bomber_2.mv1");
 }
 
 void FreamMng::Update(bool window_open_flg)
 {
-
+    models_->SetModelHandle(sceneView_->GetModelMap());
     postEffect_->Update();
     
 
@@ -152,6 +150,8 @@ void FreamMng::Update(bool window_open_flg)
             // カメラの更新
             //camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());
 
+            models_->Update();
+
             // オプション項目を開いているかどうか
             if (optionWindowFlg_) { OptionWindow(); };
 
@@ -197,10 +197,9 @@ void FreamMng::Draw()
 
     camera_->Set();
     stage_->Draw();
-    mouse_->Draw();
-
+   
     ObjectDrawField();
-
+    mouse_->Draw();
 
     SetDrawScreen(DX_SCREEN_BACK);
     RefreshDxLibDirect3DSetting();
@@ -234,6 +233,7 @@ void FreamMng::SysNewFream()
 
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
+    
 	ImGui::NewFrame();
 
     ImGuiIO& io = ImGui::GetIO();
@@ -292,6 +292,9 @@ void FreamMng::Inspector()
     window_classview.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoWindowMenuButton;
     ImGui::SetNextWindowClass(&window_classview);
     ImGui::Begin("Inspector");
+
+    models_->CustomStatus();
+
     ImGui::End();
 }
 
@@ -424,56 +427,7 @@ void FreamMng::CreateMenuBer()
 
 void FreamMng::ObjectDrawField()
 {
-    MV1_REF_POLYGONLIST RefPoly;
-
-    
-
-    //MV1SetupReferenceMesh(model, -1, TRUE);
-    //MV1RefreshReferenceMesh(model, -1, TRUE);
-    // モデルの全フレームのポリゴンの情報を取得
-    RefPoly = MV1GetReferenceMesh(testModel_, -1, TRUE);
-
-    auto minRP = RefPoly.MinPosition;
-    auto maxRP = RefPoly.MaxPosition;
-
-    VECTOR a1 = { minRP.x,minRP.y,minRP.z };
-    VECTOR a2 = { maxRP.x,minRP.y,minRP.z };
-    VECTOR a3 = { minRP.x,maxRP.y,minRP.z };
-    VECTOR a4 = { maxRP.x,maxRP.y,minRP.z };
-    VECTOR a5 = { minRP.x,minRP.y,maxRP.z };
-    VECTOR a6 = { maxRP.x,minRP.y,maxRP.z };
-    VECTOR a7 = { minRP.x,maxRP.y,maxRP.z };
-    VECTOR a8 = { maxRP.x,maxRP.y,maxRP.z };
-
-    if (CheckCameraViewClip(maxRP)
-        /*CheckCameraViewClip_Box(minRP, maxRP)*/)
-    {
-        scl *= 0.9f;
-        AddConsoleText("non");
-    }
-
-    int lineCol = 0x000000;
-    DrawLine3D(a1, a3, lineCol);
-    DrawLine3D(a1, a2, lineCol);
-    DrawLine3D(a1, a5, lineCol);
-    DrawLine3D(a2, a4, lineCol);
-    DrawLine3D(a2, a6, lineCol);
-    DrawLine3D(a3, a7, lineCol);
-    DrawLine3D(a3, a4, lineCol);
-    DrawLine3D(a4, a8, lineCol);
-    DrawLine3D(a5, a6, lineCol);
-    DrawLine3D(a6, a8, lineCol);
-    DrawLine3D(a7, a8, lineCol);
-    DrawLine3D(a7, a5, lineCol);
-
-    DrawSphere3D(minRP,10,10,lineCol,lineCol,true);
-    DrawSphere3D(maxRP,10,10,lineCol,lineCol,true);
-
-    MV1SetScale(testModel_, scl.toVECTOR());
-    MV1DrawModel(testModel_);
-    MV1RefreshReferenceMesh(testModel_, -1, TRUE);
-
-    
+    models_->Draw();
 }
 
 void FreamMng::ConsoleWindow()

@@ -13,6 +13,7 @@
 #include "../Common/Shader/ShaderMng.h"
 #include "../Common/Shader/PostEffectMng.h"
 #include "../../Class/System/System_FileCreate.h"
+#include "Fream_Model.h"
 
 class FreamMng
 {
@@ -59,6 +60,7 @@ private:
 	std::unique_ptr<Fream_FileDialog> fileDialog_;
 	std::unique_ptr<PostEffectMng> postEffect_;
 	std::unique_ptr<System_FileCreate> system_FileCreate_;
+	std::unique_ptr<Fream_Model> models_;
 
 	bool optionWindowFlg_;
 	bool demoWindowActivFlg_;

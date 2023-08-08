@@ -246,3 +246,33 @@ bool Utility::RenameFile(const std::string& filePath, const std::string& newFile
 	// ファイル名の変更に成功した場合の処理
 	return true;
 }
+
+bool Utility::IsMatch(const std::string& filepath, const std::wstring& target)
+{
+	{
+		std::filesystem::path pathObj(filepath);
+		std::string filename = pathObj.filename().string();
+
+		if (target.empty())
+		{
+			return false;
+		}
+
+		// 大文字と小文字を区別せずに比較する場合
+		/*if (filename == target) {
+			return true;
+		}*/
+
+		// 大文字と小文字を区別して比較する場合
+		// if (filename.compare(target) == 0) {
+		//     return true;
+		// }
+
+		// ファイル名に指定した文字列が含まれているかを判定する
+		if (filename.find(Utility::WideStringToString(target)) != std::string::npos) {
+			return true;
+		}
+
+		return false;
+	}
+}

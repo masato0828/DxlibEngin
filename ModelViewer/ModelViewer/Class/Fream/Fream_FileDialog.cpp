@@ -28,7 +28,6 @@ void Fream_FileDialog::Init()
 {
 	// 選択している数
 	nowSelect = nullptr;
-	selected_ = 0;
 	// 選択用マスク
 	//selection_mask_ = (1 << 0);
 	nowSelect = &fileData_;

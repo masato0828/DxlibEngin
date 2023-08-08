@@ -2,6 +2,7 @@
 #include "FreamBase.h"
 #include "../Common/Vector2.h"
 #include <string>
+#include <map>
 
 class Fream_SceneView :
     public FreamBase
@@ -19,6 +20,10 @@ public:
     Vector2Flt GetImageRightDownCornor();
     Vector2 GetWindowCenterPoint();
     Vector2Flt GetScreenSize();
+
+    
+    std::map<std::wstring, int> GetModelMap();
+
 private:
 
     float factor_;
@@ -29,5 +34,12 @@ private:
     Vector2Flt imageRightDownCornor_;
 
     Vector2Flt screenSize_;
+
+    std::map<std::wstring, int> handleMap_;
+
+    int fileCount;
+
+    int FileCnt(const std::wstring& fileName);
+    void CreateDragAndDropHandle();
 };
 

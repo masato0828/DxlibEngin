@@ -1,15 +1,18 @@
 #include "Fream_SceneView.h"
 #include <vector>
 #include <Dxlib.h>
+#include <filesystem>
 #include "../../imGui/imgui.h"
 #include "../../imGui/imgui_impl_dx11.h"
 #include "../../imGui/imgui_impl_win32.h"
 #include "../System/ImguiImageStb.h"
 #include "../../imGui/imgui_internal.h"
 #include "../Common/ImGuiMyCustom.h"
+#include "../Common/Utility.h"
 
 Fream_SceneView::Fream_SceneView()
 {
+    Init();
 }
 
 Fream_SceneView::~Fream_SceneView()
@@ -18,6 +21,7 @@ Fream_SceneView::~Fream_SceneView()
 
 void Fream_SceneView::Init()
 {
+    fileCount = 0;
 }
 
 void Fream_SceneView::Update()
@@ -91,6 +95,8 @@ void Fream_SceneView::Create()
             ImGui::GetWindowDrawList()->VtxBuffer[2].pos.y
         };
 
+        CreateDragAndDropHandle();
+
         // ウィンドウの終了
         ImGui::End();
     }
@@ -145,4 +151,54 @@ Vector2 Fream_SceneView::GetWindowCenterPoint()
 Vector2Flt Fream_SceneView::GetScreenSize()
 {
     return screenSize_;
+}
+
+std::map<std::wstring, int> Fream_SceneView::GetModelMap()
+{
+    return handleMap_;
+}
+
+void Fream_SceneView::CreateDragAndDropHandle()
+{
+    // ドラッグアンドドロップしてきたデータを取得
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("TEST"))
+        {
+            // ドラッグアンドドロップのデータを取得
+            auto payload_n = static_cast<const wchar_t*>(payload->Data);
+
+            // ファイルパスに変更
+            std::filesystem::path filePath = payload_n;
+            auto ext = filePath.extension().wstring().substr(1);
+            auto fileName = filePath.filename();
+            
+            if (ext == L"mv1")
+            {
+                // 同じ名前のモデルが存在しているとき
+                if (handleMap_.count(fileName))
+                {
+                    FileCnt(fileName);
+                    auto fileHandle = handleMap_.at(fileName.filename());
+                    std::wstring name = fileName.wstring() + std::to_wstring(fileCount);
+                    handleMap_.emplace(name, MV1DuplicateModel(fileHandle));
+                }
+                else
+                {
+                    handleMap_.emplace(fileName, MV1LoadModel(filePath.string().c_str()));
+                }
+            }
+        }
+        ImGui::EndDragDropTarget();
+    }
+}
+
+int Fream_SceneView::FileCnt(const std::wstring& fileName)
+{
+    if (handleMap_.count(fileName))
+    {
+        fileCount++;
+        FileCnt(fileName+std::to_wstring(fileCount));
+    }
+    return fileCount;
 }

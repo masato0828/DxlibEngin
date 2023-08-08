@@ -68,24 +68,15 @@ void CreateIcons::MakeFileImage(std::filesystem::path name, std::filesystem::pat
 	ImGuiID buttonID = ImGui::GetID(name.c_str());
 
 	// ボタンの識別子をPushして、その中で処理を行う
-	ImGui::PushID(buttonID);
+	//ImGui::PushID(buttonID);
 
 	// ボタンが押されたかを示す変数
-	bool buttonPressed;
+	bool buttonPressed = false;
+
+	
 
 	// FileAssignments関数を呼び出し、ファイルの割り当てとボタンの表示を行う
 	FileAssignments(name, buttonPressed, { buttonSize.x,buttonSize.y }, fileFullPath);
-
-	if (buttonPressed)
-	{
-
-		const char* payload_type = "CUSTOM_IMAGE_PAYLOAD"; // ドロップの識別子
-		// ドラッグの開始
-		ImGui::BeginDragDropSource();
-		ImGui::SetDragDropPayload(payload_type, "path_to_image.png", strlen("path_to_image.png") + 1, ImGuiCond_Once); // ドロップのデータを設定
-		ImGui::Text("Dragging Image...");
-		ImGui::EndDragDropSource();
-	}
 
 	
 }
@@ -99,6 +90,7 @@ void CreateIcons::FileAssignments(std::filesystem::path& name, bool& buttonPress
 	//auto u8name = name.u8string();
 	auto u8fileName = name.filename().wstring();
 	auto wfileName = Utility::WideStringToString(name.filename());
+
 
 	if (std::filesystem::is_directory(name))
 	{
@@ -125,6 +117,30 @@ void CreateIcons::FileAssignments(std::filesystem::path& name, bool& buttonPress
 		else if (fileImageShaderDatas_.count(u8fileName))
 		{
 			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(u8fileName), ImVec2(buttonSize.x_, buttonSize.y_));
+		
+			enum Mode
+			{
+				Mode_Copy,
+				Mode_Move,
+				Mode_Swap
+			};
+			static int mode = Mode_Copy;
+
+			// Our buttons are both drag sources and drag targets here!
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+			{
+				// Set payload to carry the index of our item (could be anything)
+				const wchar_t* itemPath = name.c_str();
+				ImGui::SetDragDropPayload("TEST", itemPath, (wcslen(itemPath)+1)*sizeof(wchar_t));
+
+				// Display preview (could be anything, e.g. when dragging an image we could decide to display
+				// the filename and a small preview of the image, etc.)
+				if (mode == Mode_Copy) { ImGui::ImageButton((void*)fileImageShaderDatas_.at(u8fileName), ImVec2(buttonSize.x_, buttonSize.y_)); }
+				if (mode == Mode_Move) { ImGui::ImageButton((void*)fileImageShaderDatas_.at(u8fileName), ImVec2(buttonSize.x_, buttonSize.y_)); }
+				if (mode == Mode_Swap) { ImGui::ImageButton((void*)fileImageShaderDatas_.at(u8fileName), ImVec2(buttonSize.x_, buttonSize.y_)); }
+				ImGui::EndDragDropSource();
+			}
+			
 		}
 		else if (ext == L"mv1")
 		{
@@ -133,6 +149,8 @@ void CreateIcons::FileAssignments(std::filesystem::path& name, bool& buttonPress
 			CreateModelIcon(IconDataPath, u8fileName);
 
 			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(u8fileName), ImVec2(buttonSize.x_, buttonSize.y_));
+
+			
 		}
 		else if (ext == L"png")
 		{
@@ -144,7 +162,8 @@ void CreateIcons::FileAssignments(std::filesystem::path& name, bool& buttonPress
 		}
 		else
 		{
-			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(L"unknown"), ImVec2(buttonSize.x_, buttonSize.y_));
+			//buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(L"unknown"), ImVec2(buttonSize.x_, buttonSize.y_));
+			buttonPressed = ImGui::Button("unknown", ImVec2(buttonSize.x_, buttonSize.y_));
 		}
 	}
 
