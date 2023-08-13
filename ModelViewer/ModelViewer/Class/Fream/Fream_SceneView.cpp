@@ -21,7 +21,7 @@ Fream_SceneView::~Fream_SceneView()
 
 void Fream_SceneView::Init()
 {
-    fileCount = 0;
+    //fileCount = 0;
 }
 
 void Fream_SceneView::Update()
@@ -152,11 +152,11 @@ Vector2Flt Fream_SceneView::GetScreenSize()
 {
     return screenSize_;
 }
-
-std::map<std::wstring, int> Fream_SceneView::GetModelMap()
-{
-    return handleMap_;
-}
+//
+//std::map<std::wstring, int> Fream_SceneView::GetModelMap()
+//{
+//    return handleMap_;
+//}
 
 void Fream_SceneView::CreateDragAndDropHandle()
 {
@@ -169,36 +169,53 @@ void Fream_SceneView::CreateDragAndDropHandle()
             auto payload_n = static_cast<const wchar_t*>(payload->Data);
 
             // ファイルパスに変更
-            std::filesystem::path filePath = payload_n;
-            auto ext = filePath.extension().wstring().substr(1);
-            auto fileName = filePath.filename();
+            //std::filesystem::path filePath = payload_n;
+            dropModelPath_ = payload_n;
+            //auto ext = filePath.extension().wstring().substr(1);
+            //auto fileName = filePath.filename();
             
-            if (ext == L"mv1")
-            {
-                // 同じ名前のモデルが存在しているとき
-                if (handleMap_.count(fileName))
-                {
-                    FileCnt(fileName);
-                    auto fileHandle = handleMap_.at(fileName.filename());
-                    std::wstring name = fileName.wstring() + std::to_wstring(fileCount);
-                    handleMap_.emplace(name, MV1DuplicateModel(fileHandle));
-                }
-                else
-                {
-                    handleMap_.emplace(fileName, MV1LoadModel(filePath.string().c_str()));
-                }
-            }
+            //if (ext == L"mv1")
+            //{
+            //    // 同じ名前のモデルが存在しているとき
+            //    if (handleMap_.count(fileName))
+            //    {
+            //        FileCnt(fileName);
+            //        auto fileHandle = handleMap_.at(fileName.filename());
+            //        std::wstring name = fileName.wstring() + std::to_wstring(fileCount);
+            //        handleMap_.emplace(name, MV1DuplicateModel(fileHandle));
+            //    }
+            //    else
+            //    {
+            //        handleMap_.emplace(fileName, MV1LoadModel(filePath.string().c_str()));
+            //    }
+            //}
+
+            is_FileLoad_ = true;
         }
         ImGui::EndDragDropTarget();
     }
 }
 
-int Fream_SceneView::FileCnt(const std::wstring& fileName)
+std::filesystem::path Fream_SceneView::GetDropModelPath()
 {
-    if (handleMap_.count(fileName))
+    if (is_FileLoad_)
     {
-        fileCount++;
-        FileCnt(fileName+std::to_wstring(fileCount));
+        is_FileLoad_ = false;
+        return dropModelPath_;
     }
-    return fileCount;
+    else
+    {
+        return "";
+    }
+    
 }
+
+//int Fream_SceneView::FileCnt(const std::wstring& fileName)
+//{
+//    if (handleMap_.count(fileName))
+//    {
+//        fileCount++;
+//        FileCnt(fileName+std::to_wstring(fileCount));
+//    }
+//    return fileCount;
+//}

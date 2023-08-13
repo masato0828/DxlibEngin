@@ -244,6 +244,11 @@ bool CreateIcons::CreateModelIcon(std::filesystem::path path, std::wstring key)
 			MV1SetScale(model, scl.toVECTOR());
 			MV1RefreshReferenceMesh(model, -1, TRUE);
 		}
+
+		if (RefPoly.VertexNum == 0&& RefPoly.PolygonNum == 0)
+		{
+			break;
+		}
 	}
 
 	// îwåi

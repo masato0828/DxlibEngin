@@ -12,12 +12,20 @@ struct Vector3
 
 	bool operator==(const Vector3& v);
 	bool operator!=(const Vector3& v);
+	bool operator>=(const Vector3& v);
+	bool operator>(const Vector3& v);
+	bool operator<=(const Vector3& v);
+	bool operator<(const Vector3& v);
 	void operator+=(const Vector3& v);
 	void operator-=(const Vector3& v);
 	void operator*=(const Vector3& v);
 	void operator/=(const Vector3& v);
 	void operator*=(float scale);
 	void operator/=(float scale);
+	bool operator>=(float scale);
+	bool operator>(float scale);
+	bool operator<=(float scale);
+	bool operator<(float scale);
 
 	VECTOR toVECTOR();
 	void setVECTOR(float x, float y, float z);

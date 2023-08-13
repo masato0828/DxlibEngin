@@ -41,6 +41,8 @@ void FreamMng::Init()
     fileDialog_ = std::make_unique<Fream_FileDialog>();
     postEffect_ = std::make_unique<PostEffectMng>();
     models_ = std::make_unique<Fream_Model>();
+    gizumo_ = std::make_unique<Gizumo>();
+    console_ = std::make_unique<Fream_Console>();
 
     optionWindowFlg_ = false;
     demoWindowActivFlg_ = false;
@@ -60,7 +62,10 @@ void FreamMng::Init()
 
 void FreamMng::Update(bool window_open_flg)
 {
-    models_->SetModelHandle(sceneView_->GetModelMap());
+    //SetUseLighting(false);
+
+    //models_->SetModelHandle(sceneView_->GetModelMap());
+    models_->SetModelPath(sceneView_->GetDropModelPath());
     postEffect_->Update();
     
 
@@ -147,6 +152,8 @@ void FreamMng::Update(bool window_open_flg)
                 sceneView_->GetImageRightDownCornor(),
                 sceneView_->GetDefaultImageSize());
 
+            gizumo_->Update();
+
             // カメラの更新
             //camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());
 
@@ -163,12 +170,17 @@ void FreamMng::Update(bool window_open_flg)
 
             // ウィンドウの終了
             ImGui::End();
-            //Test();
         };
     }
     else
     {
-        ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
+        ImGuiWindowFlags windowFlags = 
+            ImGuiWindowFlags_NoTitleBar | 
+            ImGuiWindowFlags_NoBackground | 
+            ImGuiWindowFlags_NoMove | 
+            ImGuiWindowFlags_NoResize | 
+            ImGuiWindowFlags_NoCollapse;
+
         ImGui::SetNextWindowPos(ImVec2(0, 0));
         ImGui::SetNextWindowSize(ImVec2(0, 0));
         ImGui::Begin("Invisible Window",nullptr, windowFlags);
@@ -197,14 +209,14 @@ void FreamMng::Draw()
 
     camera_->Set();
     stage_->Draw();
-   
+    
     ObjectDrawField();
     mouse_->Draw();
 
     SetDrawScreen(DX_SCREEN_BACK);
     RefreshDxLibDirect3DSetting();
     ClearDrawScreen();
-
+    
     postEffect_->Draw(screen_);
 }
 
@@ -304,7 +316,6 @@ void FreamMng::CreateMenuBer()
     style.FramePadding.y = 8.0f;  // メニューバーの上下の余白の高さを調整
     style.FrameRounding = 1.0f;  // メニューバーの角の丸みを無効化
 
-    static bool open = false;
     // メニューバーの作成
     if (ImGui::BeginMenuBar())
     {
@@ -399,99 +410,14 @@ void FreamMng::CreateMenuBer()
         // メニューバーの終了
         ImGui::EndMenuBar();
     }
-
-
-    if (open)
-    {
-        ImGui::Begin("single export");/*
-        if (ImGui::Button("export"))
-        {
-            auto fileName = FilePathErase()(
-                FileSeve(nullptr, "json", "jsonファイル(*.json)\0 * .json\0")
-                );
-            std::ofstream writing_file;
-            writing_file.open(fileName, std::ios::out);
-            fModel_->SingleE(writing_file);
-            writing_file.close();
-
-
-            open = false;
-        }*/
-
-
-        ImGui::End();
-
-
-    }
 }
 
 void FreamMng::ObjectDrawField()
 {
+    
     models_->Draw();
-}
-
-void FreamMng::ConsoleWindow()
-{
-    ImGui::SetNextWindowSize(ImVec2{ 400, 100 }, ImGuiCond_Once);
-    ImGui::Begin("Console");
-
-    if (ImGui::SmallButton("clear"))
-    {
-        consoleTextBufferCnt_ = 0;
-        consoleTextBuffer_.clear();
-    }
-
-    // セパレーター1つ＋入力テキスト1つ分の高さを確保する
-    const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
-    const float footer_with_to_reserve = ImGui::GetStyle().ItemSpacing.x;
-    ImGui::BeginChild("debuglog", ImVec2(-footer_with_to_reserve, -footer_height_to_reserve), true,ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
     
-    ImGui::Separator();
- 
-    // コンソールテキストを表示
-    ImGui::TextUnformatted(consoleTextBuffer_.c_str());
-
-    
-
-    // 操作していない時スクロールバーを固定
-    if ((ImGui::GetScrollY() >= ImGui::GetScrollMaxY()))
-    {
-        ImGui::SetScrollHereY(1.0f);
-    }
-
-    
-
-    ImGui::EndChild();
-
-    static char buffer[256] = "";
-
-    ImGui::Text(u8"テキスト入力"); ImGui::SameLine();
-    ImGui::InputText("##", buffer, 256); ImGui::SameLine();
-
-    if (ImGui::SmallButton(u8"出力"))
-    {
-        AddConsoleText(buffer);
-    }
-
-    ImGui::End();
-}
-
-void FreamMng::AddConsoleText(const std::string& text)
-{
-    std::string formattedText;
-    std::stringstream ss;
-    // n桁のゼロ埋め形式で文字列を生成
-    ss << std::setw(4) << std::setfill('0') << consoleTextBufferCnt_;
-
-    consoleTextBufferCnt_++;
-
-    // n桁のゼロ埋め形式で文字列を生成
-    ss.str("");
-    ss << std::setw(4) << std::setfill('0') << consoleTextBufferCnt_;
-    formattedText = ss.str();
-
-    // テキストをバッファに追加
-    consoleTextBuffer_ += "["+formattedText+"]:" + text + "\n";
+    gizumo_->Draw();
 }
 
 void FreamMng::OptionWindow()
@@ -532,22 +458,6 @@ void FreamMng::OptionWindow()
             if (ImGui::BeginTabItem("PostEffect"))
             {
                 postEffect_->Custom();
-               /* const char* listbox_items[] = { "none","noise"};
-                static int listbox_item_current = 1;
-                ImGui::ListBox("postEffect\n(single select)", &listbox_item_current, listbox_items, IM_ARRAYSIZE(listbox_items), 4);
-                for (auto& postState : postStateMap_)
-                {
-                    postState.second = false;
-                }
-                postStateMap_[listbox_items[listbox_item_current]] = true;
-
-                if (postStateMap_["noise"])
-                {
-                    ImGui::InputFloat("noise1",&postE_.noise1, 0.001);
-                    ImGui::InputFloat("noise2",&postE_.noise2, 0.001);
-                    ImGui::InputFloat("noise3",&postE_.noise3,0.001);
-                }*/
-
 
                 ImGui::EndTabItem();
             }
@@ -559,5 +469,5 @@ void FreamMng::OptionWindow()
         ImGui::End();
     }
 
-    ConsoleWindow();
+    console_->Update();
 }

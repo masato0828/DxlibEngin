@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Class\Common\Geometry.cpp" />
+    <ClCompile Include="Class\Common\Gizumo.cpp" />
     <ClCompile Include="Class\Common\ImGuiMyCustom.cpp" />
     <ClCompile Include="Class\Common\Shader3D.cpp" />
     <ClCompile Include="Class\Common\Shader\ConstantBuffer.cpp" />
@@ -40,9 +41,11 @@
     <ClCompile Include="Class\Fream\FreamBase.cpp" />
     <ClCompile Include="Class\Fream\FreamMng.cpp" />
     <ClCompile Include="Class\Fream\Fream_Camera.cpp" />
+    <ClCompile Include="Class\Fream\Fream_Console.cpp" />
     <ClCompile Include="Class\Fream\Fream_DokingArea.cpp" />
     <ClCompile Include="Class\Fream\Fream_FileDialog.cpp" />
     <ClCompile Include="Class\Fream\Fream_Item.cpp" />
+    <ClCompile Include="Class\Fream\Fream_Light.cpp" />
     <ClCompile Include="Class\Fream\Fream_Model.cpp" />
     <ClCompile Include="Class\Fream\Fream_SceneView.cpp" />
     <ClCompile Include="Class\Fream\Fream_Stage.cpp" />
@@ -68,6 +71,7 @@
   <ItemGroup>
     <ClInclude Include="Class\Common\FileDialog.h" />
     <ClInclude Include="Class\Common\Geometry.h" />
+    <ClInclude Include="Class\Common\Gizumo.h" />
     <ClInclude Include="Class\Common\ImGuiMyCustom.h" />
     <ClInclude Include="Class\Common\PostMyGraph.h" />
     <ClInclude Include="Class\Common\Shader3D.h" />
@@ -91,9 +95,11 @@
     <ClInclude Include="Class\Fream\FreamBase.h" />
     <ClInclude Include="Class\Fream\FreamMng.h" />
     <ClInclude Include="Class\Fream\Fream_Camera.h" />
+    <ClInclude Include="Class\Fream\Fream_Console.h" />
     <ClInclude Include="Class\Fream\Fream_DokingArea.h" />
     <ClInclude Include="Class\Fream\Fream_FileDialog.h" />
     <ClInclude Include="Class\Fream\Fream_Item.h" />
+    <ClInclude Include="Class\Fream\Fream_Light.h" />
     <ClInclude Include="Class\Fream\Fream_Model.h" />
     <ClInclude Include="Class\Fream\Fream_SceneView.h" />
     <ClInclude Include="Class\Fream\Fream_Stage.h" />

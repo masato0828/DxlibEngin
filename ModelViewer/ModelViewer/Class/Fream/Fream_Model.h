@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <filesystem>
 #include "FreamBase.h"
 #include "../Common/Vector2.h"
 #include "../Common/Geometry.h"
@@ -14,7 +15,9 @@ public:
     void Init()override;
     void Update()override;
 
-    void SetModelHandle(std::map<std::wstring, int> handle);
+    //void SetModelHandle(std::map<std::wstring, int> handle);
+
+    void SetModelPath(const std::filesystem::path& path);
 
     void Draw();
 
@@ -22,17 +25,14 @@ public:
 
     void Fream();
 
-    void Tree(std::pair<const std::wstring,int>& handleData);
+    int FileCnt(const std::wstring& fileName);
+
 private:
     std::map<std::wstring, int> handleMap_;
 
     std::map<std::wstring, Vector3> sclMap_;
     std::map<std::wstring, Vector3> posMap_;
     std::map<std::wstring, Vector3> rotMap_;
-
-    std::vector<Vector3> freamSclVec_;
-    std::vector<Vector3> freamPosVec_;
-    std::vector<Vector3> freamRotVec_;
 
     //int selected = 0;
 
@@ -54,5 +54,20 @@ private:
     std::wstring nowSelectFreamName_;
 
     int freamNumber_;
+
+    std::map<std::wstring, std::vector<Vector3>> freamSclMap_;
+    std::map<std::wstring, std::vector<Vector3>> freamPosMap_;
+    std::map<std::wstring, std::vector<Vector3>> freamRotMap_;
+
+    void Tree(std::pair<const std::wstring, int>& handleData,FreamData& freamData,FreamData*& nowSelect);
+
+    bool contextMenuFlg_;
+
+    std::wstring deleteModelName_;
+
+    void ContextMenu();
+
+    int handleCnt_;
+    
 };
 

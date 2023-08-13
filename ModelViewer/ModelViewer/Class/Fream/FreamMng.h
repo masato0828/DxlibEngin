@@ -14,6 +14,8 @@
 #include "../Common/Shader/PostEffectMng.h"
 #include "../../Class/System/System_FileCreate.h"
 #include "Fream_Model.h"
+#include "../Common/Gizumo.h"
+#include "Fream_Console.h"
 
 class FreamMng
 {
@@ -47,9 +49,7 @@ private:
 
 	void ObjectDrawField();
 
-	void ConsoleWindow();
-	// コンソールにテキストを追加する関数
-	void AddConsoleText(const std::string& text);
+	
 
 	std::unique_ptr<Fream_SceneView> sceneView_;
 	std::unique_ptr<Fream_DokingArea> dokingArea_;
@@ -61,6 +61,8 @@ private:
 	std::unique_ptr<PostEffectMng> postEffect_;
 	std::unique_ptr<System_FileCreate> system_FileCreate_;
 	std::unique_ptr<Fream_Model> models_;
+	std::unique_ptr<Gizumo> gizumo_;
+	std::unique_ptr<Fream_Console> console_;
 
 	bool optionWindowFlg_;
 	bool demoWindowActivFlg_;
@@ -79,8 +81,7 @@ private:
 
 
 	int testModel_;
-	std::string consoleTextBuffer_;
-	int consoleTextBufferCnt_;
+	
 	Vector3 scl = { 1.f,1.f,1.f };
 
 	// n桁のゼロ埋めを行う際の数値
