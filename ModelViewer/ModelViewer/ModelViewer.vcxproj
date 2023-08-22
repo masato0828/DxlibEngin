@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Class\Common\CodeReader.cpp" />
     <ClCompile Include="Class\Common\Geometry.cpp" />
     <ClCompile Include="Class\Common\Gizumo.cpp" />
     <ClCompile Include="Class\Common\ImGuiMyCustom.cpp" />
@@ -69,6 +70,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Class\Common\CodeReader.h" />
     <ClInclude Include="Class\Common\FileDialog.h" />
     <ClInclude Include="Class\Common\Geometry.h" />
     <ClInclude Include="Class\Common\Gizumo.h" />

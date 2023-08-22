@@ -81,9 +81,6 @@ void Fream_Model::Update()
 	ContextMenu();
 
 	ImGui::End();
-
-
-	
 }
 
 void Fream_Model::SetModelPath(const std::filesystem::path& path)
