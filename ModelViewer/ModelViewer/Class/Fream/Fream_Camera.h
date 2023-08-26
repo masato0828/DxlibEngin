@@ -17,6 +17,10 @@ public:
 	void MouseMove(Vector2 centerPoint);
 
 	void Custom();
+
+	Vector2 GetScreenMouse();
+
+	Vector3 GetCameraPos();
 private:
 	Vector3 pos_;
 	Vector3 rot_;

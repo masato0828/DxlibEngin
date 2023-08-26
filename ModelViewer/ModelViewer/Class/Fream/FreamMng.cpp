@@ -55,6 +55,7 @@ void FreamMng::Init()
     int ww, wh;
     GetWindowSize(&ww,&wh);
     screen_ = MakeScreen(ww,wh,true);
+    systemUIScreen_ = MakeScreen(ww,wh,true);
 
     //////
     testModel_ = MV1LoadModel("data/Bomber_2.mv1");
@@ -152,12 +153,14 @@ void FreamMng::Update(bool window_open_flg)
                 sceneView_->GetImageRightDownCornor(),
                 sceneView_->GetDefaultImageSize());
 
-            gizumo_->Update();
+            models_->Update();
+
+            gizumo_->Update(mouse_->GetSceneMousePoint(), camera_->GetCameraPos().toVECTOR());
 
             // カメラの更新
             //camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());
 
-            models_->Update();
+            
 
             // オプション項目を開いているかどうか
             if (optionWindowFlg_) { OptionWindow(); };
@@ -195,29 +198,43 @@ void FreamMng::Update(bool window_open_flg)
 
 void FreamMng::Draw()
 {
-    // ゲーム内Update処理
-    {
-
-        // カメラの更新
-        camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());
-
-    }
+    // 上から見たカメラに変更
+    camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());
+    // 2Dの上から見たステージの作成
     stage_->PreviewMake();
 
-    SetDrawScreen(screen_);
-    ClearDrawScreen();
+    // ギズモ用のスクリーン作成
+    {
+        SetDrawScreen(systemUIScreen_);
+        ClearDrawScreen();
+        camera_->Set();
+        gizumo_->Draw();
+    }
 
-    camera_->Set();
-    stage_->Draw();
-    
-    ObjectDrawField();
-    mouse_->Draw();
+    // スクリーン作成
+    {
+        SetDrawScreen(screen_);
+        ClearDrawScreen();
+        camera_->Set();
+
+        int ww, wh;
+        GetWindowSize(&ww, &wh);
+        // 背景
+        DrawBox(0, 0, ww, wh, GetColor(60, 60, 60), true);
+        stage_->Draw();
+
+        ObjectDrawField();
+        DrawGraph(0, 0, systemUIScreen_, true);
+
+        mouse_->Draw();
+    }
 
     SetDrawScreen(DX_SCREEN_BACK);
     RefreshDxLibDirect3DSetting();
     ClearDrawScreen();
-    
+
     postEffect_->Draw(screen_);
+    
 }
 
 void FreamMng::Render()
@@ -417,7 +434,7 @@ void FreamMng::ObjectDrawField()
     
     models_->Draw();
     
-    gizumo_->Draw();
+    //gizumo_->Draw();
 }
 
 void FreamMng::OptionWindow()

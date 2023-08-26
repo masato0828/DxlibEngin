@@ -27,6 +27,8 @@ public:
 
     int FileCnt(const std::wstring& fileName);
 
+    std::map<std::wstring, int> NowModelHnadle();
+
 private:
     std::map<std::wstring, int> handleMap_;
 

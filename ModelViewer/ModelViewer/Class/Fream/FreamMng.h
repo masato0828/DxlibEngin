@@ -78,6 +78,7 @@ private:
 	bool m_show;
 
 	int screen_;
+	int systemUIScreen_;
 
 
 	int testModel_;

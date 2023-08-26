@@ -115,7 +115,7 @@ bool Application::SysInit()
 	// ウィンドウモードと全画面モードの切り替え
 	ChangeWindowMode(true);
 	// 背景色
-	SetBackgroundColor(60, 60, 60, 255);
+	//SetBackgroundColor(60, 60, 60, 255);
 	// Direct3Dのバージョン
 	SetUseDirect3DVersion(DX_DIRECT3D_11);
 	// ウィンドウプロシージャルの設定

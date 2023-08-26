@@ -27,6 +27,8 @@ struct Vector3
 	bool operator<=(float scale);
 	bool operator<(float scale);
 
+	Vector3 operator+(const Vector3& v);
+
 	VECTOR toVECTOR();
 	void setVECTOR(float x, float y, float z);
 };

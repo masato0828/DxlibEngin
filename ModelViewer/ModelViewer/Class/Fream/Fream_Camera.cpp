@@ -202,6 +202,16 @@ void Fream_Camera::Custom()
 
 }
 
+Vector2 Fream_Camera::GetScreenMouse()
+{
+	return {mouseX_,mouseY_};
+}
+
+Vector3 Fream_Camera::GetCameraPos()
+{
+	return pos_;
+}
+
 void Fream_Camera::Set()
 {
 	// クリップ距離を設定する(SetDrawScreenでリセットされる)

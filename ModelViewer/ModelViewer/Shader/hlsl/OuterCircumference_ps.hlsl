@@ -11,14 +11,14 @@ Texture2D _MainTex : register(t0); // テクスチャ
 
 cbuffer args : register(b7)
 {
-    float4 color;       // 出力する色
-    float2 screenSize;  // 画面のサイズ
-    float2 aspect;      // 画面のアスペクト比
-    float time;         // 時間
-    float div;          // 四角形の分割数
-    float direction;    // 回転の方向
-    float rotation;     // 回転角度
-    float size;         // 四角形のサイズ
+    float4 color; // 出力する色
+    float2 screenSize; // 画面のサイズ
+    float2 aspect; // 画面のアスペクト比
+    float time; // 時間
+    float div; // 四角形の分割数
+    float direction; // 回転の方向
+    float rotation; // 回転角度
+    float size; // 四角形のサイズ
 };
 
 // 四角形
@@ -38,7 +38,7 @@ float trs(float2 p, float val, float div, float t)
 {
     float mn = 0.001;
     float u = 1.0;
-    for (int i = 0; i < t; i++)
+    for (float i = 0; i < t; i++)
     {
         u += (div * 2.0 - 4.0 * i - 2.0) * 4.0;
     }
@@ -66,31 +66,30 @@ float trs(float2 p, float val, float div, float t)
 
 float4 main(PixelInput input) : SV_Target
 {
-    float4 _color = color;  // 出力する色
-    float _div = div;       // 四角形の分割数
+    float4 _color = color; // 出力する色
+    float _div = div; // 四角形の分割数
     float _dir = direction; // 回転の方向
-    float _rot = rotation;  // 回転角度
-    float2 _asp = aspect;   // 画面のアスペクト比
+    float _rot = rotation; // 回転角度
+    float2 _asp = aspect; // 画面のアスペクト比
     float _ratio = screenSize.x / screenSize.y; // 画面の縦横比
-    float _size = size;     // 四角形のサイズ
+    float _size = size; // 四角形のサイズ
 
     // テクスチャ座標を-1から1の範囲に変換
     float2 f_st = input.uv * 2.0 - 1.0;
 
-    // 回転の方向に応じて座標を変換
+    //// 回転の方向に応じて座標を変換
     f_st.x = f_st.x * (1.0 - 2.0 * _dir);
     f_st = Rotation(f_st, radians(_rot));
 
-    // 画面のアスペクト比と四角形のサイズを考慮して座標を変換
+    //// 画面のアスペクト比と四角形のサイズを考慮して座標を変換
     f_st *= _size;
     f_st *= _div;
 
     // 領域ごとに値を増加させる
     float a = 0.0;
-    [unroll(4)]
-    for (int i = 0; i < _div * 0.5; i++)
+    for (float i = 0; i < _div * 0.5; i++)
     {
-        a = min(a + trs(f_st, time, _div, i), 1);
+        a = min(a + trs(f_st, time, _div, i), 0.5);
     }
 
     // 値が0の場合は透明にする
