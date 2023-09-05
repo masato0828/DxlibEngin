@@ -1,7 +1,6 @@
 #pragma once
 #include <Dxlib.h>
 #include "Vector2.h"
-// 2D座標,ベクトルの構造体
 
 // 3D座標,ベクトルの構造体
 struct Vector3
@@ -28,6 +27,9 @@ struct Vector3
 	bool operator<(float scale);
 
 	Vector3 operator+(const Vector3& v);
+	Vector3 operator-(const Vector3& v);
+	Vector3 operator*(const Vector3& v);
+	Vector3 operator/(const Vector3& v);
 
 	VECTOR toVECTOR();
 	void setVECTOR(float x, float y, float z);

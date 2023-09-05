@@ -78,6 +78,21 @@ Vector3 Vector3::operator+(const Vector3& v)
     return { x_ + v.x_, y_ + v.y_, z_ + v.z_ };
 }
 
+Vector3 Vector3::operator-(const Vector3& v)
+{
+    return { x_ - v.x_, y_ - v.y_, z_ - v.z_ };
+}
+
+Vector3 Vector3::operator*(const Vector3& v)
+{
+    return { x_ * v.x_, y_ * v.y_, z_ * v.z_ };
+}
+
+Vector3 Vector3::operator/(const Vector3& v)
+{
+    return { x_ / v.x_, y_ / v.y_, z_ / v.z_ };
+}
+
 bool Vector3::operator>=(const Vector3& v)
 {
     return (x_ >= v.x_) && (y_ >= v.y_) && (z_ >= v.z_);

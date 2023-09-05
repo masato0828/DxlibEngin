@@ -34,7 +34,7 @@ void PostEffect_Noise::Draw(std::string name, const int imageHnadle)
     {
         MV1SetUseOrigShader(true);
         // postEffect
-        lpShaderMng.Draw(name);
+        lpShaderMng.DrawBegin(name);
         lpShaderMng.SetTexture(0, imageHnadle);
         Noise_Effect* cbBuf = (Noise_Effect*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
         cbBuf[0].time = pram_.time;

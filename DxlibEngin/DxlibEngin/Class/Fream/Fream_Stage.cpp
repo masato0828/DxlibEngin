@@ -75,7 +75,7 @@ void Fream_Stage::Draw()
 
 
     MV1SetUseOrigShader(true);
-    lpShaderMng.Draw("plane");
+    lpShaderMng.DrawBegin("plane");
 
     MV1SetPosition(modelH_, VGet(0, 0, 0));
     MV1SetRotationXYZ(modelH_, VGet(0, 0, 0));

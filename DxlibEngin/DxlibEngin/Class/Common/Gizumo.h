@@ -2,6 +2,7 @@
 #include "Geometry.h"
 #include<memory>
 #include <array>
+#include <map>
 #include "Shader\ShaderMng.h"
 class Gizumo
 {
@@ -9,22 +10,38 @@ public:
 	Gizumo();
 	~Gizumo();
 
-	void Init();
-	void Update(Vector2Flt sceneMousePoint, VECTOR cameraPos,Vector3& modelPos);
+	
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	/// <param name="sceneMousePoint">マウスのスクリーン座標</param>
+	/// <param name="modelPos">モデルの位置orモデルのフレーム位置</param>
+	void Update(Vector2Flt sceneMousePoint,Vector3& modelPos);
+	
+	/// <summary>
+	/// 描画
+	/// </summary>
 	void Draw();
 private:
-	Vector3 pos;
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Init();
 
-	VECTOR start;
-	VECTOR end;
+	Vector3 pos;	// 位置
+	VECTOR start;	// カメラレイ始点
+	VECTOR end;		// カメラレイ終点
 
+	// 各座標の棒の構造体
 	struct Stick
 	{
-		Vector3 front;
-		Vector3 back;
-		int color;
+		Vector3 front;	// 最大頂点
+		Vector3 back;	// 最小頂点
+		int color;		// 色
 	};
 
+	// 棒のタイプ
 	enum STICK_TYPE
 	{
 		CENTER,
@@ -34,8 +51,13 @@ private:
 		MAX
 	};
 
+	// 棒の管理変数
 	std::array<Stick,STICK_TYPE::MAX> stick_;
 
+	// 選択している棒
 	STICK_TYPE selectStick_;
+
+	// 棒のデフォルトカラー
+	std::map<STICK_TYPE,int> defoStickColor_;
 };
 

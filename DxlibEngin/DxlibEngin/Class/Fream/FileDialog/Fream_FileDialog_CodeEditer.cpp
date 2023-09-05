@@ -79,14 +79,14 @@ void Fream_FileDialog_CodeEditer::Update(std::filesystem::path filePath)
 
 
 
-		if (Utility::IsHeaderFile(fileName.u8string(), "cpp") ||
-			Utility::IsHeaderFile(fileName.u8string(), "h"))
+		if (Utility::ComparisonExtensionFile(fileName, L"cpp") ||
+			Utility::ComparisonExtensionFile(fileName, L"h"))
 		{
 			auto w_maltbyte = Utility::MultiByteToUnicode(code);
 			auto maltbyte = Utility::WStringToUTF8(w_maltbyte);
 			editor.SetText(maltbyte);
 		}
-		else if (Utility::IsHeaderFile(fileName.u8string(), "hlsl"))
+		else if (Utility::ComparisonExtensionFile(fileName, L"hlsl"))
 		{
 			auto w_maltbyte = Utility::MultiByteToUnicode(code);
 			auto maltbyte = Utility::WStringToUTF8(w_maltbyte);

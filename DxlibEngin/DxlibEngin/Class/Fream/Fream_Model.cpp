@@ -95,6 +95,19 @@ void Fream_Model::Update()
 	ContextMenu();
 
 	ImGui::End();
+
+
+
+	if (nowSelectFreamName_ == L"")
+	{
+		return;
+	}
+
+	if (is_rotation_.at(nowSelectFreamName_))
+	{
+		rotMap_.at(nowSelectFreamName_).y_ += Utility::Deg2Rad(1.0f);
+	}
+	
 }
 
 void Fream_Model::SetModelPath(const std::filesystem::path& path)
@@ -177,6 +190,8 @@ void Fream_Model::SetModelPath(const std::filesystem::path& path)
 		freamPosMap_.emplace(handleM.first, vpos);
 		freamRotMap_.emplace(handleM.first, vrot);
 		freamSclMap_.emplace(handleM.first, vscl);
+
+		is_rotation_.emplace(handleM.first,false);
 
 	}
 }
@@ -272,7 +287,7 @@ void Fream_Model::CustomStatus()
 		ImGui::DragFloat3("##pos", &posMap_.at(nowSelectFreamName_));
 
 		ImGui::SetCursorPos(ImVec2(70, 120));
-		ImGui::DragFloat3("##rot", &rotMap_.at(nowSelectFreamName_));
+		ImGui::DragFloat3("##rot", &rotMap_.at(nowSelectFreamName_),Utility::Deg2Rad(1.0f));
 	}
 	else
 	{
@@ -283,10 +298,12 @@ void Fream_Model::CustomStatus()
 		ImGui::DragFloat3("##pos", &freamPosMap_.at(nowSelectFreamName_).at(freamNumber_));
 
 		ImGui::SetCursorPos(ImVec2(70, 120));
-		ImGui::DragFloat3("##rot", &freamRotMap_.at(nowSelectFreamName_).at(freamNumber_));
+		ImGui::DragFloat3("##rot", &freamRotMap_.at(nowSelectFreamName_).at(freamNumber_), Utility::Deg2Rad(1.0f));
 
 		Fream();
 	}
+
+	ImGui::Checkbox("rotation", &is_rotation_.at(nowSelectFreamName_));
 }
 
 void Fream_Model::Fream()

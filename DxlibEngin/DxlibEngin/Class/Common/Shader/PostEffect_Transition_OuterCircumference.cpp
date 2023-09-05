@@ -34,11 +34,6 @@ void PostEffect_Transition_OuterCircumference::Init()
     pram_.aspect.x_ = static_cast<float>(ww / num);
     pram_.aspect.y_ = static_cast<float>(wh / num);
     pram_.size = 1.0f;
-   /* pram_._rotation = 0;
-    pram_._aspect = 1;
-   
-
-    pram_._drection = 0;*/
 
     rotationDir_ = false;
 }
@@ -55,7 +50,7 @@ void PostEffect_Transition_OuterCircumference::Draw(std::string name, const int 
         DrawGraph(0, 0, imageHnadle, true);
         MV1SetUseOrigShader(true);
         // postEffect
-        lpShaderMng.Draw(name);
+        lpShaderMng.DrawBegin(name);
         lpShaderMng.SetTexture(0, imageHnadle);
         Transition_OuterCircumference* cbBuf = (Transition_OuterCircumference*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
         cbBuf[0].color = pram_.color;

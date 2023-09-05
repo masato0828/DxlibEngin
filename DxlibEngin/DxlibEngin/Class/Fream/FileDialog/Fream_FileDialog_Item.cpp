@@ -250,8 +250,8 @@ void Fream_FileDialog_Item::CreateFiles(
 	//ImGui::Text(fileName.c_str());
 
 	// 拡張子が"cpp"または"h"でない場合、テキストを表示する(色も変更する)
-	if (!Utility::CharacterSearch(Utility::WStringToUTF8(fileName).c_str(), "cpp", { 0,1,1,1 }, Utility::WideStringToString(name)) &&
-		!Utility::CharacterSearch(Utility::WStringToUTF8(fileName).c_str(), "h", { 1,0,1,1 }, Utility::WideStringToString(name)))
+	if (!Utility::CharacterSearch(Utility::WStringToUTF8(fileName).c_str(), L"cpp", { 0,1,1,1 }, name) &&
+		!Utility::CharacterSearch(Utility::WStringToUTF8(fileName).c_str(), L"h", { 1,0,1,1 }, name))
 	{
 		ImGui::Text(Utility::WStringToUTF8(fileName).c_str());
 	}

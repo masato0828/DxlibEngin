@@ -74,6 +74,8 @@ private:
     int handleCnt_;
 
     Vector3 nullPos_;
+
+    std::map<std::wstring, bool> is_rotation_;
     
 };
 

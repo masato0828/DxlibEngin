@@ -44,7 +44,7 @@ void PostEffect_Transition_Circle::Draw(std::string name, const int imageHnadle)
         DrawGraph(0, 0, imageHnadle, true);
         MV1SetUseOrigShader(true);
         // postEffect
-        lpShaderMng.Draw(name);
+        lpShaderMng.DrawBegin(name);
         lpShaderMng.SetTexture(0, imageHnadle);
         Transition_Circle* cbBuf = (Transition_Circle*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
         cbBuf[0].color = pram_.color;

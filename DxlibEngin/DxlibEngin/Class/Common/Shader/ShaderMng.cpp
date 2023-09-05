@@ -93,7 +93,7 @@ int ShaderMng::GetShaderPSHandle(const std::string& name) const
     return -1;
 }
 
-void ShaderMng::Draw(const std::string& name)
+void ShaderMng::DrawBegin(const std::string& name)
 {
     SetUseVertexShader(shaders_[name].first);
     SetUsePixelShader(shaders_[name].second);

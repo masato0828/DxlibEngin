@@ -40,7 +40,7 @@ void PostEffect_ScanLine::Draw(std::string name, const int imageHnadle)
     {
         MV1SetUseOrigShader(true);
         // postEffect
-        lpShaderMng.Draw(name);
+        lpShaderMng.DrawBegin(name);
         lpShaderMng.SetTexture(0, imageHnadle);
         ScanLine* cbBuf = (ScanLine*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
         cbBuf[0].time = pram_.time;

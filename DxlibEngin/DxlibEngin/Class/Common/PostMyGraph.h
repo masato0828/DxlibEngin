@@ -2,6 +2,12 @@
 #include <DxLib.h>
 #include <array>
 
+/// <summary>
+/// ポリゴンの作成
+/// </summary>
+/// <param name="x">横ポリゴンサイズ</param>
+/// <param name="y">縦ポリゴンサイズ</param>
+/// <param name="imgHandle">画像ハンドル</param>
 static void MyDrawGraph(int x, int y, int imgHandle)
 {
 	int width, height;
@@ -50,9 +56,5 @@ static void MyDrawGraph(int x, int y, int imgHandle)
 	verts[3].u = 1.0f;
 	verts[3].v = 1.0f;
 
-	//SetUsePixelShader(psHandle);
-	//SetUseTextureToShader(0, imgHandle);
-	//SetUseTextureToShader(1, ptnHandle);
-	//SetUseTextureToShader(2, housenHandle);
 	DrawPrimitive2DToShader(verts.data(), static_cast<int>(verts.size()), DX_PRIMTYPE_TRIANGLESTRIP);
 }

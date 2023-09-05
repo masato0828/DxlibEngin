@@ -23,7 +23,6 @@
     <ClCompile Include="Class\Common\Geometry.cpp" />
     <ClCompile Include="Class\Common\Gizumo.cpp" />
     <ClCompile Include="Class\Common\ImGuiMyCustom.cpp" />
-    <ClCompile Include="Class\Common\Shader3D.cpp" />
     <ClCompile Include="Class\Common\Shader\ConstantBuffer.cpp" />
     <ClCompile Include="Class\Common\Shader\PostEffectMng.cpp" />
     <ClCompile Include="Class\Common\Shader\PostEffect_Base.cpp" />
@@ -76,7 +75,6 @@
     <ClInclude Include="Class\Common\Gizumo.h" />
     <ClInclude Include="Class\Common\ImGuiMyCustom.h" />
     <ClInclude Include="Class\Common\PostMyGraph.h" />
-    <ClInclude Include="Class\Common\Shader3D.h" />
     <ClInclude Include="Class\Common\Shader\ConstantBuffer.h" />
     <ClInclude Include="Class\Common\Shader\PostEffectMng.h" />
     <ClInclude Include="Class\Common\Shader\PostEffect_Base.h" />

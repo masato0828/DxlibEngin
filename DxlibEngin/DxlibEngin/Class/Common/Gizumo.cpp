@@ -27,13 +27,20 @@ void Gizumo::Init()
 	Vector3 greenBack = { -size,-size,-size };
 	Vector3 greenFront = { size,80,size };
 
-	stick_[STICK_TYPE::CENTER] = {centerBack,centerFront,0xffffff};
-	stick_[STICK_TYPE::X] = {redBack,redFront,0xff0000};
-	stick_[STICK_TYPE::Y] = {greenBack,greenFront,0x00ff00};
-	stick_[STICK_TYPE::Z] = {blueBack,blueFront,0x0000ff};
+	defoStickColor_.emplace(STICK_TYPE::CENTER, 0xffffff);
+	defoStickColor_.emplace(STICK_TYPE::X, 0xff0000);
+	defoStickColor_.emplace(STICK_TYPE::Y, 0x00ff00);
+	defoStickColor_.emplace(STICK_TYPE::Z, 0x0000ff);
+
+	stick_[STICK_TYPE::CENTER] = {centerBack,centerFront,defoStickColor_[STICK_TYPE::CENTER]};
+	stick_[STICK_TYPE::X] = {redBack,redFront,defoStickColor_[STICK_TYPE::X] };
+	stick_[STICK_TYPE::Y] = {greenBack,greenFront,defoStickColor_[STICK_TYPE::Y] };
+	stick_[STICK_TYPE::Z] = {blueBack,blueFront,defoStickColor_[STICK_TYPE::Z] };
+
+	
 }
 
-void Gizumo::Update(Vector2Flt sceneMousePoint,VECTOR cameraPos,Vector3& modelPos)
+void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 {
 	pos = modelPos;
 
@@ -60,13 +67,49 @@ void Gizumo::Update(Vector2Flt sceneMousePoint,VECTOR cameraPos,Vector3& modelPo
 		selectStick_ = STICK_TYPE::MAX;
 	}
 
+	for (int i = 0; i < stick_.size(); i++)
+	{
+		if (i == STICK_TYPE::CENTER)
+		{
+			continue;
+		}
+
+		if (selectStick_ == static_cast<STICK_TYPE>(i))
+		{
+			stick_[static_cast<STICK_TYPE>(i)].color = 0x000000;
+		}
+		else
+		{
+			stick_[static_cast<STICK_TYPE>(i)].color = defoStickColor_[static_cast<STICK_TYPE>(i)];
+		}
+	}
+
+
 	if (selectStick_ == STICK_TYPE::X)
 	{
 		stick_[STICK_TYPE::X].color = 0x000000;
 	}
 	else
 	{
-		stick_[STICK_TYPE::X].color = 0xff0000;
+		stick_[STICK_TYPE::X].color = defoStickColor_[STICK_TYPE::X];
+	}
+
+	if (selectStick_ == STICK_TYPE::Y)
+	{
+		stick_[STICK_TYPE::Y].color = 0x000000;
+	}
+	else
+	{
+		stick_[STICK_TYPE::Y].color = defoStickColor_[STICK_TYPE::Y];
+	}
+
+	if (selectStick_ == STICK_TYPE::Z)
+	{
+		stick_[STICK_TYPE::Z].color = 0x000000;
+	}
+	else
+	{
+		stick_[STICK_TYPE::Z].color = defoStickColor_[STICK_TYPE::Z];
 	}
 }
 

@@ -17,10 +17,6 @@ void CodeReader::Update()
 {
 }
 
-void CodeReader::Draw()
-{
-}
-
 void CodeReader::Init()
 {
 }

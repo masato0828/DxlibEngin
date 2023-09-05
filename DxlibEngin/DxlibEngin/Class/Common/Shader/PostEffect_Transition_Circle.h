@@ -16,17 +16,22 @@ private:
 
 	struct Transition_Circle
 	{
-		ImGuiCustom::IM_COLOR color;
-		Vector2Flt screenSize;
-		Vector2Flt dir;
-		int div;
-		float val;
-		float width;
+		ImGuiCustom::IM_COLOR color;// 色
+		Vector2Flt screenSize;// スクリーンサイズ
+		Vector2Flt dir;// 大きくなる方向
+		int div;// 円の数
+		float val;// 経過時間
+		float width;// 円が大きくなるタイミング調整用
+
+		// 1.0：画面のポストエフェクトが入る
+		// 0.0：画面のポストエフェクトが無くなる
 		float revers;
 	};
 
+	// パラメータ管理
 	Transition_Circle pram_;
 
+	// 時間
 	float timeSpeed_;
 };
 

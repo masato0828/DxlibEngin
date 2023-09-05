@@ -83,8 +83,8 @@ void CreateIcons::MakeFileImage(std::filesystem::path name, std::filesystem::pat
 
 void CreateIcons::FileAssignments(std::filesystem::path& name, bool& buttonPressed, Vector2Flt buttonSize, std::filesystem::path fileFullPath)
 {
-	ImGuiCustom::SetCustomButtonStyle(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-	ImGuiCustom::SetCustomButtonStyle(ImGuiCol_ButtonHovered, ImVec4(0.5f, 0.5f, 0.7f, 1.f));
+	ImGuiCustom::SetCustomStyle(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+	ImGuiCustom::SetCustomStyle(ImGuiCol_ButtonHovered, ImVec4(0.5f, 0.5f, 0.7f, 1.f));
 
 
 	//auto u8name = name.u8string();
@@ -101,7 +101,7 @@ void CreateIcons::FileAssignments(std::filesystem::path& name, bool& buttonPress
 		// 拡張子がない場合
 		if (name.extension() == "")
 		{
-			ImGuiCustom::SetCustomButtonStyle(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.4f, 1.f));
+			ImGuiCustom::SetCustomStyle(ImGuiCol_Button, ImVec4(0.2f, 0.2f, 0.4f, 1.f));
 			buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(L"unknown"), ImVec2(buttonSize.x_, buttonSize.y_));
 			// カスタムスタイルを元に戻す
 			//ImGui::StyleColorsDark();
@@ -175,7 +175,7 @@ void CreateIcons::FileAssignments(std::filesystem::path& name, bool& buttonPress
 
 bool CreateIcons::SettingIcon(std::wstring& name, bool& buttonPressed, Vector2Flt buttonSize, std::wstring ext)
 {
-	if (Utility::IsHeaderFile(Utility::WStringToUTF8(name).c_str(), Utility::WideStringToString(ext)))
+	if (Utility::ComparisonExtensionFile(name, ext))
 	{
 		buttonPressed = ImGui::ImageButton((void*)fileImageShaderDatas_.at(ext), ImVec2(buttonSize.x_, buttonSize.y_));
 		return true;

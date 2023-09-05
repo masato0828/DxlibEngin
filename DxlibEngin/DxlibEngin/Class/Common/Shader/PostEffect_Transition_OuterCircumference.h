@@ -17,24 +17,23 @@ private:
 	struct Transition_OuterCircumference
 	{
 		
-		ImGuiCustom::IM_COLOR color;
-		Vector2Flt screenSize;
-		Vector2Flt aspect;
-		float time;
-		float div;
-		float direction;
-		float rotation;
-		float size;
-		/*float _rotation;
-		float _aspect;
-		Vector2Flt _screenSize;
-		float _drection;*/
+		ImGuiCustom::IM_COLOR color;// 色
+		Vector2Flt screenSize;// スクリーンのサイズ
+		Vector2Flt aspect;// アスペクト比
+		float time;// 時間
+		float div;//
+		float direction;//
+		float rotation;//回転
+		float size;//サイズ
 	};
 
+	// パラメータ管理
 	Transition_OuterCircumference pram_;
 
+	// 時間のスピード
 	float timespeed_;
 
+	// 回転方向
 	bool rotationDir_;
 };
 

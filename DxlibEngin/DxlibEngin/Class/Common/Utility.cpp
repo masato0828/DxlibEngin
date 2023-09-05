@@ -175,17 +175,17 @@ bool Utility::OpenWithDefaultApplication(const std::wstring& filePath)
 	return false;
 }
 
-bool Utility::IsHeaderFile(const std::string& filename, const std::string& ext)
+bool Utility::ComparisonExtensionFile(const std::wstring& filename, const std::wstring& ext)
 {
 	// Šg’£q‚ÌˆÊ’u‚ğ’T‚·
-	std::size_t dotPos = filename.find_last_of(".");
+	std::size_t dotPos = filename.find_last_of(L".");
 	if (dotPos == std::string::npos) {
 		// ƒhƒbƒg‚ªŒ©‚Â‚©‚ç‚È‚¢ê‡‚ÍŠg’£q‚ª‚È‚¢‚Æ”»’f
 		return false;
 	}
 
 	// Šg’£q‚ğæ“¾‚µ‚Ä”äŠr‚·‚é
-	std::string extension = filename.substr(dotPos + 1);
+	std::wstring extension = filename.substr(dotPos + 1);
 	if (extension == ext) {
 		return true;
 	}
@@ -193,10 +193,9 @@ bool Utility::IsHeaderFile(const std::string& filename, const std::string& ext)
 	return false;
 }
 
-bool Utility::CharacterSearch(std::string showName, std::string searchFileName, ImGuiCustom::IM_COLOR color, std::string defaultTarget)
+bool Utility::CharacterSearch(std::string showName, std::wstring searchFileName, ImGuiCustom::IM_COLOR color, std::wstring defaultTarget)
 {
-	if (Utility::IsHeaderFile(defaultTarget, searchFileName))
-		//if (defaultTarget.find(searchFileName) != std::string::npos)
+	if (Utility::ComparisonExtensionFile(defaultTarget, searchFileName))
 	{
 		ImGui::TextColored(ImVec4(color.red, color.green, color.blue, color.alpha), showName.c_str());
 		return true;
