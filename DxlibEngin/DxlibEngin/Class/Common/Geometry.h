@@ -33,4 +33,5 @@ struct Vector3
 
 	VECTOR toVECTOR();
 	void setVECTOR(float x, float y, float z);
+	void setVECTOR(VECTOR vec);
 };

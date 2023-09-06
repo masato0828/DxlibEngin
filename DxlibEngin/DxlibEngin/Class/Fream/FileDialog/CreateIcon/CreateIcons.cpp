@@ -232,7 +232,29 @@ bool CreateIcons::CreateModelIcon(std::filesystem::path path, std::wstring key)
 		maxRP = RefPoly.MaxPosition;
 		minRP = RefPoly.MinPosition;
 
-		// カメラ内に入りき　っているか
+		// カメラ内に入りきっているか
+		if (!CheckCameraViewClip(maxRP) &&
+			!CheckCameraViewClip(minRP))
+		{
+			scl *= 1.9f;
+			MV1SetScale(model, scl.toVECTOR());
+			MV1RefreshReferenceMesh(model, -1, TRUE);
+		}
+		else
+		{
+			break;
+		}	
+	}
+
+	while (true)
+	{
+		// モデルの全フレームのポリゴンの情報を取得
+		RefPoly = MV1GetReferenceMesh(model, -1, TRUE);
+		// 頂点を更新
+		maxRP = RefPoly.MaxPosition;
+		minRP = RefPoly.MinPosition;
+
+		// カメラ内に入りきっているか
 		if (!CheckCameraViewClip(maxRP) &&
 			!CheckCameraViewClip(minRP))
 		{

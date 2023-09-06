@@ -44,7 +44,6 @@ private:
 	// 棒のタイプ
 	enum STICK_TYPE
 	{
-		CENTER,
 		X,
 		Y,
 		Z,
@@ -59,5 +58,18 @@ private:
 
 	// 棒のデフォルトカラー
 	std::map<STICK_TYPE,int> defoStickColor_;
+
+	// マウス関連
+	int NowInput, EdgeInput, PrevInput;
+	int Catch;
+	int CatchMouseX, CatchMouseY;
+
+	// 位置関連
+	VECTOR Catch3DModelPosition;
+	VECTOR Catch3DHitPosition;
+	VECTOR Catch2DHitPosition;
+
+	VECTOR ScreenPos;
+
 };
 

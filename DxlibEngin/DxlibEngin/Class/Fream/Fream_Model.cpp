@@ -107,7 +107,6 @@ void Fream_Model::Update()
 	{
 		rotMap_.at(nowSelectFreamName_).y_ += Utility::Deg2Rad(1.0f);
 	}
-	
 }
 
 void Fream_Model::SetModelPath(const std::filesystem::path& path)
@@ -379,10 +378,12 @@ Vector3& Fream_Model::GetModelPos()
 
 	if (freamNumber_ == -1)
 	{
+		// model
 		return posMap_.at(nowSelectFreamName_);
 	}
 	else
 	{
+		// model fream
 		return freamPosMap_.at(nowSelectFreamName_).at(freamNumber_);
 	}
 

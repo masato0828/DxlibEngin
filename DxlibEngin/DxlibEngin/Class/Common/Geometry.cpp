@@ -124,3 +124,10 @@ void Vector3::setVECTOR(float x, float y, float z)
     y_ = y;
     z_ = z;
 }
+
+void Vector3::setVECTOR(VECTOR vec)
+{
+    x_ = vec.x;
+    y_ = vec.y;
+    z_ = vec.z;
+}
