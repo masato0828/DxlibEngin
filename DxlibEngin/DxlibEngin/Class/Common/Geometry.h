@@ -31,6 +31,9 @@ struct Vector3
 	Vector3 operator*(const Vector3& v);
 	Vector3 operator/(const Vector3& v);
 
+	Vector3 operator+(const VECTOR& v);
+	Vector3 operator=(const VECTOR& v);
+
 	VECTOR toVECTOR();
 	void setVECTOR(float x, float y, float z);
 	void setVECTOR(VECTOR vec);

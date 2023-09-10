@@ -63,6 +63,7 @@ private:
 	int NowInput, EdgeInput, PrevInput;
 	int Catch;
 	int CatchMouseX, CatchMouseY;
+	VECTOR catchPos_;
 
 	// ˆÊ’uŠÖ˜A
 	VECTOR Catch3DModelPosition;
