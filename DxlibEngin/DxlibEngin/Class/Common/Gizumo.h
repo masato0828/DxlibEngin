@@ -72,5 +72,7 @@ private:
 
 	VECTOR ScreenPos;
 
+	VECTOR resultMovePos_;
+
 };
 

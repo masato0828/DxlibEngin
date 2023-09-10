@@ -38,11 +38,14 @@ void Gizumo::Init()
 	EdgeInput = 0;
 	PrevInput = 0;
 	Catch = 0;
+
+	resultMovePos_ = VECTOR();
 	
 }
 
 void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 {
+	ImGui::Begin("test");
 	pos = modelPos;
 
 	// マウスボタンの入力状態を更新
@@ -70,8 +73,12 @@ void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 			if (EdgeInput & MOUSE_INPUT_1)
 			{
 				Catch = true;
+				catchPos_ = result.Position;
+
+				// 掴んだ時のスクリーン座標
+				CatchMouseX = ScreenPos.x;
+				CatchMouseY = ScreenPos.y;
 			}
-			catchPos_ = result.Position;
 			selectStick_ = static_cast<STICK_TYPE>(i);
 			break;
 		}
@@ -81,11 +88,40 @@ void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 	if (Catch)
 	{
 		// 掴んでいる処理
+		// マウスの左クリックが離されていたら掴み状態を解除
+		if ((NowInput & MOUSE_INPUT_1) == 0)
+		{
+			Catch = 0;
+		}
+		else
+		{
+
+			float moveX = 0, moveY = 0, moveZ = 0;
+
+			// 移動分
+			moveX = (float)(ScreenPos.x - CatchMouseX-modelPos.x_);
+			moveY = (float)(ScreenPos.y - CatchMouseY);
+			ImGui::Text("move :%f;%f;%f", moveX, moveY, moveY);
+
+			if (modelPos == Vector3(0,0,0))
+			{
+				ImGui::End();
+				return;
+				
+			}
+
+			resultMovePos_.x = modelPos.x_ + moveX;
+
+			modelPos.y_ = 0;
+			modelPos.z_ = 0;
+
+			modelPos.x_ = resultMovePos_.x+ catchPos_.x;
+		}
 	}
 
 	
-	ImGui::Begin("test");
-	ImGui::Text("%f;%f;%f" , modelPos.x_, modelPos.y_, modelPos.z_);
+	
+	ImGui::Text("modelPos: %f;%f;%f" , modelPos.x_, modelPos.y_, modelPos.z_);
 
 	if (Catch)
 	{
