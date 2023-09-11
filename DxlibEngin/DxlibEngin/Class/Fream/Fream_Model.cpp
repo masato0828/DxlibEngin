@@ -194,7 +194,7 @@ void Fream_Model::SetModelPath(const std::filesystem::path& path)
 		is_rotation_.emplace(handleM.first,false);
 
 
-		//LoadShaderProc(Utility::WideStringToString(handleM.first));
+		LoadShaderProc(Utility::WideStringToString(handleM.first));
 	}
 
 	
@@ -202,7 +202,6 @@ void Fream_Model::SetModelPath(const std::filesystem::path& path)
 
 void Fream_Model::Draw()
 {
-
 	if (handleMap_.empty())
 	{
 		return;
@@ -246,7 +245,10 @@ void Fream_Model::Draw()
 		MV1SetScale(modelHandle.second, sclMap_.at(modelHandle.first).toVECTOR());
 		MV1SetPosition(modelHandle.second, posMap_.at(modelHandle.first).toVECTOR());
 		MV1SetRotationXYZ(modelHandle.second, rotMap_.at(modelHandle.first).toVECTOR());
+
+		lpShaderMng.DrawBegin(Utility::WideStringToString(modelHandle.first));
         MV1DrawModel(modelHandle.second);
+		lpShaderMng.DrawEnd();
         MV1RefreshReferenceMesh(modelHandle.second, -1, TRUE);
     }
 }
@@ -403,12 +405,12 @@ bool Fream_Model::IsModelSelect()
 
 void Fream_Model::LoadShaderProc(const std::string& name)
 {
-	lpShaderMng.LoadShader(name, "", "", 0);
+	lpShaderMng.LoadShader(name, "data/ShaderBinary/Vertex/ModelPixelShader.vs", "data/ShaderBinary/Pixel/ModelPixelShader.ps", 0);
 
 	auto it = handleMap_;
 	auto rit = it.rbegin();
 
-	lpShaderMng.SetSkiningVertex(name, rit->second,"");
+	lpShaderMng.SetSkiningVertex(name, rit->second);
 }
 
 void Fream_Model::Tree(std::pair<const std::wstring, int>& handleData, FreamData& freamData, FreamData*& nowSelect)

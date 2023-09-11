@@ -76,7 +76,7 @@ public:
     /// <param name="imageHnadle">‰æ‘œ‚Ìƒnƒ“ƒhƒ‹</param>
     void SetTexture(int slot,int imageHnadle);
 
-    void SetSkiningVertex(const std::string& name,const int& modelHandle,const std::string& vsPath);
+    void SetSkiningVertex(const std::string& name,const int& modelHandle);
 
 private:
 

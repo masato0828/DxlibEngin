@@ -15,7 +15,7 @@ PostEffect_ScanLine::~PostEffect_ScanLine()
 
 void PostEffect_ScanLine::Init()
 {
-	lpShaderMng.LoadShader("scanLine", "", "Shader/ps/ScanLine.ps", sizeof(ScanLine) * 8);
+	lpShaderMng.LoadShader("scanLine", "", "data/Pixel/ScanLine.ps", sizeof(ScanLine) * 8);
 
     pram_.time = 0.0f;
     pram_.pram1 = 2.0f;
@@ -38,7 +38,6 @@ void PostEffect_ScanLine::Draw(std::string name, const int imageHnadle)
 {
     if (name == "scanLine")
     {
-        MV1SetUseOrigShader(true);
         // postEffect
         lpShaderMng.DrawBegin(name);
         lpShaderMng.SetTexture(0, imageHnadle);
@@ -59,7 +58,6 @@ void PostEffect_ScanLine::Draw(std::string name, const int imageHnadle)
         MyDrawGraph(0, 0, imageHnadle);
         //DrawGraph(0,0,screen_,true);
         lpShaderMng.DrawEnd();
-        MV1SetUseOrigShader(false);
     }
 }
 

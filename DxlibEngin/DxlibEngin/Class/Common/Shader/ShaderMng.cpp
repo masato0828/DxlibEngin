@@ -95,6 +95,8 @@ int ShaderMng::GetShaderPSHandle(const std::string& name) const
 
 void ShaderMng::DrawBegin(const std::string& name)
 {
+    MV1SetUseOrigShader(true);
+
     SetUseVertexShader(shaders_[name].first);
     SetUsePixelShader(shaders_[name].second);
 }
@@ -103,6 +105,8 @@ void ShaderMng::DrawEnd()
 {
     SetUseVertexShader(-1);
     SetUsePixelShader(-1);
+
+    MV1SetUseOrigShader(false);
 }
 
 void ShaderMng::SetTexture(int slot, int imageHnadle)
@@ -110,7 +114,7 @@ void ShaderMng::SetTexture(int slot, int imageHnadle)
     SetUseTextureToShader(slot,imageHnadle);
 }
 
-void ShaderMng::SetSkiningVertex(const std::string& name, const int& modelHandle, const std::string& vsPath)
+void ShaderMng::SetSkiningVertex(const std::string& name, const int& modelHandle)
 {
     // モデルに含まれるトライアングルリストの数を取得する
     int modelListNum = MV1GetTriangleListNum(modelHandle);
@@ -131,32 +135,32 @@ void ShaderMng::SetSkiningVertex(const std::string& name, const int& modelHandle
     {
     case DX_MV1_VERTEX_TYPE_1FRAME:
         // １フレームの影響を受ける頂点
-        vsHandle = -1;
-            break;
+        vsHandle = LoadVertexShader("data/ShaderBinary/Vertex/Model1FreamVertexShader.vs");
+        break;
     case DX_MV1_VERTEX_TYPE_4FRAME:
         // １～４フレームの影響を受ける頂点
         vsHandle = -1;
-            break;
+        break;
     case DX_MV1_VERTEX_TYPE_8FRAME:
         // ５～８フレームの影響を受ける頂点
         vsHandle = -1;
-            break;
+        break;
     case DX_MV1_VERTEX_TYPE_FREE_FRAME:
         // ９フレーム以上の影響を受ける頂点
         vsHandle = -1;
-            break;
+        break;
     case DX_MV1_VERTEX_TYPE_NMAP_1FRAME:
         // 法線マップ用の情報が含まれる１フレームの影響を受ける頂点
         vsHandle = -1;
-            break;
+        break;
     case DX_MV1_VERTEX_TYPE_NMAP_4FRAME:
         // 法線マップ用の情報が含まれる１～４フレームの影響を受ける頂点
         vsHandle = -1;
-            break;
+        break;
     case DX_MV1_VERTEX_TYPE_NMAP_8FRAME:
         // 法線マップ用の情報が含まれる５～８フレームの影響を受ける頂点
         vsHandle = -1;
-            break;
+        break;
     case DX_MV1_VERTEX_TYPE_NMAP_FREE_FRAME:
         // 法線マップ用の情報が含まれる９フレーム以上の影響を受ける頂点
         vsHandle = -1;
@@ -166,14 +170,16 @@ void ShaderMng::SetSkiningVertex(const std::string& name, const int& modelHandle
         vsHandle = -1;
         break;
     default:
-        vsHandle = LoadVertexShader(vsPath.c_str());
+        vsHandle = shaders_[name].second;
         break;
     }
 
-    
+
     if (vsHandle < 0)
+    {
         // 元の頂点シェーダーを入れる
         vsHandle = shaders_[name].second;
+    }
 
     shaders_[name].second = vsHandle;
 }

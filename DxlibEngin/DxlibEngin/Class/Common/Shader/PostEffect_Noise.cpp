@@ -15,7 +15,7 @@ PostEffect_Noise::~PostEffect_Noise()
 
 void PostEffect_Noise::Init()
 {
-	lpShaderMng.LoadShader("noise", "", "Shader/ps/screen_ps.ps", sizeof(Noise_Effect) * 8);
+	lpShaderMng.LoadShader("noise", "", "data/Pixel/screen_ps.ps", sizeof(Noise_Effect) * 8);
 
 	pram_.time = 0.0f;
 	pram_.noise1 = 8.7819f;

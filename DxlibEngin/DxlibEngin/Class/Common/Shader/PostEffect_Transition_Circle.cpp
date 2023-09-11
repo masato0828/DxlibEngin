@@ -16,7 +16,7 @@ PostEffect_Transition_Circle::~PostEffect_Transition_Circle()
 
 void PostEffect_Transition_Circle::Init()
 {
-	lpShaderMng.LoadShader("circle", "Shader/vs/Circle_vs.vs", "Shader/ps/Circle_ps.ps", sizeof(Transition_Circle) * 16);
+	lpShaderMng.LoadShader("circle", "data/Vertex/Circle_vs.vs", "data/Pixel/Circle_ps.ps", sizeof(Transition_Circle) * 16);
 
     pram_.color = {0.0f,0.0f,1.0f,1.0f};
 

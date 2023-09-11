@@ -28,8 +28,8 @@ void Fream_Stage::Init()
 
     lpShaderMng.LoadShader(
         "plane",
-        "Shader/vs/planeVertexShader.vs",
-        "Shader/ps/planePixelShader.ps",
+        "data/ShaderBinary/Vertex/planeVertexShader.vs",
+        "data/ShaderBinary/Pixel/planePixelShader.ps",
         sizeof(stageGrid) * 8);
 
     lineNum_ = 79.8f;

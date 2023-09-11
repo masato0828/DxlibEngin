@@ -152,7 +152,7 @@ void CreateIcons::FileAssignments(std::filesystem::path& name, bool& buttonPress
 
 			
 		}
-		else if (ext == L"png")
+		else if (ext == L"png" || ext == L"tif")
 		{
 			fileImageShaderDatas_.emplace(u8fileName, nullptr);
 			auto IconDataPath = fileFullPath / u8fileName;

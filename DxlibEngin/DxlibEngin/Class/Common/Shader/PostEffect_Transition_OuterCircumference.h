@@ -16,7 +16,6 @@ private:
 
 	struct Transition_OuterCircumference
 	{
-		
 		ImGuiCustom::IM_COLOR color;// 色
 		Vector2Flt screenSize;// スクリーンのサイズ
 		Vector2Flt aspect;// アスペクト比

@@ -16,7 +16,7 @@ PostEffect_Transition_OuterCircumference::~PostEffect_Transition_OuterCircumfere
 
 void PostEffect_Transition_OuterCircumference::Init()
 {
-	lpShaderMng.LoadShader("outerCircumference", "Shader/vs/OuterCircumference_vs.vs", "Shader/ps/OuterCircumference_ps.ps", sizeof(Transition_OuterCircumference) * 16);
+	lpShaderMng.LoadShader("outerCircumference", "data/Vertex/OuterCircumference_vs.vs", "data/Pixel/OuterCircumference_ps.ps", sizeof(Transition_OuterCircumference) * 16);
 
     timespeed_ = 1.0f;
 
