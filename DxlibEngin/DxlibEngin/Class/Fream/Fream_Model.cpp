@@ -364,30 +364,36 @@ int Fream_Model::FileCnt(const std::wstring& fileName)
 }
 Vector3& Fream_Model::GetModelPos()
 {
-	nullPos_ = {0,0,0};
+	Vector3 null = Vector3(0,0,0);
 
-	if (handleMap_.empty())
-	{
-		return nullPos_;
-	}
-
-	if (nowSelectFreamName_ == L"")
-	{
-		return nullPos_;
-	}
-
-	if (freamNumber_ == -1)
-	{
-		// model
-		return posMap_.at(nowSelectFreamName_);
-	}
-	else
+	if (freamNumber_ != -1)
 	{
 		// model fream
 		return freamPosMap_.at(nowSelectFreamName_).at(freamNumber_);
 	}
 
-	return nullPos_;
+	// model
+	return posMap_.at(nowSelectFreamName_);
+}
+
+bool Fream_Model::IsModelSelect()
+{
+	if (handleMap_.empty())
+	{
+		return false;
+	}
+
+	if (nowSelect->myName == L"")
+	{
+		return false;
+	}
+
+	if (nowSelectFreamName_ == L"")
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void Fream_Model::Tree(std::pair<const std::wstring, int>& handleData, FreamData& freamData, FreamData*& nowSelect)

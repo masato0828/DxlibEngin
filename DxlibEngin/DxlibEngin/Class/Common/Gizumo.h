@@ -74,5 +74,8 @@ private:
 
 	VECTOR resultMovePos_;
 
+
+	// ‘I‘ð‚µ‚Ä‚¢‚é–_
+	STICK_TYPE selectStick2_;
 };
 

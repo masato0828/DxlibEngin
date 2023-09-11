@@ -31,6 +31,8 @@ public:
 
     Vector3& GetModelPos();
 
+    bool IsModelSelect();
+
 private:
     std::map<std::wstring, int> handleMap_;
 

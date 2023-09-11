@@ -25,11 +25,13 @@ struct Vector3
 	bool operator>(float scale);
 	bool operator<=(float scale);
 	bool operator<(float scale);
+	
 
 	Vector3 operator+(const Vector3& v);
 	Vector3 operator-(const Vector3& v);
 	Vector3 operator*(const Vector3& v);
 	Vector3 operator/(const Vector3& v);
+	Vector3 operator+(float scale);
 
 	Vector3 operator+(const VECTOR& v);
 	Vector3 operator=(const VECTOR& v);

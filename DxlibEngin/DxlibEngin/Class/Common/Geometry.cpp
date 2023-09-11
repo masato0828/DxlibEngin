@@ -93,6 +93,11 @@ Vector3 Vector3::operator/(const Vector3& v)
     return { x_ / v.x_, y_ / v.y_, z_ / v.z_ };
 }
 
+Vector3 Vector3::operator+(float scale)
+{
+    return {x_+scale,y_ + scale ,z_ + scale };
+}
+
 Vector3 Vector3::operator+(const VECTOR& v)
 {
     return { x_ + v.x, y_ + v.y, z_ + v.z };

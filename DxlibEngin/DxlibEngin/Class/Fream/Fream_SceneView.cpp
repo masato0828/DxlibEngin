@@ -37,7 +37,7 @@ void Fream_SceneView::Create()
     ImGui::SetNextWindowClass(&window_classview);
     
     // ウィンドウの表示
-    if (ImGui::Begin("scene"))
+    if (ImGui::Begin("scene",0,ImGuiWindowFlags_NoMove))
     {
         // シェーダ情報の作成
         static ID3D11ShaderResourceView* my_shaderData = NULL;

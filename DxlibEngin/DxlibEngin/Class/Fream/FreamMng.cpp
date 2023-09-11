@@ -153,7 +153,10 @@ void FreamMng::Update(bool window_open_flg)
 
             models_->Update();
 
-            gizumo_->Update(mouse_->GetScreenMousePoint(),models_->GetModelPos());
+            if (models_->IsModelSelect())
+            {
+                gizumo_->Update(mouse_->GetScreenMousePoint(), models_->GetModelPos());
+            }
 
             // カメラの更新
             //camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());

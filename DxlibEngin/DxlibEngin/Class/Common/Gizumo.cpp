@@ -78,8 +78,11 @@ void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 				// 掴んだ時のスクリーン座標
 				CatchMouseX = ScreenPos.x;
 				CatchMouseY = ScreenPos.y;
+
+				Catch3DHitPosition = result.Position;
+				Catch2DHitPosition = ConvWorldPosToScreenPos(result.Position);
+				selectStick_ = static_cast<STICK_TYPE>(i);
 			}
-			selectStick_ = static_cast<STICK_TYPE>(i);
 			break;
 		}
 		selectStick_ = STICK_TYPE::MAX;
@@ -99,33 +102,26 @@ void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 			float moveX = 0, moveY = 0, moveZ = 0;
 
 			// 移動分
-			moveX = (float)(ScreenPos.x - CatchMouseX-modelPos.x_);
+			moveX = (float)(ScreenPos.x - CatchMouseX);
 			moveY = (float)(ScreenPos.y - CatchMouseY);
-			ImGui::Text("move :%f;%f;%f", moveX, moveY, moveY);
+			ImGui::Text("move\n%f;%f;%f", moveX, moveY, moveY);
 
-			if (modelPos == Vector3(0,0,0))
-			{
-				ImGui::End();
-				return;
-				
-			}
 
-			resultMovePos_.x = modelPos.x_ + moveX;
-
+			modelPos.x_ = moveX + catchPos_.x;
 			modelPos.y_ = 0;
 			modelPos.z_ = 0;
 
-			modelPos.x_ = resultMovePos_.x+ catchPos_.x;
+			selectStick2_ = selectStick_;
 		}
 	}
 
 	
 	
-	ImGui::Text("modelPos: %f;%f;%f" , modelPos.x_, modelPos.y_, modelPos.z_);
+	ImGui::Text("modelPos\n %f;%f;%f" , modelPos.x_, modelPos.y_, modelPos.z_);
 
 	if (Catch)
 	{
-		ImGui::Text("catchPos  :%f;%f;%f", catchPos_.x, catchPos_.y, catchPos_.z);
+		ImGui::Text("catchPos\n  :%f;%f;%f", catchPos_.x, catchPos_.y, catchPos_.z);
 	}
 	ImGui::End();
 
@@ -148,12 +144,15 @@ void Gizumo::Draw()
 {
 	SetUseLighting(false);
 
-	for (auto & [back,front,color]:stick_)
+	for (auto& [back, front, color] : stick_)
 	{
 		DrawCube3D((pos + back).toVECTOR(), (pos + front).toVECTOR(), color, color, true);
+		DrawLine3D(pos.toVECTOR(), { pos.x_ + front.x_ + 1000, pos.y_, pos.z_ }, color);
 	}
 
-	DrawCapsule3D(start,end,0.1f,10,0xffff00, 0xffff00,true);
+	
+
+	//DrawCapsule3D(start,end,0.1f,10,0xffff00, 0xffff00,true);
 	
 
 	SetUseLighting(true);
