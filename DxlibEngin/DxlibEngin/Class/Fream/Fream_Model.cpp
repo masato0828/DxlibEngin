@@ -1,6 +1,7 @@
 #include "Fream_Model.h"
 #include "../../imGui/imgui.h"
 #include "../Common/Utility.h"
+#include "../Common/Shader/ShaderMng.h"
 
 Fream_Model::Fream_Model():freamData_(nullptr,L"")
 {
@@ -192,7 +193,11 @@ void Fream_Model::SetModelPath(const std::filesystem::path& path)
 
 		is_rotation_.emplace(handleM.first,false);
 
+
+		//LoadShaderProc(Utility::WideStringToString(handleM.first));
 	}
+
+	
 }
 
 void Fream_Model::Draw()
@@ -394,6 +399,16 @@ bool Fream_Model::IsModelSelect()
 	}
 
 	return true;
+}
+
+void Fream_Model::LoadShaderProc(const std::string& name)
+{
+	lpShaderMng.LoadShader(name, "", "", 0);
+
+	auto it = handleMap_;
+	auto rit = it.rbegin();
+
+	lpShaderMng.SetSkiningVertex(name, rit->second,"");
 }
 
 void Fream_Model::Tree(std::pair<const std::wstring, int>& handleData, FreamData& freamData, FreamData*& nowSelect)

@@ -12,10 +12,10 @@ using  json = nlohmann::json;
 
 System_FileCreate::System_FileCreate()
 {
-    basePath_ = L"D:/UseEngin";
+    basePath_ = L"C:/UseEngin";
     fileDialog_open = false;
     systemFullPath_ = basePath_;
-    enginFile_ = L"D:/";
+    enginFile_ = L"C:/";
 
     appOpenFlg_ = false;
 }
@@ -85,7 +85,7 @@ void System_FileCreate::IsMainFile()
         if (ImGui::Button("OK"))
         {
             // 指定した場所にフォルダの作成
-            //std::filesystem::create_directories(systemFullPath_);
+            std::filesystem::create_directories(systemFullPath_);
 
             CreateFolderCheck(systemFullPath_);
 

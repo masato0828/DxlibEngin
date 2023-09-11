@@ -76,6 +76,8 @@ public:
     /// <param name="imageHnadle">画像のハンドル</param>
     void SetTexture(int slot,int imageHnadle);
 
+    void SetSkiningVertex(const std::string& name,const int& modelHandle,const std::string& vsPath);
+
 private:
 
     // シェーダーの管理(key値,頂点シェーダハンドル,ピクセルシェーダハンドル)

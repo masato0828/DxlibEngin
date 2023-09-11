@@ -33,6 +33,8 @@ public:
 
     bool IsModelSelect();
 
+    void LoadShaderProc(const std::string& name);
+
 private:
     std::map<std::wstring, int> handleMap_;
 

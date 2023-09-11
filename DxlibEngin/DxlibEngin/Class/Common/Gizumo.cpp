@@ -19,9 +19,9 @@ void Gizumo::Init()
 	float size = 2.5f;
 
 	Vector3 redBack = { -size,-size,-size };
-	Vector3 redFront = { size,size,-80 };
+	Vector3 redFront = { -80,size,size };
 	Vector3 blueBack = { -size,-size,-size };
-	Vector3 blueFront = { -80,size,size };
+	Vector3 blueFront = { size,size,-80 };
 	Vector3 greenBack = { -size,-size,-size };
 	Vector3 greenFront = { size,80,size };
 
@@ -39,7 +39,7 @@ void Gizumo::Init()
 	PrevInput = 0;
 	Catch = 0;
 
-	resultMovePos_ = VECTOR();
+	selectStick_ = STICK_TYPE::MAX;
 	
 }
 
@@ -82,6 +82,7 @@ void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 				Catch3DHitPosition = result.Position;
 				Catch2DHitPosition = ConvWorldPosToScreenPos(result.Position);
 				selectStick_ = static_cast<STICK_TYPE>(i);
+				selectStick2_ = static_cast<STICK_TYPE>(i);
 			}
 			break;
 		}
@@ -95,29 +96,38 @@ void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 		if ((NowInput & MOUSE_INPUT_1) == 0)
 		{
 			Catch = 0;
+			selectStick2_ = STICK_TYPE::MAX;
 		}
 		else
 		{
-
 			float moveX = 0, moveY = 0, moveZ = 0;
 
 			// ˆÚ“®•ª
 			moveX = (float)(ScreenPos.x - CatchMouseX);
 			moveY = (float)(ScreenPos.y - CatchMouseY);
+			moveZ = moveX - moveY;
+
 			ImGui::Text("move\n%f;%f;%f", moveX, moveY, moveY);
 
-
-			modelPos.x_ = moveX + catchPos_.x;
-			modelPos.y_ = 0;
-			modelPos.z_ = 0;
-
-			selectStick2_ = selectStick_;
+			if (selectStick2_ == STICK_TYPE::X)
+			{
+				modelPos.x_ = moveX + catchPos_.x;
+			}
+			else if (selectStick2_ == STICK_TYPE::Y)
+			{
+				modelPos.y_ = -(moveY + catchPos_.y);
+			}
+			else if (selectStick2_ == STICK_TYPE::Z)
+			{
+				modelPos.z_ = -(moveZ + catchPos_.z);
+			}
 		}
 	}
 
 	
 	
 	ImGui::Text("modelPos\n %f;%f;%f" , modelPos.x_, modelPos.y_, modelPos.z_);
+	ImGui::Text("selectStick_\n %d", selectStick2_);
 
 	if (Catch)
 	{
@@ -128,7 +138,7 @@ void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 	for (int i = 0; i < stick_.size(); i++)
 	{
 
-		if (selectStick_ == static_cast<STICK_TYPE>(i))
+		if (selectStick2_ == static_cast<STICK_TYPE>(i))
 		{
 			stick_[static_cast<STICK_TYPE>(i)].color = 0x000000;
 		}
@@ -142,18 +152,32 @@ void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 
 void Gizumo::Draw()
 {
-	SetUseLighting(false);
+	//SetUseLighting(false);
 
 	for (auto& [back, front, color] : stick_)
 	{
 		DrawCube3D((pos + back).toVECTOR(), (pos + front).toVECTOR(), color, color, true);
-		DrawLine3D(pos.toVECTOR(), { pos.x_ + front.x_ + 1000, pos.y_, pos.z_ }, color);
+
+		if (selectStick2_ == STICK_TYPE::X)
+		{
+			DrawLine3D({ pos.x_ - (front.x_ + 10000), pos.y_, pos.z_ }, { pos.x_ + front.x_ + 10000, pos.y_, pos.z_ }, color);
+		}
+		else if (selectStick2_ == STICK_TYPE::Y)
+		{
+			DrawLine3D({ pos.x_ , pos.y_ - (front.y_ + 10000), pos.z_ }, { pos.x_ , pos.y_ + front.y_ + 10000, pos.z_ }, color);
+		}
+		else if (selectStick2_ == STICK_TYPE::Z)
+		{
+			DrawLine3D({ pos.x_, pos.y_, pos.z_ - (front.z_ + 10000) }, { pos.x_ , pos.y_, pos.z_ + front.z_ + 10000 }, color);
+		}
 	}
+
+
 
 	
 
 	//DrawCapsule3D(start,end,0.1f,10,0xffff00, 0xffff00,true);
 	
 
-	SetUseLighting(true);
+	//SetUseLighting(true);
 }

@@ -109,3 +109,71 @@ void ShaderMng::SetTexture(int slot, int imageHnadle)
 {
     SetUseTextureToShader(slot,imageHnadle);
 }
+
+void ShaderMng::SetSkiningVertex(const std::string& name, const int& modelHandle, const std::string& vsPath)
+{
+    // モデルに含まれるトライアングルリストの数を取得する
+    int modelListNum = MV1GetTriangleListNum(modelHandle);
+    int modelShaderType = DX_MV1_VERTEX_TYPE_1FRAME;
+    int vsHandle = -1;
+
+    // 頂点タイプの取得
+    for (int i = 0; i < modelListNum; i++)
+    {
+        // トライアングルリストの頂点タイプ
+        modelShaderType = MV1GetTriangleListVertexType(modelHandle, i);
+        break;
+    }
+
+
+    // 頂点シェーダの読み込み
+    switch (modelShaderType)
+    {
+    case DX_MV1_VERTEX_TYPE_1FRAME:
+        // １フレームの影響を受ける頂点
+        vsHandle = -1;
+            break;
+    case DX_MV1_VERTEX_TYPE_4FRAME:
+        // １～４フレームの影響を受ける頂点
+        vsHandle = -1;
+            break;
+    case DX_MV1_VERTEX_TYPE_8FRAME:
+        // ５～８フレームの影響を受ける頂点
+        vsHandle = -1;
+            break;
+    case DX_MV1_VERTEX_TYPE_FREE_FRAME:
+        // ９フレーム以上の影響を受ける頂点
+        vsHandle = -1;
+            break;
+    case DX_MV1_VERTEX_TYPE_NMAP_1FRAME:
+        // 法線マップ用の情報が含まれる１フレームの影響を受ける頂点
+        vsHandle = -1;
+            break;
+    case DX_MV1_VERTEX_TYPE_NMAP_4FRAME:
+        // 法線マップ用の情報が含まれる１～４フレームの影響を受ける頂点
+        vsHandle = -1;
+            break;
+    case DX_MV1_VERTEX_TYPE_NMAP_8FRAME:
+        // 法線マップ用の情報が含まれる５～８フレームの影響を受ける頂点
+        vsHandle = -1;
+            break;
+    case DX_MV1_VERTEX_TYPE_NMAP_FREE_FRAME:
+        // 法線マップ用の情報が含まれる９フレーム以上の影響を受ける頂点
+        vsHandle = -1;
+        break;
+    case DX_MV1_VERTEX_TYPE_NUM:
+        // 頂点タイプの数
+        vsHandle = -1;
+        break;
+    default:
+        vsHandle = LoadVertexShader(vsPath.c_str());
+        break;
+    }
+
+    
+    if (vsHandle < 0)
+        // 元の頂点シェーダーを入れる
+        vsHandle = shaders_[name].second;
+
+    shaders_[name].second = vsHandle;
+}

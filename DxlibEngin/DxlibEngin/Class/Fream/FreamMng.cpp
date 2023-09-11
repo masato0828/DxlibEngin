@@ -30,7 +30,7 @@ void FreamMng::Init()
 		(ID3D11Device*)GetUseDirect3D11Device(),
 		(ID3D11DeviceContext*)GetUseDirect3D11DeviceContext());
 
-    //system_FileCreate_ = std::make_unique<System_FileCreate>();
+    system_FileCreate_ = std::make_unique<System_FileCreate>();
 
     sceneView_ = std::make_unique<Fream_SceneView>();
     dokingArea_ = std::make_unique<Fream_DokingArea>();
@@ -68,12 +68,12 @@ void FreamMng::Update(bool window_open_flg)
     postEffect_->Update();
     
 
-    //system_FileCreate_->IsMainFile();
+    system_FileCreate_->IsMainFile();
 
-    /*if (!system_FileCreate_->GetAppOpenFlg())
+    if (!system_FileCreate_->GetAppOpenFlg())
     {
         return;
-    }*/
+    }
 
 
     if (firstWindowFlg_)
@@ -205,6 +205,7 @@ void FreamMng::Draw()
     stage_->PreviewMake();
 
     // ギズモ用のスクリーン作成
+    if (models_->IsModelSelect())
     {
         SetDrawScreen(systemUIScreen_);
         ClearDrawScreen();
