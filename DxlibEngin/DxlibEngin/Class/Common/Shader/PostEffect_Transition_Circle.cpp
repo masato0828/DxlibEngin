@@ -16,7 +16,7 @@ PostEffect_Transition_Circle::~PostEffect_Transition_Circle()
 
 void PostEffect_Transition_Circle::Init()
 {
-	lpShaderMng.LoadShader("circle", "data/Vertex/Circle_vs.vs", "data/Pixel/Circle_ps.ps", sizeof(Transition_Circle) * 16);
+	lpShaderMng.LoadShader(L"circle", "data/ShaderBinary/Vertex/Circle_vs.vs", "data/ShaderBinary/Pixel/Circle_ps.ps", sizeof(Transition_Circle) * 16);
 
     pram_.color = {0.0f,0.0f,1.0f,1.0f};
 
@@ -37,15 +37,15 @@ void PostEffect_Transition_Circle::Update()
     pram_.val += timeSpeed_;
 }
 
-void PostEffect_Transition_Circle::Draw(std::string name, const int imageHnadle)
+void PostEffect_Transition_Circle::Draw(std::wstring name, const int imageHnadle)
 {
-    if (name == "circle")
+    if (name == L"circle")
     {
         DrawGraph(0, 0, imageHnadle, true);
         MV1SetUseOrigShader(true);
         // postEffect
         lpShaderMng.DrawBegin(name);
-        lpShaderMng.SetTexture(0, imageHnadle);
+        lpShaderMng.SetTexture(SLOT_TYPE::DEFFUSE, imageHnadle);
         Transition_Circle* cbBuf = (Transition_Circle*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
         cbBuf[0].color = pram_.color;
         cbBuf[0].screenSize = pram_.screenSize;

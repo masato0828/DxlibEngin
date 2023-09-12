@@ -15,7 +15,7 @@ PostEffect_ScanLine::~PostEffect_ScanLine()
 
 void PostEffect_ScanLine::Init()
 {
-	lpShaderMng.LoadShader("scanLine", "", "data/Pixel/ScanLine.ps", sizeof(ScanLine) * 8);
+	lpShaderMng.LoadShader(L"scanLine", "", "data/ShaderBinary/Pixel/ScanLine.ps", sizeof(ScanLine) * 8);
 
     pram_.time = 0.0f;
     pram_.pram1 = 2.0f;
@@ -34,13 +34,13 @@ void PostEffect_ScanLine::Update()
     pram_.time += 0.1f;
 }
 
-void PostEffect_ScanLine::Draw(std::string name, const int imageHnadle)
+void PostEffect_ScanLine::Draw(std::wstring name, const int imageHnadle)
 {
-    if (name == "scanLine")
+    if (name == L"scanLine")
     {
         // postEffect
         lpShaderMng.DrawBegin(name);
-        lpShaderMng.SetTexture(0, imageHnadle);
+        lpShaderMng.SetTexture(SLOT_TYPE::DEFFUSE, imageHnadle);
         ScanLine* cbBuf = (ScanLine*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
         cbBuf[0].time = pram_.time;
         cbBuf[0].pram1 = pram_.pram1;

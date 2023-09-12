@@ -10,7 +10,7 @@ public:
 	~PostEffect_Transition_OuterCircumference();
 	void Init() override final;
 	void Update() override final;
-	void Draw(std::string name, const int imageHnadle) override final;
+	void Draw(std::wstring name, const int imageHnadle) override final;
 	void Custom()override final;
 private:
 

@@ -16,7 +16,7 @@ PostEffect_Transition_OuterCircumference::~PostEffect_Transition_OuterCircumfere
 
 void PostEffect_Transition_OuterCircumference::Init()
 {
-	lpShaderMng.LoadShader("outerCircumference", "data/Vertex/OuterCircumference_vs.vs", "data/Pixel/OuterCircumference_ps.ps", sizeof(Transition_OuterCircumference) * 16);
+	lpShaderMng.LoadShader(L"outerCircumference", "data/ShaderBinary/Vertex/OuterCircumference_vs.vs", "data/ShaderBinary/Pixel/OuterCircumference_ps.ps", sizeof(Transition_OuterCircumference) * 16);
 
     timespeed_ = 1.0f;
 
@@ -43,15 +43,15 @@ void PostEffect_Transition_OuterCircumference::Update()
     pram_.time += timespeed_;
 }
 
-void PostEffect_Transition_OuterCircumference::Draw(std::string name, const int imageHnadle)
+void PostEffect_Transition_OuterCircumference::Draw(std::wstring name, const int imageHnadle)
 {
-    if (name == "outerCircumference")
+    if (name == L"outerCircumference")
     {
         DrawGraph(0, 0, imageHnadle, true);
         MV1SetUseOrigShader(true);
         // postEffect
         lpShaderMng.DrawBegin(name);
-        lpShaderMng.SetTexture(0, imageHnadle);
+        lpShaderMng.SetTexture(SLOT_TYPE::DEFFUSE, imageHnadle);
         Transition_OuterCircumference* cbBuf = (Transition_OuterCircumference*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
         cbBuf[0].color = pram_.color;
         cbBuf[0].screenSize = pram_.screenSize;

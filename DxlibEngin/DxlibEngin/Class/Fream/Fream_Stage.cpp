@@ -27,7 +27,7 @@ void Fream_Stage::Init()
     modelH_ = MV1LoadModel("data/modelData/plane.mv1");
 
     lpShaderMng.LoadShader(
-        "plane",
+        L"plane",
         "data/ShaderBinary/Vertex/planeVertexShader.vs",
         "data/ShaderBinary/Pixel/planePixelShader.ps",
         sizeof(stageGrid) * 8);
@@ -50,7 +50,7 @@ void Fream_Stage::Init()
 void Fream_Stage::Update()
 {
     //stageGrid* cbBuf = (stageGrid*)GetBufferShaderConstantBuffer(buffer_);
-    stageGrid* cbBuf = (stageGrid*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle("plane"));
+    stageGrid* cbBuf = (stageGrid*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(L"plane"));
     cbBuf[0].lineNum = lineNum_;
     cbBuf[0].lineSize = lineSize_;
     cbBuf[0].lineColorR = color_[0];
@@ -58,11 +58,11 @@ void Fream_Stage::Update()
     cbBuf[0].lineColorB = color_[2];
 
     //// ピクセルシェーダー用の定数バッファを更新して書き込んだ内容を反映する
-    UpdateShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle("plane"));
+    UpdateShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(L"plane"));
 
     //// ピクセルシェーダー用の定数バッファを定数バッファレジスタにセット
     //// 引数の三番目はレジスタに設定している番号
-    SetShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle("plane"), DX_SHADERTYPE_PIXEL, 5);
+    SetShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(L"plane"), DX_SHADERTYPE_PIXEL, 5);
 }
 
 void Fream_Stage::Draw()
@@ -75,7 +75,7 @@ void Fream_Stage::Draw()
 
 
     MV1SetUseOrigShader(true);
-    lpShaderMng.DrawBegin("plane");
+    lpShaderMng.DrawBegin(L"plane");
 
     MV1SetPosition(modelH_, VGet(0, 0, 0));
     MV1SetRotationXYZ(modelH_, VGet(0, 0, 0));

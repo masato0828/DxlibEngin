@@ -32,10 +32,10 @@ public:
 private:
 
 	// ポストエフェクト管理(key値,ポストエフェクト)
-	std::unordered_map<std::string,std::unique_ptr<PostEffect_Base>> postEffect_;
+	std::unordered_map<std::wstring,std::unique_ptr<PostEffect_Base>> postEffect_;
 
 	// 選択中のポストエフェクトのkey値
-	std::string selectName_;
+	std::wstring selectName_;
 
 	
 };

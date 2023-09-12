@@ -6,6 +6,9 @@
 #include "FreamBase.h"
 #include "../Common/Vector2.h"
 #include "../Common/Geometry.h"
+
+
+
 class Fream_Model :
     public FreamBase
 {
@@ -33,16 +36,26 @@ public:
 
     bool IsModelSelect();
 
-    void LoadShaderProc(const std::string& name);
+    void LoadShaderProc(const std::wstring& name);
 
 private:
-    std::map<std::wstring, int> handleMap_;
+    struct ModelFream
+    {
+        Vector3 ferampos;
+        Vector3 feramrot;
+        Vector3 feramscl;
+    };
 
-    std::map<std::wstring, Vector3> sclMap_;
-    std::map<std::wstring, Vector3> posMap_;
-    std::map<std::wstring, Vector3> rotMap_;
+    struct Model
+    {
+        int handle;
+        Vector3 pos;
+        Vector3 rot;
+        Vector3 scl;
+        std::vector<ModelFream>modelFream;
+    };
 
-    //int selected = 0;
+    std::map<std::wstring, Model> model_;
 
     struct FreamData
     {
@@ -63,11 +76,7 @@ private:
 
     int freamNumber_;
 
-    std::map<std::wstring, std::vector<Vector3>> freamSclMap_;
-    std::map<std::wstring, std::vector<Vector3>> freamPosMap_;
-    std::map<std::wstring, std::vector<Vector3>> freamRotMap_;
-
-    void Tree(std::pair<const std::wstring, int>& handleData,FreamData& freamData,FreamData*& nowSelect);
+    void Tree(std::pair<const std::wstring, Model>& handleData,FreamData& freamData,FreamData*& nowSelect);
 
     bool contextMenuFlg_;
 

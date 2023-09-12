@@ -15,7 +15,7 @@ PostEffect_Noise::~PostEffect_Noise()
 
 void PostEffect_Noise::Init()
 {
-	lpShaderMng.LoadShader("noise", "", "data/Pixel/screen_ps.ps", sizeof(Noise_Effect) * 8);
+	lpShaderMng.LoadShader(L"noise", "", "data/ShaderBinary/Pixel/screen_ps.ps", sizeof(Noise_Effect) * 8);
 
 	pram_.time = 0.0f;
 	pram_.noise1 = 8.7819f;
@@ -28,14 +28,14 @@ void PostEffect_Noise::Update()
 	pram_.time += 0.1f;
 }
 
-void PostEffect_Noise::Draw(std::string name, const int imageHnadle)
+void PostEffect_Noise::Draw(std::wstring name, const int imageHnadle)
 {
-    if (name == "noise")
+    if (name == L"noise")
     {
         MV1SetUseOrigShader(true);
         // postEffect
         lpShaderMng.DrawBegin(name);
-        lpShaderMng.SetTexture(0, imageHnadle);
+        lpShaderMng.SetTexture(SLOT_TYPE::DEFFUSE, imageHnadle);
         Noise_Effect* cbBuf = (Noise_Effect*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
         cbBuf[0].time = pram_.time;
         cbBuf[0].noise1 = pram_.noise1;

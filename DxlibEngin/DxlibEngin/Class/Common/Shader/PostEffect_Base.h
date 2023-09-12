@@ -22,7 +22,7 @@ public:
 	/// <param name="name">シェーダーの名前
 	/// (ポストエフェクトマネージャーのkey値と一致する必要あり)</param>
 	/// <param name="imageHnadle">画像ハンドル</param>
-	virtual void Draw(std::string name,const int imageHnadle) = 0;
+	virtual void Draw(std::wstring name,const int imageHnadle) = 0;
 
 	/// <summary>
 	/// カスタム

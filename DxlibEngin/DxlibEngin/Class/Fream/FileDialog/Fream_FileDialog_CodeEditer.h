@@ -16,5 +16,9 @@ public:
 
 private:
     TextEditor editor;
+
+    bool isText_;
+
+    std::string beforCode_;
 };
 

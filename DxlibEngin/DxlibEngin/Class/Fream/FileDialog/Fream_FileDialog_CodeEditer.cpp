@@ -39,6 +39,8 @@ void Fream_FileDialog_CodeEditer::Init()
 	editor.SetPalette(customPalette);
 
 	editor.SetLanguageDefinition(customLanguage);
+
+	isText_ = false;
 }
 
 void Fream_FileDialog_CodeEditer::Update()
@@ -49,6 +51,8 @@ void Fream_FileDialog_CodeEditer::Update(std::filesystem::path filePath)
 {
 	std::ifstream file(filePath);
 	std::string code((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
+	
 
 	std::string maltbyteEncoding = Utility::DetectMaltbyteEncoding(code);
 
@@ -68,49 +72,71 @@ void Fream_FileDialog_CodeEditer::Update(std::filesystem::path filePath)
 
 	ImGui::SetWindowFontScale(1.0f);
 
-	if (maltbyteEncoding == "UTF-8")
+	// loadボタンを押した場合
+	if (ImGui::Button("Load"))
 	{
-		editor.SetText(code);
+		isText_ = true;
 	}
-	else
+
+	// 前回読み込んだコードと違う場合
+	if (beforCode_ != code)
+	{
+		isText_ = true;
+	}
+
+	if (isText_)
 	{
 
-		auto fileName = filePath;
-
-
-
-		if (Utility::ComparisonExtensionFile(fileName, L"cpp") ||
-			Utility::ComparisonExtensionFile(fileName, L"h"))
+		if (maltbyteEncoding == "UTF-8")
 		{
-			auto w_maltbyte = Utility::MultiByteToUnicode(code);
-			auto maltbyte = Utility::WStringToUTF8(w_maltbyte);
-			editor.SetText(maltbyte);
-		}
-		else if (Utility::ComparisonExtensionFile(fileName, L"hlsl"))
-		{
-			auto w_maltbyte = Utility::MultiByteToUnicode(code);
-			auto maltbyte = Utility::WStringToUTF8(w_maltbyte);
-			editor.SetLanguageDefinition(TextEditor::LanguageDefinition::HLSL());
-
-			// 関数名の色を設定
-			TextEditor::Palette customPalette = editor.GetDarkPalette();
-			customPalette[(unsigned)TextEditor::PaletteIndex::Custom1_Function] = 0xff7070e0;
-			// パレットをテキストエディタに設定
-			editor.SetPalette(customPalette);
-
-
-			editor.SetText(maltbyte);
+			editor.SetText(code);
 		}
 		else
 		{
-			auto w_maltbyte = Utility::MultiByteToUnicode(code);
-			auto maltbyte = Utility::WStringToUTF8(w_maltbyte);
-			editor.SetText(maltbyte);
+
+			auto fileName = filePath;
+
+
+
+			if (Utility::ComparisonExtensionFile(fileName, L"cpp") ||
+				Utility::ComparisonExtensionFile(fileName, L"h"))
+			{
+				auto w_maltbyte = Utility::MultiByteToUnicode(code);
+				auto maltbyte = Utility::WStringToUTF8(w_maltbyte);
+				editor.SetText(maltbyte);
+			}
+			else if (Utility::ComparisonExtensionFile(fileName, L"hlsl"))
+			{
+				auto w_maltbyte = Utility::MultiByteToUnicode(code);
+				auto maltbyte = Utility::WStringToUTF8(w_maltbyte);
+				editor.SetLanguageDefinition(TextEditor::LanguageDefinition::HLSL());
+
+				// 関数名の色を設定
+				TextEditor::Palette customPalette = editor.GetDarkPalette();
+				customPalette[(unsigned)TextEditor::PaletteIndex::Custom1_Function] = 0xff7070e0;
+				// パレットをテキストエディタに設定
+				editor.SetPalette(customPalette);
+
+
+				editor.SetText(maltbyte);
+			}
+			else
+			{
+				auto w_maltbyte = Utility::MultiByteToUnicode(code);
+				auto maltbyte = Utility::WStringToUTF8(w_maltbyte);
+				editor.SetText(maltbyte);
+			}
+
 		}
 
+		beforCode_ = code;
+
+		isText_ = false;
 	}
 
 	editor.Render("##codeEditor", ImVec2(-1, -1));
+	
+	
 
 	//if (ImGui::Button("Apply"))
 	//{

@@ -199,20 +199,18 @@ void FreamMng::Update(bool window_open_flg)
 
 void FreamMng::Draw()
 {
-    
+
     // 上から見たカメラに変更
     camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());
     // 2Dの上から見たステージの作成
     stage_->PreviewMake();
 
     // ギズモ用のスクリーン作成
-    if (models_->IsModelSelect())
-    {
-        SetDrawScreen(systemUIScreen_);
-        ClearDrawScreen();
-        camera_->Set();
-        gizumo_->Draw();
-    }
+
+    SetDrawScreen(systemUIScreen_);
+    ClearDrawScreen();
+    camera_->Set();
+    gizumo_->Draw();
 
     // スクリーン作成
     {
@@ -227,7 +225,10 @@ void FreamMng::Draw()
         stage_->Draw();
 
         ObjectDrawField();
-        DrawGraph(0, 0, systemUIScreen_, true);
+        if (models_->IsModelSelect())
+        {
+            DrawGraph(0, 0, systemUIScreen_, true);
+        }
 
         mouse_->Draw();
     }
@@ -239,7 +240,7 @@ void FreamMng::Draw()
     camera_->Set();
 
     postEffect_->Draw(screen_);
-    
+
 }
 
 void FreamMng::Render()

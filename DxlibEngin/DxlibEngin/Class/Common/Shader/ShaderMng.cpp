@@ -7,7 +7,7 @@ ShaderMng::~ShaderMng()
     Clear();
 }
 
-bool ShaderMng::LoadShader(const std::string& name, const std::string& vsPath, const std::string& psPath, int bufferSize)
+bool ShaderMng::LoadShader(const std::wstring& name, const std::string& vsPath, const std::string& psPath, int bufferSize)
 {
     // 頂点シェーダの読み込み
     int vsHandle = LoadVertexShader(vsPath.c_str());
@@ -37,7 +37,7 @@ bool ShaderMng::LoadShader(const std::string& name, const std::string& vsPath, c
     return true;
 }
 
-void ShaderMng::UnloadShader(const std::string& name)
+void ShaderMng::UnloadShader(const std::wstring& name)
 {
     // 指定された名前のシェーダーハンドルを解放
     auto it = shaders_.find(name);
@@ -71,7 +71,7 @@ void ShaderMng::Clear()
     }
 }
 
-int ShaderMng::GetShaderVSHandle(const std::string& name) const
+int ShaderMng::GetShaderVSHandle(const std::wstring& name) const
 {
     // 指定された名前の頂点シェーダーハンドルを取得
     auto it = shaders_.find(name);
@@ -82,7 +82,7 @@ int ShaderMng::GetShaderVSHandle(const std::string& name) const
     return -1;
 }
 
-int ShaderMng::GetShaderPSHandle(const std::string& name) const
+int ShaderMng::GetShaderPSHandle(const std::wstring& name) const
 {
     // 指定された名前のピクセルシェーダーハンドルを取得
     auto it = shaders_.find(name);
@@ -93,7 +93,7 @@ int ShaderMng::GetShaderPSHandle(const std::string& name) const
     return -1;
 }
 
-void ShaderMng::DrawBegin(const std::string& name)
+void ShaderMng::DrawBegin(const std::wstring& name)
 {
     MV1SetUseOrigShader(true);
 
@@ -109,12 +109,12 @@ void ShaderMng::DrawEnd()
     MV1SetUseOrigShader(false);
 }
 
-void ShaderMng::SetTexture(int slot, int imageHnadle)
+void ShaderMng::SetTexture(SLOT_TYPE slot, int imageHnadle)
 {
-    SetUseTextureToShader(slot,imageHnadle);
+    SetUseTextureToShader(static_cast<int>(slot),imageHnadle);
 }
 
-void ShaderMng::SetSkiningVertex(const std::string& name, const int& modelHandle)
+void ShaderMng::SetSkiningVertex(const std::wstring& name, const int& modelHandle)
 {
     // モデルに含まれるトライアングルリストの数を取得する
     int modelListNum = MV1GetTriangleListNum(modelHandle);
@@ -135,15 +135,15 @@ void ShaderMng::SetSkiningVertex(const std::string& name, const int& modelHandle
     {
     case DX_MV1_VERTEX_TYPE_1FRAME:
         // １フレームの影響を受ける頂点
-        vsHandle = LoadVertexShader("data/ShaderBinary/Vertex/Model1FreamVertexShader.vs");
+        vsHandle = LoadVertexShader("data/ShaderBinary/Vertex/Model1FrameVertexShader.vs");
         break;
     case DX_MV1_VERTEX_TYPE_4FRAME:
         // １～４フレームの影響を受ける頂点
-        vsHandle = -1;
+        vsHandle = LoadVertexShader("data/ShaderBinary/Vertex/Model4FrameVertexShader.vs");
         break;
     case DX_MV1_VERTEX_TYPE_8FRAME:
         // ５～８フレームの影響を受ける頂点
-        vsHandle = -1;
+        vsHandle = LoadVertexShader("data/ShaderBinary/Vertex/Model8FrameVertexShader.vs");
         break;
     case DX_MV1_VERTEX_TYPE_FREE_FRAME:
         // ９フレーム以上の影響を受ける頂点
@@ -151,15 +151,15 @@ void ShaderMng::SetSkiningVertex(const std::string& name, const int& modelHandle
         break;
     case DX_MV1_VERTEX_TYPE_NMAP_1FRAME:
         // 法線マップ用の情報が含まれる１フレームの影響を受ける頂点
-        vsHandle = -1;
+        vsHandle = LoadVertexShader("data/ShaderBinary/Vertex/ModelNormal1FrameVertexShader.vs");
         break;
     case DX_MV1_VERTEX_TYPE_NMAP_4FRAME:
         // 法線マップ用の情報が含まれる１～４フレームの影響を受ける頂点
-        vsHandle = -1;
+        vsHandle = LoadVertexShader("data/ShaderBinary/Vertex/ModelNormal4FrameVertexShader.vs");
         break;
     case DX_MV1_VERTEX_TYPE_NMAP_8FRAME:
         // 法線マップ用の情報が含まれる５～８フレームの影響を受ける頂点
-        vsHandle = -1;
+        vsHandle = LoadVertexShader("data/ShaderBinary/Vertex/ModelNormal8FrameVertexShader.vs");
         break;
     case DX_MV1_VERTEX_TYPE_NMAP_FREE_FRAME:
         // 法線マップ用の情報が含まれる９フレーム以上の影響を受ける頂点
@@ -170,16 +170,19 @@ void ShaderMng::SetSkiningVertex(const std::string& name, const int& modelHandle
         vsHandle = -1;
         break;
     default:
-        vsHandle = shaders_[name].second;
+        vsHandle = shaders_[name].first;
         break;
     }
 
+    shaders_[name].first = vsHandle;
+}
 
-    if (vsHandle < 0)
+void ShaderMng::Draw(const std::wstring& name, const int& modelHandle)
+{
+    //モデル中のトライアングルリストの数だけ回す
+    const auto triangleListNum = MV1GetTriangleListNum(modelHandle);
+    for (int i = 0; i < triangleListNum; i++)
     {
-        // 元の頂点シェーダーを入れる
-        vsHandle = shaders_[name].second;
+       MV1DrawTriangleList(modelHandle, i);		//トライアングルリスト単位での描画
     }
-
-    shaders_[name].second = vsHandle;
 }
