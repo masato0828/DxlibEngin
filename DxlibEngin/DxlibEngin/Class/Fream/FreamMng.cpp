@@ -199,6 +199,7 @@ void FreamMng::Update(bool window_open_flg)
 
 void FreamMng::Draw()
 {
+    
 
     // 上から見たカメラに変更
     camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());
@@ -206,7 +207,7 @@ void FreamMng::Draw()
     stage_->PreviewMake();
 
     // ギズモ用のスクリーン作成
-
+    SetUseLighting(true);
     SetDrawScreen(systemUIScreen_);
     ClearDrawScreen();
     camera_->Set();

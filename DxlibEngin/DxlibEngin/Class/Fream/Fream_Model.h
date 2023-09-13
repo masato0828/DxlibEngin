@@ -18,25 +18,15 @@ public:
     void Init()override;
     void Update()override;
 
-    //void SetModelHandle(std::map<std::wstring, int> handle);
-
     void SetModelPath(const std::filesystem::path& path);
 
     void Draw();
 
     void CustomStatus();
 
-    void Fream();
-
-    int FileCnt(const std::wstring& fileName);
-
-    std::map<std::wstring, int> NowModelHnadle();
-
-    Vector3& GetModelPos();
-
     bool IsModelSelect();
-
-    void LoadShaderProc(const std::wstring& name);
+  
+    Vector3& GetModelPos();
 
 private:
     struct ModelFream
@@ -46,13 +36,28 @@ private:
         Vector3 feramscl;
     };
 
+    struct Material
+    {
+        std::wstring materialName;
+        COLOR_F difColor;
+        COLOR_F spcColor;
+        COLOR_F ambColor;
+        COLOR_F emiColor;
+        int spcPower;
+        int difMapTex;
+        int spcMapTex;
+        int normalMapTex;
+    };
+
     struct Model
     {
         int handle;
         Vector3 pos;
         Vector3 rot;
         Vector3 scl;
-        std::vector<ModelFream>modelFream;
+        std::vector<ModelFream>fream;
+        bool isRotation;
+        std::vector<Material> material;
     };
 
     std::map<std::wstring, Model> model_;
@@ -70,8 +75,14 @@ private:
         std::wstring myName;
     };
 
+    struct PsColorPram
+    {
+        FLOAT3 diffuse;
+        FLOAT3 specular;
+    };
+
     FreamData freamData_;
-    FreamData* nowSelect;
+    FreamData* nowSelect_;
     std::wstring nowSelectFreamName_;
 
     int freamNumber_;
@@ -82,13 +93,25 @@ private:
 
     std::wstring deleteModelName_;
 
+    void Fream();
+
+    int FileCnt(const std::wstring& fileName);
+
     void ContextMenu();
+
+
+    
+
+    void LoadShaderProc(const std::wstring& name);
+
+    std::vector<Material> CreateMaterialData(const int& handle);
+
 
     int handleCnt_;
 
     Vector3 nullPos_;
 
-    std::map<std::wstring, bool> is_rotation_;
+    //std::map<std::wstring, bool> is_rotation_;
     
 };
 

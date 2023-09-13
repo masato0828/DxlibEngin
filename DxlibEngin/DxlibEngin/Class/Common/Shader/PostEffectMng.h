@@ -31,7 +31,7 @@ public:
 	void Custom();
 private:
 
-	// ポストエフェクト管理(key値,ポストエフェクト)
+	// ポストエフェクト管理(key値,ポストエフェクトデータ)
 	std::unordered_map<std::wstring,std::unique_ptr<PostEffect_Base>> postEffect_;
 
 	// 選択中のポストエフェクトのkey値

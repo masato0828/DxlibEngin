@@ -1,5 +1,16 @@
 #include "PixelShader3DHeader.hlsli"
 
+struct PsColorPram
+{
+    float3 diffuse;
+    float3 specular;
+};
+
+cbuffer cbD3D11_CONST_BUFFER_PS_COLOR_REAM : register(b3)
+{
+    PsColorPram colorPram;
+};
+
 PS_OUTPUT main(PS_INPUT input) : SV_TARGET
 {
     float4 result = float4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -8,8 +19,8 @@ PS_OUTPUT main(PS_INPUT input) : SV_TARGET
     const float3 normal = normalize(input.viewNorm);        //法線(ビュー)
 
     //ライティング処理での合計色
-    float3 totalDiffuse = float3(0, 0, 0);
-    float3 totalSpecular = float3(0, 0, 0);
+    float3 totalDiffuse = colorPram.diffuse;
+    float3 totalSpecular = colorPram.specular;
 
     //ライトごとにライティング処理
     for (int i = 0; i < DX_D3D11_COMMON_CONST_LIGHT_NUM; i++)

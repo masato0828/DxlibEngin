@@ -113,6 +113,7 @@ namespace Utility
 	/// <param name="target">指定文字</param>
 	/// <returns>一致：true　不一致：false</returns>
 	bool IsMatch(const std::string& filepath, const std::wstring& target);
+
 }
 // vectorからindex番目の要素を削除する
 template<typename T>
@@ -133,4 +134,5 @@ std::pair<T, N> GetElementNum(const std::map<T, N>& myMap, size_t index) {
 
 	return *it;
 }
+
 

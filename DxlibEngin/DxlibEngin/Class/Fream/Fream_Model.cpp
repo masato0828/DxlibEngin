@@ -1,5 +1,6 @@
 #include "Fream_Model.h"
 #include "../../imGui/imgui.h"
+#include "../Common/ImGuiMyCustom.h"
 #include "../Common/Utility.h"
 #include "../Common/Shader/ShaderMng.h"
 
@@ -15,9 +16,9 @@ Fream_Model::~Fream_Model()
 void Fream_Model::Init()
 {
 	// ‘I‘ð‚µ‚Ä‚¢‚é”
-	nowSelect = nullptr;
+	nowSelect_ = nullptr;
 
-	nowSelect = &freamData_;
+	nowSelect_ = &freamData_;
 
 	nowSelectFreamName_ = L"";
 
@@ -29,7 +30,7 @@ void Fream_Model::Init()
 
 	nullPos_ = {0,0,0};
 
-	SetModelPath("data/modelData/cube.mv1");
+	//SetModelPath("data/modelData/cube.mv1");
 }
 
 void Fream_Model::Update()
@@ -48,7 +49,7 @@ void Fream_Model::Update()
 			auto data = freamData_.freamMap_.try_emplace(handleM.first,
 				FreamData(&freamData_, handleM.first)).first;
 
-			const bool is_selected = &data->second == nowSelect;
+			const bool is_selected = &data->second == nowSelect_;
 
 			// ‘I‘ð’†
 			if (is_selected)
@@ -61,14 +62,14 @@ void Fream_Model::Update()
 			if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
 			{
 				// Œ»Ý‘I‘ð’†
-				nowSelect = &data->second;
+				nowSelect_ = &data->second;
 				freamNumber_ = -1;
 				nowSelectFreamName_ = handleM.first;
 			}
 
 			if (is)
 			{
-				Tree(handleM,data->second,nowSelect);
+				Tree(handleM,data->second,nowSelect_);
 				ImGui::TreePop();
 			}
 
@@ -90,6 +91,12 @@ void Fream_Model::Update()
 					contextMenuFlg_ = false;
 				}
 			}
+
+			if (handleM.second.isRotation)
+			{
+				handleM.second.rot.y_ += Utility::Deg2Rad(1.0f);
+				//rotMap_.at(nowSelectFreamName_).y_ += Utility::Deg2Rad(1.0f);
+			}
 		}
 	}
 
@@ -104,11 +111,7 @@ void Fream_Model::Update()
 		return;
 	}
 
-	if (is_rotation_.at(nowSelectFreamName_))
-	{
-		model_.at(nowSelectFreamName_).rot.y_+= Utility::Deg2Rad(1.0f);
-		//rotMap_.at(nowSelectFreamName_).y_ += Utility::Deg2Rad(1.0f);
-	}
+	
 }
 
 void Fream_Model::SetModelPath(const std::filesystem::path& path)
@@ -122,8 +125,7 @@ void Fream_Model::SetModelPath(const std::filesystem::path& path)
 	Vector3 pos;
 	Vector3 rot;
 	Vector3 scl;
-	std::vector<ModelFream>modelFream;
-
+	std::vector<ModelFream>fream;
 
 
 	std::filesystem::path filePath = path;
@@ -147,12 +149,6 @@ void Fream_Model::SetModelPath(const std::filesystem::path& path)
 
 		handleCnt_ = 0;
 	}
-
-
-	scl = Vector3(1, 1, 1);
-	pos = Vector3(0, 0, 0);
-	rot = Vector3(0, 0, 0);
-
 	freamData_.freamMap_.try_emplace(fileName,
 		FreamData(&freamData_, fileName));
 
@@ -183,20 +179,19 @@ void Fream_Model::SetModelPath(const std::filesystem::path& path)
 		scale.y_ = sqrtf(matrix.m[1][0] * matrix.m[1][0] + matrix.m[1][1] * matrix.m[1][1] + matrix.m[1][2] * matrix.m[1][2]);
 		scale.z_ = sqrtf(matrix.m[2][0] * matrix.m[2][0] + matrix.m[2][1] * matrix.m[2][1] + matrix.m[2][2] * matrix.m[2][2]);
 
-		modelFream.push_back({ position, rotation, scale });
+		fream.push_back({ position, rotation, scale });
 	}
 
+	scl = Vector3(1, 1, 1);
+	pos = Vector3(0, 0, 0);
+	rot = Vector3(0, 0, 0);
+	std::vector<Material> materials = CreateMaterialData(handle);
 
+	Model model = { handle,pos,rot,scl,fream,false,materials};
 
-
-	is_rotation_.emplace(fileName, false);
-
-	MV1GetTextureNum(handle);
-
-	Model model = { handle,pos,rot,scl,modelFream };
+	materials.clear();
+	
 	model_.emplace(fileName, model);
-
-
 	LoadShaderProc(fileName);
 
 }
@@ -250,6 +245,8 @@ void Fream_Model::Draw()
 		MV1SetPosition(modelHandle.second.handle, modelHandle.second.pos.toVECTOR());
 		MV1SetRotationXYZ(modelHandle.second.handle, modelHandle.second.rot.toVECTOR());
 
+		
+
 		lpShaderMng.DrawBegin(modelHandle.first);
 
 		//MV1DrawModel(modelHandle.second);
@@ -257,6 +254,16 @@ void Fream_Model::Draw()
 		lpShaderMng.DrawEnd();
         //MV1RefreshReferenceMesh(modelHandle.second, -1, TRUE);
         MV1RefreshReferenceMesh(modelHandle.second.handle, -1, TRUE);
+
+		int index = 0;
+		for (auto material : modelHandle.second.material)
+		{
+			MV1SetMaterialDifColor(modelHandle.second.handle,index,material.difColor);
+			MV1SetMaterialSpcColor(modelHandle.second.handle, index, material.spcColor);
+			MV1SetMaterialAmbColor(modelHandle.second.handle, index, material.ambColor);
+			MV1SetMaterialEmiColor(modelHandle.second.handle, index, material.emiColor);
+			index++;
+		}
     }
 }
 
@@ -267,7 +274,7 @@ void Fream_Model::CustomStatus()
 		return;
 	}
 
-	if (nowSelect->myName == L"")
+	if (nowSelect_->myName == L"")
 	{
 		return;
 	}
@@ -305,18 +312,20 @@ void Fream_Model::CustomStatus()
 	else
 	{
 		ImGui::SetCursorPos(ImVec2(70, 40));
-		ImGui::DragFloat3("##scl", &model_.at(nowSelectFreamName_).modelFream.at(freamNumber_).feramscl);
+		ImGui::DragFloat3("##scl", &model_.at(nowSelectFreamName_).fream.at(freamNumber_).feramscl);
 
 		ImGui::SetCursorPos(ImVec2(70, 80));
-		ImGui::DragFloat3("##pos", &model_.at(nowSelectFreamName_).modelFream.at(freamNumber_).ferampos);
+		ImGui::DragFloat3("##pos", &model_.at(nowSelectFreamName_).fream.at(freamNumber_).ferampos);
 
 		ImGui::SetCursorPos(ImVec2(70, 120));
-		ImGui::DragFloat3("##rot", &model_.at(nowSelectFreamName_).modelFream.at(freamNumber_).feramrot, Utility::Deg2Rad(1.0f));
+		ImGui::DragFloat3("##rot", &model_.at(nowSelectFreamName_).fream.at(freamNumber_).feramrot, Utility::Deg2Rad(1.0f));
 
 		Fream();
 	}
 
-	ImGui::Checkbox("rotation", &is_rotation_.at(nowSelectFreamName_));
+	ImGui::Checkbox("rotation", &model_.at(nowSelectFreamName_).isRotation);
+
+
 }
 
 void Fream_Model::Fream()
@@ -339,7 +348,7 @@ void Fream_Model::Fream()
 	//////////Šg‘å—¦///////////////
 	{
 		//auto scale = freamSclMap_.at(nowSelectFreamName_).at(freamNumber_);
-		auto scale = model_.at(nowSelectFreamName_).modelFream.at(freamNumber_).feramscl;
+		auto scale = model_.at(nowSelectFreamName_).fream.at(freamNumber_).feramscl;
 
 		// Šg‘å—¦s—ñ‚ÌæŽZ
 		mixMat = MMult(mixMat, MGetScale(scale.toVECTOR()));
@@ -350,16 +359,16 @@ void Fream_Model::Fream()
 		// ‰ñ“]—p’PˆÊs—ñ‚ÌŽæ“¾
 		MATRIX mixRot = MGetIdent();
 		//// ‰ñ“]s—ñŽO—v‘f‚ÌæŽZ@
-		mixRot = MMult(mixRot, MGetRotX(model_.at(nowSelectFreamName_).modelFream.at(freamNumber_).feramrot.x_));
-		mixRot = MMult(mixRot, MGetRotY(model_.at(nowSelectFreamName_).modelFream.at(freamNumber_).feramrot.y_));
-		mixRot = MMult(mixRot, MGetRotZ(model_.at(nowSelectFreamName_).modelFream.at(freamNumber_).feramrot.z_));
+		mixRot = MMult(mixRot, MGetRotX(model_.at(nowSelectFreamName_).fream.at(freamNumber_).feramrot.x_));
+		mixRot = MMult(mixRot, MGetRotY(model_.at(nowSelectFreamName_).fream.at(freamNumber_).feramrot.y_));
+		mixRot = MMult(mixRot, MGetRotZ(model_.at(nowSelectFreamName_).fream.at(freamNumber_).feramrot.z_));
 		// ‰ñ“]s—ñ‚Æ‚ÌæŽZ(Šg‘å—¦A‰ñ“])
 		mixMat = MMult(mixMat, mixRot);
 	}
 	
 	//////////ˆÊ’u///////////////
 	{
-		auto position = model_.at(nowSelectFreamName_).modelFream.at(freamNumber_).ferampos;
+		auto position = model_.at(nowSelectFreamName_).fream.at(freamNumber_).ferampos;
 		// •½sˆÚ“®s—ñ‚Æ‚ÌæŽZ(Šg‘å—¦A‰ñ“]A•½sˆÚ“®)
 		mixMat = MMult(mixMat, MGetTranslate(position.toVECTOR()));
 	}
@@ -384,7 +393,7 @@ Vector3& Fream_Model::GetModelPos()
 	if (freamNumber_ != -1)
 	{
 		// model fream
-		return model_.at(nowSelectFreamName_).modelFream.at(freamNumber_).ferampos;
+		return model_.at(nowSelectFreamName_).fream.at(freamNumber_).ferampos;
 	}
 
 	// model
@@ -398,7 +407,7 @@ bool Fream_Model::IsModelSelect()
 		return false;
 	}
 
-	if (nowSelect->myName == L"")
+	if (nowSelect_->myName == L"")
 	{
 		return false;
 	}
@@ -417,6 +426,30 @@ void Fream_Model::LoadShaderProc(const std::wstring& name)
 
 
 	lpShaderMng.SetSkiningVertex(name, model_.at(name).handle);
+}
+
+std::vector<Fream_Model::Material> Fream_Model::CreateMaterialData(const int& handle)
+{
+	std::vector<Material> materials;
+
+	int totalNum = MV1GetMaterialNum(handle);
+	for (int m = 0; m < totalNum; m++)
+	{
+		std::wstring name = Utility::MultiByteToUnicode(MV1GetMaterialName(handle,m));
+		COLOR_F difColor = MV1GetMaterialDifColor(handle, m);
+		COLOR_F spcColor = MV1GetMaterialSpcColor(handle, m);
+		COLOR_F ambColor = MV1GetMaterialAmbColor(handle, m);
+		COLOR_F emiColor = MV1GetMaterialEmiColor(handle, m);
+		int spcPower = MV1GetMaterialSpcPower(handle,m);
+		int difMapTex = MV1GetMaterialDifMapTexture(handle,m);
+		int spcMapTex = MV1GetMaterialSpcMapTexture(handle, m);
+		int normalMapTex = MV1GetMaterialNormalMapTexture(handle, m);
+
+		Material material = { name,difColor,spcColor,ambColor,emiColor,spcPower,difMapTex,spcMapTex,normalMapTex };
+		materials.push_back(material);
+	}
+
+	return materials;
 }
 
 void Fream_Model::Tree(std::pair<const std::wstring, Model>& handleData, FreamData& freamData, FreamData*& nowSelect)

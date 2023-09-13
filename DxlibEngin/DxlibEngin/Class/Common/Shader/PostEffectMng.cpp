@@ -4,6 +4,7 @@
 #include "PostEffect_Transition_OuterCircumference.h"
 #include "PostEffect_Transition_Circle.h"
 #include "../../../imGui/imgui.h"
+#include "../../../imGui/imgui_internal.h"
 #include "../../Common/Utility.h"
 #include <string>
 #include <DxLib.h>
@@ -74,11 +75,19 @@ void PostEffectMng::Custom()
 	// 要素追加時に数値を増やす
 	const char* listbox_items[5];
 
+	std::vector<std::string>name;
+
 	// 要素の名前を入れる
-	auto cnt = 0;
 	for (auto& map : postEffect_)
 	{
-		listbox_items[cnt] = Utility::WideStringToString(map.first).c_str();
+		std::string postName = Utility::WStringToUTF8(map.first);
+		name.push_back(postName);
+	}
+
+	auto cnt = 0;
+	for (auto& map : name)
+	{
+		listbox_items[cnt] = map.c_str();
 		cnt++;
 	}
 
@@ -87,7 +96,7 @@ void PostEffectMng::Custom()
 
 	// リストボックスを作成
 	ImGui::ListBox("postEffect\n(single select)", &listbox_item_current, listbox_items, IM_ARRAYSIZE(listbox_items), 4);
-	
+
 	// 指定要素の名前を取得
 	std::string selectName = listbox_items[listbox_item_current];
 

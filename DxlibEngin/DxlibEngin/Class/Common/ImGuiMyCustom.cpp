@@ -2,6 +2,15 @@
 #include "../../imGui/imgui_internal.h"
 #include "ImGuiMyCustom.h"
 
+// Getter for the old Combo() API: const char*[]
+static bool Items_wArrayGetter(void* data, int idx, const wchar_t** out_text)
+{
+    const wchar_t* const* items = (const wchar_t* const*)data;
+    if (out_text)
+        *out_text = items[idx];
+    return true;
+}
+
 IMGUI_API bool ImGui::DragFloat3(const char* label, Vector3* vec3, float v_speed, float v_min, float v_max, const char* format, ImGuiSliderFlags flags)
 {
 	return DragScalarN(label, ImGuiDataType_Float, vec3, 3, v_speed, &v_min, &v_max, format, flags);
@@ -32,6 +41,16 @@ IMGUI_API bool ImGuiCustom::ColorEdit3(const char* label, IM_COLOR* col, ImGuiCo
     col->alpha =  color[3];
 	return flg;
 }
+IMGUI_API bool ImGuiCustom::ColorEdit3(const char* label, COLOR_F* col, ImGuiColorEditFlags flags)
+{
+    float color[4] = { col->r,col->g ,col->b,col->a };
+    bool flg = ImGui::ColorEdit4(label, color, flags | ImGuiColorEditFlags_NoAlpha);
+    col->r = color[0];
+    col->g = color[1];
+    col->b = color[2];
+    col->a = color[3];
+    return flg;
+}
 IMGUI_API bool ImGuiCustom::ColorEdit4(const char* label, IM_COLOR* col, ImGuiColorEditFlags flags)
 {
     float color[4] = { col->red,col->green ,col->blue,col->alpha };
@@ -40,6 +59,17 @@ IMGUI_API bool ImGuiCustom::ColorEdit4(const char* label, IM_COLOR* col, ImGuiCo
     col->green = color[1];
     col->blue = color[2];
     col->alpha = color[3];
+    return flg;
+}
+
+IMGUI_API bool ImGuiCustom::ColorEdit4(const char* label, COLOR_F* col, ImGuiColorEditFlags flags)
+{
+    float color[4] = { col->r,col->g ,col->b,col->a };
+    bool flg = ImGui::ColorEdit4(label,color, flags);
+    col->r = color[0];
+    col->g = color[1];
+    col->b = color[2];
+    col->a = color[3];
     return flg;
 }
 
