@@ -13,7 +13,7 @@ cbuffer cbD3D11_CONST_BUFFER_PS_COLOR_REAM : register(b3)
 
 PS_OUTPUT main(PS_INPUT input) : SV_TARGET
 {
-    float4 result = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float4 result = float4(0.0f, 0.0f, 0.0f, 1.0f);
 
     const float3 ray = normalize(input.viewPos);            //カメラ→自身のベクトル
     const float3 normal = normalize(input.viewNorm);        //法線(ビュー)

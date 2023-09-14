@@ -1,6 +1,10 @@
 #include <Dxlib.h>
 #include "ShaderMng.h"
 #include "ConstantBuffer.h"
+#include "../../Common/Utility.h"
+#include "../FileDialog.h"
+
+#include <algorithm>
 
 ShaderMng::~ShaderMng()
 {
@@ -26,6 +30,7 @@ bool ShaderMng::LoadShader(const std::wstring& name, const std::string& vsPath, 
 
     // シェーダーハンドルをマップに追加
     shaders_[name] = std::make_pair(vsHandle, psHandle);
+    pixelFilePath_[name] = psPath;
     
     constansBuffers_[name] = std::make_unique<ConstantBuffer>();
     constansBuffers_[name]->Create(bufferSize);
@@ -186,3 +191,45 @@ void ShaderMng::Draw(const std::wstring& name, const int& modelHandle)
        MV1DrawTriangleList(modelHandle, i);		//トライアングルリスト単位での描画
     }
 }
+
+void ShaderMng::LoadShaderFile(const std::wstring& filePath)
+{
+    //ID3DInclude* include = D3D_COMPILE_STANDARD_FILE_INCLUDE;
+    ID3DInclude* include = ((ID3DInclude*)(UINT_PTR)1);
+    UINT flag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+    ID3DBlob* pErrorBlob = nullptr;
+
+    std::wstring format = L".ps";
+    std::wstring currentPath = L"data/ShaderBinary/";
+
+    // ピクセルシェーダーのコンパイル
+    {
+        std::wstring fullFilepath = filePath;
+
+        auto hr = D3DCompileFromFile(fullFilepath.c_str(), nullptr, include, "main",
+            "ps_5_0", flag, 0, &pPSBlob, &pErrorBlob);
+
+
+        if (FAILED(hr))
+        {    
+            std::string errstr;
+
+        errstr.resize(pErrorBlob->GetBufferSize());
+        std::copy_n((char*)pErrorBlob->GetBufferPointer(), pErrorBlob->GetBufferSize(), errstr.begin());
+            assert(0 && "ピクセルシェーダーのコンパイルに失敗しました");
+            return;
+        }
+    }
+}
+
+void ShaderMng::Updater(const std::wstring& name)
+{
+    if (ImGui::Button("shaderReload"))
+    {
+        LoadShaderFile(Utility::StringToWideString(OpenFileDialog()()));
+
+        int handle = LoadPixelShaderFromMem(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize());
+
+        shaders_[name].second = handle;
+    }
+};

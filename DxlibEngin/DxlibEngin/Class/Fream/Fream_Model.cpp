@@ -127,7 +127,6 @@ void Fream_Model::SetModelPath(const std::filesystem::path& path)
 	Vector3 scl;
 	std::vector<ModelFream>fream;
 
-
 	std::filesystem::path filePath = path;
 	auto ext = filePath.extension().wstring().substr(1);
 	auto fileName = filePath.filename();
@@ -151,6 +150,8 @@ void Fream_Model::SetModelPath(const std::filesystem::path& path)
 	}
 	freamData_.freamMap_.try_emplace(fileName,
 		FreamData(&freamData_, fileName));
+
+	std::wstring name = fileName;
 
 
 	// ÉtÉåÅ[ÉÄèâä˙íl-----------------------------------------------
@@ -187,11 +188,18 @@ void Fream_Model::SetModelPath(const std::filesystem::path& path)
 	rot = Vector3(0, 0, 0);
 	std::vector<Material> materials = CreateMaterialData(handle);
 
-	Model model = { handle,pos,rot,scl,fream,false,materials};
+	std::map<COLOR_TYPE, bool>allChangeColor = { 
+		{COLOR_TYPE::DIF,false}, 
+		{COLOR_TYPE::SPC,false},
+		{COLOR_TYPE::AMB,false},
+		{COLOR_TYPE::EMI,false} };
+
+	Model model = { name,handle,pos,rot,scl,fream,false,materials,allChangeColor};
 
 	materials.clear();
 	
 	model_.emplace(fileName, model);
+	defoModelData_.emplace(fileName, model);
 	LoadShaderProc(fileName);
 
 }
@@ -238,9 +246,6 @@ void Fream_Model::Draw()
 
         //DrawSphere3D(minRP, 10, 10, lineCol, lineCol, true);
         //DrawSphere3D(maxRP, 10, 10, lineCol, lineCol, true);
-		/*MV1SetScale(modelHandle.second.handle, sclMap_.at(modelHandle.first).toVECTOR());
-		MV1SetPosition(modelHandle.second.handle, posMap_.at(modelHandle.first).toVECTOR());
-		MV1SetRotationXYZ(modelHandle.second.handle, rotMap_.at(modelHandle.first).toVECTOR());*/
 		MV1SetScale(modelHandle.second.handle, modelHandle.second.scl.toVECTOR());
 		MV1SetPosition(modelHandle.second.handle, modelHandle.second.pos.toVECTOR());
 		MV1SetRotationXYZ(modelHandle.second.handle, modelHandle.second.rot.toVECTOR());
@@ -258,10 +263,10 @@ void Fream_Model::Draw()
 		int index = 0;
 		for (auto material : modelHandle.second.material)
 		{
-			MV1SetMaterialDifColor(modelHandle.second.handle,index,material.difColor);
-			MV1SetMaterialSpcColor(modelHandle.second.handle, index, material.spcColor);
-			MV1SetMaterialAmbColor(modelHandle.second.handle, index, material.ambColor);
-			MV1SetMaterialEmiColor(modelHandle.second.handle, index, material.emiColor);
+			MV1SetMaterialDifColor(modelHandle.second.handle,index,material.color.at(COLOR_TYPE::DIF));
+			MV1SetMaterialSpcColor(modelHandle.second.handle, index, material.color.at(COLOR_TYPE::SPC));
+			MV1SetMaterialAmbColor(modelHandle.second.handle, index, material.color.at(COLOR_TYPE::AMB));
+			MV1SetMaterialEmiColor(modelHandle.second.handle, index, material.color.at(COLOR_TYPE::EMI));
 			index++;
 		}
     }
@@ -302,12 +307,18 @@ void Fream_Model::CustomStatus()
 	{
 		ImGui::SetCursorPos(ImVec2(70, 40));
 		ImGui::DragFloat3("##scl", &model_.at(nowSelectFreamName_).scl);
+		ImGui::SameLine();
+		if (ImGui::Button("##sscl")) {model_.at(nowSelectFreamName_).scl = defoModelData_.at(nowSelectFreamName_).scl; };
 
 		ImGui::SetCursorPos(ImVec2(70, 80));
 		ImGui::DragFloat3("##pos", &model_.at(nowSelectFreamName_).pos);
+		ImGui::SameLine();
+		if (ImGui::Button("##spos")) {model_.at(nowSelectFreamName_).pos = defoModelData_.at(nowSelectFreamName_).pos; };
 
 		ImGui::SetCursorPos(ImVec2(70, 120));
-		ImGui::DragFloat3("##rot", &model_.at(nowSelectFreamName_).rot,Utility::Deg2Rad(1.0f));
+		ImGui::DragFloat3("##rot", &model_.at(nowSelectFreamName_).rot, Utility::Deg2Rad(1.0f));
+		ImGui::SameLine();
+		if (ImGui::Button("##srot")) {model_.at(nowSelectFreamName_).rot = defoModelData_.at(nowSelectFreamName_).rot; };
 	}
 	else
 	{
@@ -325,7 +336,59 @@ void Fream_Model::CustomStatus()
 
 	ImGui::Checkbox("rotation", &model_.at(nowSelectFreamName_).isRotation);
 
+	ColorEdit("[dif]", COLOR_TYPE::DIF);
+	ColorEdit("[spc]", COLOR_TYPE::SPC);
+	ColorEdit("[amb]", COLOR_TYPE::AMB);
+	ColorEdit("[emi]", COLOR_TYPE::EMI);
 
+	lpShaderMng.Updater(model_.at(nowSelectFreamName_).name);
+}
+
+void Fream_Model::ColorEdit(const std::string& tagName,COLOR_TYPE type)
+{
+	
+	if (ImGui::TreeNode(tagName.c_str()))
+	{
+		ImGui::Checkbox(tagName.c_str(), &model_.at(nowSelectFreamName_).allChangeColor.at(type));
+		for (auto& m : model_.at(nowSelectFreamName_).material)
+		{
+			std::string materialName = Utility::WideStringToString(m.materialName);
+			std::string difName = materialName + tagName.c_str();
+			if (!model_.at(nowSelectFreamName_).allChangeColor.at(type))
+			{	
+				ImGuiCustom::ColorEdit4(difName.c_str(), &m.color[type]);
+			}
+		}
+
+		if (model_.at(nowSelectFreamName_).allChangeColor.at(type))
+		{
+			auto chengeColor = model_.at(nowSelectFreamName_).material.at(0).color.at(type);
+			ImGuiCustom::ColorEdit4(tagName.c_str(), &chengeColor);
+			for (auto& m : model_.at(nowSelectFreamName_).material)
+			{
+				m.color[type] = chengeColor;
+			}
+		}
+		ImGui::TreePop();
+	}
+}
+
+void Fream_Model::AllColorEdit(const std::string& tagName)
+{
+	if (ImGui::TreeNode(tagName.c_str()))
+	{
+		for (auto& m : model_.at(nowSelectFreamName_).material)
+		{
+			std::string materialName = Utility::WideStringToString(m.materialName);
+
+			//std::string difName = materialName + tagName.c_str();
+			ImGuiCustom::ColorEdit4(materialName.c_str(), &m.color[COLOR_TYPE::DIF]);
+			ImGuiCustom::ColorEdit4(materialName.c_str(), &m.color[COLOR_TYPE::SPC]);
+			ImGuiCustom::ColorEdit4(materialName.c_str(), &m.color[COLOR_TYPE::AMB]);
+			ImGuiCustom::ColorEdit4(materialName.c_str(), &m.color[COLOR_TYPE::EMI]);
+		}
+		ImGui::TreePop();
+	}
 }
 
 void Fream_Model::Fream()
@@ -431,6 +494,7 @@ void Fream_Model::LoadShaderProc(const std::wstring& name)
 std::vector<Fream_Model::Material> Fream_Model::CreateMaterialData(const int& handle)
 {
 	std::vector<Material> materials;
+	std::map<COLOR_TYPE, COLOR_F> color;
 
 	int totalNum = MV1GetMaterialNum(handle);
 	for (int m = 0; m < totalNum; m++)
@@ -445,7 +509,17 @@ std::vector<Fream_Model::Material> Fream_Model::CreateMaterialData(const int& ha
 		int spcMapTex = MV1GetMaterialSpcMapTexture(handle, m);
 		int normalMapTex = MV1GetMaterialNormalMapTexture(handle, m);
 
-		Material material = { name,difColor,spcColor,ambColor,emiColor,spcPower,difMapTex,spcMapTex,normalMapTex };
+		//Material material = { name,difColor,spcColor,ambColor,emiColor,spcPower,difMapTex,spcMapTex,normalMapTex };
+		
+		color = {
+			{COLOR_TYPE::DIF,difColor},
+			{COLOR_TYPE::SPC,spcColor},
+			{COLOR_TYPE::AMB,ambColor},
+			{COLOR_TYPE::EMI,emiColor} };
+
+
+		Material material = {name,color,spcPower,difMapTex,spcMapTex,normalMapTex };
+
 		materials.push_back(material);
 	}
 

@@ -7,6 +7,13 @@
 #include "../Common/Vector2.h"
 #include "../Common/Geometry.h"
 
+enum class COLOR_TYPE
+{
+    DIF,
+    SPC,
+    AMB,
+    EMI,
+};
 
 
 class Fream_Model :
@@ -24,11 +31,14 @@ public:
 
     void CustomStatus();
 
+   
+
     bool IsModelSelect();
   
     Vector3& GetModelPos();
 
 private:
+    
     struct ModelFream
     {
         Vector3 ferampos;
@@ -39,10 +49,7 @@ private:
     struct Material
     {
         std::wstring materialName;
-        COLOR_F difColor;
-        COLOR_F spcColor;
-        COLOR_F ambColor;
-        COLOR_F emiColor;
+        std::map<COLOR_TYPE,COLOR_F> color;
         int spcPower;
         int difMapTex;
         int spcMapTex;
@@ -51,6 +58,7 @@ private:
 
     struct Model
     {
+        std::wstring name;
         int handle;
         Vector3 pos;
         Vector3 rot;
@@ -58,9 +66,11 @@ private:
         std::vector<ModelFream>fream;
         bool isRotation;
         std::vector<Material> material;
+        std::map<COLOR_TYPE, bool> allChangeColor;
     };
 
     std::map<std::wstring, Model> model_;
+    std::map<std::wstring, Model> defoModelData_;
 
     struct FreamData
     {
@@ -99,8 +109,9 @@ private:
 
     void ContextMenu();
 
+    void ColorEdit(const std::string& tagName, COLOR_TYPE type);
 
-    
+    void AllColorEdit(const std::string& tagName);
 
     void LoadShaderProc(const std::wstring& name);
 
@@ -110,8 +121,6 @@ private:
     int handleCnt_;
 
     Vector3 nullPos_;
-
-    //std::map<std::wstring, bool> is_rotation_;
     
 };
 

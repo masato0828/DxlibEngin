@@ -3,6 +3,12 @@
 #include <string>
 #include <unordered_map>
 #include "ConstantBuffer.h"
+#include <wrl/client.h>
+#include <assert.h>
+#include <d3dcompiler.h>
+
+
+#pragma comment(lib,"d3dcompiler.lib")
 
 #define lpShaderMng ShaderMng::GetInstance()
 
@@ -97,15 +103,21 @@ public:
 
     void Draw(const std::wstring& name,const int& modelHandle);
 
-    
+    void LoadShaderFile(const std::wstring& filePath);
+
+    void Updater(const std::wstring& name);
 
 private:
 
     // シェーダーの管理(key値,頂点シェーダハンドル,ピクセルシェーダハンドル)
     std::unordered_map<std::wstring, std::pair<int, int>> shaders_;
 
+    std::unordered_map <std::wstring, std::string> pixelFilePath_;
+
     // バッファの管理(key値,コンスタントバッファ)
     std::unordered_map<std::wstring, std::unique_ptr<ConstantBuffer>> constansBuffers_;
+
+    ID3DBlob* pPSBlob = nullptr;// ピクセルシェーダー
 
     ShaderMng() = default;
     ~ShaderMng();

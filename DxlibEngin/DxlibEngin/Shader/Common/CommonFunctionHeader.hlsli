@@ -2,7 +2,7 @@
 #if !defined(COMMON_FUNCTION_HEADER)
 	#define COMMON_FUNCTION_HEADER
 
-	#include "CommonStructuresHeader.hlsli"
+	#include "../Common/CommonStructuresHeader.hlsli"
 
 	/// @brief 各要素の内、最大値の要素を返す
 	/// @param vec 任意のベクトル

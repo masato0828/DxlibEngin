@@ -82,7 +82,7 @@ namespace Utility
 	bool ComparisonExtensionFile(const std::wstring& filename, const std::wstring& ext);
 
 	/// <summary>
-	/// 文字の拡張子が指定された拡張子であればテキストの色を変える
+	/// 文字の拡張子が指定された拡張子であればImGui::Textのテキストの色を変える
 	/// </summary>
 	/// <param name="showName">表示する名前</param>
 	/// <param name="searchFileName">拡張子</param>
