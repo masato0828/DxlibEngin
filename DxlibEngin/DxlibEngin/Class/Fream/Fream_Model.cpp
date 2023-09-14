@@ -267,6 +267,8 @@ void Fream_Model::Draw()
 			MV1SetMaterialSpcColor(modelHandle.second.handle, index, material.color.at(COLOR_TYPE::SPC));
 			MV1SetMaterialAmbColor(modelHandle.second.handle, index, material.color.at(COLOR_TYPE::AMB));
 			MV1SetMaterialEmiColor(modelHandle.second.handle, index, material.color.at(COLOR_TYPE::EMI));
+
+			MV1SetMaterialSpcPower(modelHandle.second.handle, index, material.spcPower);
 			index++;
 		}
     }
@@ -340,7 +342,13 @@ void Fream_Model::CustomStatus()
 	ColorEdit("[spc]", COLOR_TYPE::SPC);
 	ColorEdit("[amb]", COLOR_TYPE::AMB);
 	ColorEdit("[emi]", COLOR_TYPE::EMI);
-
+	
+	for (auto& m : model_.at(nowSelectFreamName_).material)
+	{
+		std::string materialName = Utility::WideStringToString(m.materialName);
+		std::string spcPName = materialName + "spcPower";
+		ImGui::SliderFloat(spcPName.c_str(), &m.spcPower, 0.0f, 256.0f);
+	}
 	lpShaderMng.Updater(model_.at(nowSelectFreamName_).name);
 }
 
@@ -485,9 +493,7 @@ bool Fream_Model::IsModelSelect()
 
 void Fream_Model::LoadShaderProc(const std::wstring& name)
 {
-	lpShaderMng.LoadShader(name, "data/ShaderBinary/Vertex/ModelPixelShader.vs", "data/ShaderBinary/Pixel/ModelPixelShader.ps", 0);
-
-
+	lpShaderMng.LoadShader(name, "", "data/ShaderBinary/Pixel/ModelPixelShader.ps", 0);
 	lpShaderMng.SetSkiningVertex(name, model_.at(name).handle);
 }
 
@@ -504,7 +510,7 @@ std::vector<Fream_Model::Material> Fream_Model::CreateMaterialData(const int& ha
 		COLOR_F spcColor = MV1GetMaterialSpcColor(handle, m);
 		COLOR_F ambColor = MV1GetMaterialAmbColor(handle, m);
 		COLOR_F emiColor = MV1GetMaterialEmiColor(handle, m);
-		int spcPower = MV1GetMaterialSpcPower(handle,m);
+		float spcPower = MV1GetMaterialSpcPower(handle,m);
 		int difMapTex = MV1GetMaterialDifMapTexture(handle,m);
 		int spcMapTex = MV1GetMaterialSpcMapTexture(handle, m);
 		int normalMapTex = MV1GetMaterialNormalMapTexture(handle, m);

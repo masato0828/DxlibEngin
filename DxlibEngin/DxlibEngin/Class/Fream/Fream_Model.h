@@ -50,7 +50,7 @@ private:
     {
         std::wstring materialName;
         std::map<COLOR_TYPE,COLOR_F> color;
-        int spcPower;
+        float spcPower;
         int difMapTex;
         int spcMapTex;
         int normalMapTex;
