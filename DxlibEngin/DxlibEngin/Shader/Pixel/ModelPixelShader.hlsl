@@ -19,8 +19,8 @@ PS_OUTPUT main(PS_INPUT input) : SV_TARGET
     const float3 normal = normalize(input.viewNorm);        //法線(ビュー)
 
     //ライティング処理での合計色
-    float3 totalDiffuse = colorPram.diffuse;
-    float3 totalSpecular = colorPram.specular;
+    float3 totalDiffuse = (0,0,0);
+    float3 totalSpecular = (0, 0, 0);
 
     //ライトごとにライティング処理
     for (int i = 0; i < DX_D3D11_COMMON_CONST_LIGHT_NUM; i++)

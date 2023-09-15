@@ -74,4 +74,7 @@
 		Texture2D    shadowMap2Texture            : register(t10);	    	// シャドウマップ２テクスチャ
 	#endif
 
+	SamplerState cubeMapSampler : register(s11); // キューブマップテクスチャ
+    TextureCube cubeMapTexture : register(t11); // キューブマップテクスチャ
+
 #endif

@@ -3,6 +3,7 @@
 #include "../Common/ImGuiMyCustom.h"
 #include "../Common/Utility.h"
 #include "../Common/Shader/ShaderMng.h"
+#include"../Common/FileDialog.h"
 
 Fream_Model::Fream_Model():freamData_(nullptr,L"")
 {
@@ -30,7 +31,8 @@ void Fream_Model::Init()
 
 	nullPos_ = {0,0,0};
 
-	//SetModelPath("data/modelData/cube.mv1");
+	skyDomeHnadle_ = MV1LoadModel("data/modelData/SkyDome/Skydome.mv1");
+	//SetModelPath("data/modelData/SkyDome/Skydome.mv1");
 }
 
 void Fream_Model::Update()
@@ -194,7 +196,22 @@ void Fream_Model::SetModelPath(const std::filesystem::path& path)
 		{COLOR_TYPE::AMB,false},
 		{COLOR_TYPE::EMI,false} };
 
-	Model model = { name,handle,pos,rot,scl,fream,false,materials,allChangeColor};
+	std::map < SLOT_TYPE, std::pair<std::string,int>>textureHnadle = {
+		{SLOT_TYPE::DEFFUSE,std::make_pair("deffuse",-1)},
+		{SLOT_TYPE::NORMAL_MAP,std::make_pair("normal",-1)},
+		{SLOT_TYPE::SHADOW_MAP_0,std::make_pair("shadow_map0",-1)},
+		{SLOT_TYPE::SHADOW_MAP_1,std::make_pair("shadow_map1",-1)},
+		{SLOT_TYPE::SHADOW_MAP_2,std::make_pair("shadow_map2",-1)},
+		{SLOT_TYPE::SPECULAR_MAP,std::make_pair("specular_map",-1)},
+		{SLOT_TYPE::SUB,std::make_pair("sub",-1)},
+		{SLOT_TYPE::TOON_DEFFUSE_GRAD,std::make_pair("toon_deffuse",-1)},
+		{SLOT_TYPE::TOON_RGB_TO_MAXRGB_VOLUME,std::make_pair("toon_rgb",-1)},
+		{SLOT_TYPE::TOON_SPECULAR_GRAD,std::make_pair("toon_specular",-1)},
+		{SLOT_TYPE::TOON_SPHERE_MAP,std::make_pair("toon_sphere",-1)},
+		{SLOT_TYPE::CUBE_MAP,std::make_pair("cube_map",-1)},
+	};
+	
+	Model model = { name,handle,pos,rot,scl,fream,false,materials,allChangeColor,textureHnadle};
 
 	materials.clear();
 	
@@ -204,7 +221,7 @@ void Fream_Model::SetModelPath(const std::filesystem::path& path)
 
 }
 
-void Fream_Model::Draw()
+void Fream_Model::Draw(int cubeTexture)
 {
 	if (model_.empty())
 	{
@@ -254,8 +271,23 @@ void Fream_Model::Draw()
 
 		lpShaderMng.DrawBegin(modelHandle.first);
 
-		//MV1DrawModel(modelHandle.second);
-		MV1DrawModel(modelHandle.second.handle);
+		modelHandle.second.textureHnadle[SLOT_TYPE::CUBE_MAP].second = cubeTexture;
+
+		// テクスチャの入力
+		for (auto & tex:modelHandle.second.textureHnadle)
+		{
+			lpShaderMng.SetTexture(tex.first, tex.second.second);
+		}
+
+		//Draw();
+		//MV1DrawModel(modelHandle.second.handle);
+		lpShaderMng.Draw(modelHandle.first,modelHandle.second.handle);
+
+		// テクスチャの入力
+		for (auto& tex : modelHandle.second.textureHnadle)
+		{
+			lpShaderMng.EndTextere(tex.first);
+		}
 		lpShaderMng.DrawEnd();
         //MV1RefreshReferenceMesh(modelHandle.second, -1, TRUE);
         MV1RefreshReferenceMesh(modelHandle.second.handle, -1, TRUE);
@@ -271,6 +303,7 @@ void Fream_Model::Draw()
 			MV1SetMaterialSpcPower(modelHandle.second.handle, index, material.spcPower);
 			index++;
 		}
+		
     }
 }
 
@@ -350,6 +383,16 @@ void Fream_Model::CustomStatus()
 		ImGui::SliderFloat(spcPName.c_str(), &m.spcPower, 0.0f, 256.0f);
 	}
 	lpShaderMng.Updater(model_.at(nowSelectFreamName_).name);
+
+	if (ImGui::TreeNode("Texture"))
+	{
+		for (auto& m : model_.at(nowSelectFreamName_).textureHnadle)
+		{
+			LoadTexture(m.second.first, m.first);
+		}
+		ImGui::TreePop();
+	}
+
 }
 
 void Fream_Model::ColorEdit(const std::string& tagName,COLOR_TYPE type)
@@ -471,6 +514,12 @@ Vector3& Fream_Model::GetModelPos()
 	return model_.at(nowSelectFreamName_).pos;
 }
 
+void Fream_Model::DrawSkyDome()
+{
+	MV1SetScale(skyDomeHnadle_,VGet(100,100,100));
+	MV1DrawModel(skyDomeHnadle_);
+}
+
 bool Fream_Model::IsModelSelect()
 {
 	if (model_.empty())
@@ -530,6 +579,18 @@ std::vector<Fream_Model::Material> Fream_Model::CreateMaterialData(const int& ha
 	}
 
 	return materials;
+}
+
+void Fream_Model::LoadTexture(std::string tagName,SLOT_TYPE type)
+{
+	if (ImGui::Button(tagName.c_str()))
+	{
+		std::string name = "テクスチャ画像の読み込み";
+		std::string filter = ".png";
+		std::filesystem::path tPath = (OpenFileDialog()(nullptr,&name,&filter));
+		int handle = LoadGraph(tPath.u8string().c_str());
+		model_.at(nowSelectFreamName_).textureHnadle[type].second = handle;
+	}
 }
 
 void Fream_Model::Tree(std::pair<const std::wstring, Model>& handleData, FreamData& freamData, FreamData*& nowSelect)
@@ -594,6 +655,8 @@ void Fream_Model::ContextMenu()
 
 			if (ImGui::MenuItem(u8"削除")) // ユニークなIDを指定する
 			{
+				MV1TerminateReferenceMesh(model_.at(deleteModelName_).handle, -1, TRUE);
+				MV1DeleteModel(model_.at(deleteModelName_).handle);
 				model_.erase(deleteModelName_);
 
 				if (deleteModelName_ == nowSelectFreamName_)

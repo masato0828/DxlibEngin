@@ -59,6 +59,11 @@ void FreamMng::Init()
 
     //////
     testModel_ = MV1LoadModel("data/Bomber_2.mv1");
+
+    SetCubeMapTextureCreateFlag(true);
+    cubeTexture_ = MakeScreen(1024,1024,true);
+    SetCubeMapTextureCreateFlag(false);
+
 }
 
 void FreamMng::Update(bool window_open_flg)
@@ -199,8 +204,6 @@ void FreamMng::Update(bool window_open_flg)
 
 void FreamMng::Draw()
 {
-    
-
     // 上から見たカメラに変更
     camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());
     // 2Dの上から見たステージの作成
@@ -234,9 +237,19 @@ void FreamMng::Draw()
         mouse_->Draw();
     }
 
+    for (int i = 0; i < CUBE_TEXTURE_NUM; i++)
+    {
+        SetRenderTargetToShader(0, cubeTexture_, i);
+        ClearDrawScreen();
+        camera_->Set();
+        models_->DrawSkyDome();
+    }
+
     SetDrawScreen(DX_SCREEN_BACK);
     RefreshDxLibDirect3DSetting();
     ClearDrawScreen();
+
+    
 
     camera_->Set();
 
@@ -440,7 +453,7 @@ void FreamMng::ObjectDrawField()
 {
     SetUseLighting(false);
 
-    models_->Draw();
+    models_->Draw(cubeTexture_);
     
     //gizumo_->Draw();
 }

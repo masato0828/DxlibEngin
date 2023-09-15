@@ -79,7 +79,9 @@ private:
 
 	int screen_;
 	int systemUIScreen_;
+	int cubeTexture_;
 
+	const int CUBE_TEXTURE_NUM = 6;
 
 	int testModel_;
 	

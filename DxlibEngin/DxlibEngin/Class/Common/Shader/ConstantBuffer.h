@@ -1,5 +1,7 @@
 #pragma once
 
+
+
 class ConstantBuffer
 {
 public:
@@ -27,4 +29,6 @@ public:
 private:
     // バッファのハンドル
     int bufferHandle_;
+
+   
 };

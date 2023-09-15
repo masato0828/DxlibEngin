@@ -116,7 +116,16 @@ void ShaderMng::DrawEnd()
 
 void ShaderMng::SetTexture(SLOT_TYPE slot, int imageHnadle)
 {
+    if (imageHnadle == -1)
+    {
+        return;
+    }
     SetUseTextureToShader(static_cast<int>(slot),imageHnadle);
+}
+
+void ShaderMng::EndTextere(SLOT_TYPE slot)
+{
+    SetUseTextureToShader(static_cast<int>(slot), -1);			//設定されたテクスチャを解除する
 }
 
 void ShaderMng::SetSkiningVertex(const std::wstring& name, const int& modelHandle)
@@ -192,44 +201,63 @@ void ShaderMng::Draw(const std::wstring& name, const int& modelHandle)
     }
 }
 
-void ShaderMng::LoadShaderFile(const std::wstring& filePath)
+bool ShaderMng::LoadShaderFile(const std::wstring& name, const std::wstring& filePath)
 {
     //ID3DInclude* include = D3D_COMPILE_STANDARD_FILE_INCLUDE;
     ID3DInclude* include = ((ID3DInclude*)(UINT_PTR)1);
     UINT flag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
     ID3DBlob* pErrorBlob = nullptr;
 
-    std::wstring format = L".ps";
-    std::wstring currentPath = L"data/ShaderBinary/";
-
     // ピクセルシェーダーのコンパイル
     {
         std::wstring fullFilepath = filePath;
-
+        pixelFilePath_[name] = Utility::WideStringToString(filePath);
         auto hr = D3DCompileFromFile(fullFilepath.c_str(), nullptr, include, "main",
             "ps_5_0", flag, 0, &pPSBlob, &pErrorBlob);
 
-
         if (FAILED(hr))
-        {    
-            std::string errstr;
-
-        errstr.resize(pErrorBlob->GetBufferSize());
-        std::copy_n((char*)pErrorBlob->GetBufferPointer(), pErrorBlob->GetBufferSize(), errstr.begin());
+        {
+            /*std::string errstr;
+            errstr.resize(pErrorBlob->GetBufferSize());
+            std::copy_n((char*)pErrorBlob->GetBufferPointer(), pErrorBlob->GetBufferSize(), errstr.begin());*/
             assert(0 && "ピクセルシェーダーのコンパイルに失敗しました");
-            return;
+            return false;
         }
     }
+
+    return true;
 }
 
 void ShaderMng::Updater(const std::wstring& name)
 {
     if (ImGui::Button("shaderReload"))
     {
-        LoadShaderFile(Utility::StringToWideString(OpenFileDialog()()));
+        std::wstring format = L".hlsl";
+        std::wstring currentPath = L"Shader/Pixel/";
+        std::filesystem::path path = pixelFilePath_[name];
+        std::wstring noExtFilePath = path.filename().replace_extension();
 
-        int handle = LoadPixelShaderFromMem(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize());
+        auto hlslPath = currentPath + noExtFilePath + format;
 
-        shaders_[name].second = handle;
+        bool result = LoadShaderFile(name,hlslPath.c_str());
+
+        if (result)
+        {
+            int handle = LoadPixelShaderFromMem(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize());
+
+            shaders_[name].second = handle;
+        }
+    }
+
+    if (ImGui::Button("shaderLoad"))
+    {
+        bool result = LoadShaderFile(name,Utility::StringToWideString(OpenFileDialog()()));
+
+        if (result)
+        {
+            int handle = LoadPixelShaderFromMem(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize());
+
+            shaders_[name].second = handle;
+        }
     }
 };

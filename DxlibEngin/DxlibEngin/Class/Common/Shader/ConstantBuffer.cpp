@@ -9,6 +9,9 @@ ConstantBuffer::~ConstantBuffer()
 bool ConstantBuffer::Create(int bufferSize)
 {
     Release();
+
+   
+
     // 定数バッファの作成
     bufferHandle_ = CreateShaderConstantBuffer(bufferSize);
     return (bufferHandle_ != -1);

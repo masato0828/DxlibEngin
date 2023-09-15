@@ -6,6 +6,7 @@
 #include "FreamBase.h"
 #include "../Common/Vector2.h"
 #include "../Common/Geometry.h"
+#include "../Common/Shader/ShaderMng.h"
 
 enum class COLOR_TYPE
 {
@@ -27,7 +28,7 @@ public:
 
     void SetModelPath(const std::filesystem::path& path);
 
-    void Draw();
+    void Draw(int cubeTexture);
 
     void CustomStatus();
 
@@ -36,6 +37,8 @@ public:
     bool IsModelSelect();
   
     Vector3& GetModelPos();
+
+    void DrawSkyDome();
 
 private:
     
@@ -67,10 +70,13 @@ private:
         bool isRotation;
         std::vector<Material> material;
         std::map<COLOR_TYPE, bool> allChangeColor;
+        std::map < SLOT_TYPE, std::pair<std::string, int>> textureHnadle;
     };
 
     std::map<std::wstring, Model> model_;
     std::map<std::wstring, Model> defoModelData_;
+
+    
 
     struct FreamData
     {
@@ -117,10 +123,14 @@ private:
 
     std::vector<Material> CreateMaterialData(const int& handle);
 
+    void LoadTexture(std::string tagName,SLOT_TYPE type);
+
 
     int handleCnt_;
 
     Vector3 nullPos_;
+
+    int skyDomeHnadle_;
     
 };
 

@@ -5,10 +5,11 @@
 #include "ConstantBuffer.h"
 #include <wrl/client.h>
 #include <assert.h>
+
 #include <d3dcompiler.h>
-
-
+#include <dxgi.h>
 #pragma comment(lib,"d3dcompiler.lib")
+#pragma comment(lib,"dxgi.lib")
 
 #define lpShaderMng ShaderMng::GetInstance()
 
@@ -25,6 +26,7 @@ enum class SLOT_TYPE
     SHADOW_MAP_0,
     SHADOW_MAP_1,
     SHADOW_MAP_2,
+    CUBE_MAP,
 };
 
 class ShaderMng
@@ -99,13 +101,16 @@ public:
     /// <param name="imageHnadle">‰æ‘œ‚Ìƒnƒ“ƒhƒ‹</param>
     void SetTexture(SLOT_TYPE slot,int imageHnadle);
 
+    void EndTextere(SLOT_TYPE slot);
+
     void SetSkiningVertex(const std::wstring& name,const int& modelHandle);
 
     void Draw(const std::wstring& name,const int& modelHandle);
 
-    void LoadShaderFile(const std::wstring& filePath);
+    bool LoadShaderFile(const std::wstring& name,const std::wstring& filePath);
 
     void Updater(const std::wstring& name);
+
 
 private:
 

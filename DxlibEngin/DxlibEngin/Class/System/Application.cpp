@@ -91,6 +91,12 @@ bool Application::Run()
 
 		ScreenFlip();
 
+		auto a = GetDrawCallCount();
+
+		ImGui::Begin("DrawCall");
+		ImGui::Text("DrawCall:%d",a);
+		ImGui::End();
+
 		// •`‰æ
 		freamMng_->Render();
 	}
