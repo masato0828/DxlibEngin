@@ -28,12 +28,5 @@ private:
 
 	void Tree(std::filesystem::path directory, FileData& fileData, FileData*& nowSelect);
 
-	bool IsMatch(const std::string& filepath, const std::wstring& target);
-	void ShowCodeEditor(std::string& code);
-
-	void EditMainCppCode();
-
-	std::string ReadMainCppCodeFromFile(const std::string& filePath);
-
 };
 

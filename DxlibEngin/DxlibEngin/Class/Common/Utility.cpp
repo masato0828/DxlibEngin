@@ -293,3 +293,13 @@ bool Utility::IsMatch(const std::string& filepath, const std::wstring& target)
 		return false;
 	}
 }
+
+std::string Utility::StringToInt(const int& val)
+{
+	return std::to_string(val);
+}
+
+int Utility::IntToString(const std::string& str)
+{
+	return stoi(str);
+}

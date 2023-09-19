@@ -10,6 +10,7 @@
 #include "../../imGui/imgui_internal.h"
 #include "../Common/ImGuiMyCustom.h"
 #include "../Common/PostMyGraph.h"
+#include "../Common/Utility.h"
 
 FreamMng::FreamMng()
 {
@@ -57,12 +58,14 @@ void FreamMng::Init()
     screen_ = MakeScreen(ww,wh,true);
     systemUIScreen_ = MakeScreen(ww,wh,true);
 
-    //////
-    testModel_ = MV1LoadModel("data/Bomber_2.mv1");
-
     SetCubeMapTextureCreateFlag(true);
     cubeTexture_ = MakeScreen(1024,1024,true);
     SetCubeMapTextureCreateFlag(false);
+
+    viewFlg_ = { 
+        {L"console",false},
+        {L"codeEditer",false},
+    };
 
 }
 
@@ -107,7 +110,7 @@ void FreamMng::Update(bool window_open_flg)
         ImGuiWindowFlags_MenuBar |
         ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoBringToFrontOnFocus |
-        ImGuiWindowFlags_NoNavFocus|
+        ImGuiWindowFlags_NoNavFocus |
         ImGuiWindowFlags_NoTitleBar;
 
     // Imgui用ウィンドウクラスの作成
@@ -134,7 +137,7 @@ void FreamMng::Update(bool window_open_flg)
         }
         
         // ウィンドウの作成（ウィンドウの名前、開いているか、ウィンドウの効果）
-        if (ImGui::Begin("##model view", &m_show, window_flags))
+        if (ImGui::Begin("##model view", &m_show,ImGui::WindowZOrder::WindowZOrder_Menu, window_flags))
         {
             //hwnd_ = (HWND)ImGui::GetWindowViewport()->PlatformHandleRaw;
             hwnd_ = (HWND)ImGui::GetMainViewport()->PlatformHandleRaw;
@@ -170,12 +173,13 @@ void FreamMng::Update(bool window_open_flg)
 
             // オプション項目を開いているかどうか
             if (optionWindowFlg_) { OptionWindow(); };
+            ViewWindow();
 
             // シーンビューの作成
             sceneView_->Create();
 
             items_->Update();
-            fileDialog_->Update();
+            fileDialog_->Update(viewFlg_[L"codeEditer"]);
 
             // ウィンドウの終了
             ImGui::End();
@@ -259,6 +263,14 @@ void FreamMng::Draw()
 
 void FreamMng::Render()
 {
+    ImGuiContext* ctx = ImGui::GetCurrentContext();
+    std::stable_sort(ctx->Windows.begin(), ctx->Windows.end(),
+        [](const ImGuiWindow* a, const ImGuiWindow* b) {
+            return a->BeginOrderWithinContext < b->BeginOrderWithinContext;
+        }
+    );
+
+
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	//// Update and Render additional Platform Windows
@@ -362,24 +374,26 @@ void FreamMng::CreateMenuBer()
             // メニューの中身
             if (ImGui::MenuItem("new data"))
             {
-                // 
+                auto id = MessageBoxA(NULL, "Do you want to save the current data?", "SAVE", MB_OKCANCEL);
+                if (id == IDOK)
                 {
-                    auto id = MessageBoxA(NULL, "Do you want to save the current data?", "SAVE", MB_OKCANCEL);
-                    if (id == IDOK)
-                    {
-                        // 全初期化
-                    }
+                    // 全初期化
+                    models_.release();
+                    camera_.release();
+                    stage_.release();
+                    postEffect_.release();
+                    lpShaderMng.Clear();
+                    stage_ = std::make_unique<Fream_Stage>();
+                    camera_ = std::make_unique<Fream_Camera>();
+                    models_ = std::make_unique<Fream_Model>();
+                    postEffect_ = std::make_unique<PostEffectMng>();
                 }
             }
             // メニューの中身
-            if (ImGui::BeginMenu("add model"))
+            if (ImGui::BeginMenu("open data"))
             {
                 ImGui::EndMenu();
             };
-            if (ImGui::BeginMenu("model data"))
-            {
-                ImGui::EndMenu();
-            }
             ImGui::EndMenu();
         }
         // メニュー2
@@ -391,24 +405,28 @@ void FreamMng::CreateMenuBer()
             const bool has_debug_tools = false;
 #endif
             ImGui::MenuItem("Option", NULL, &optionWindowFlg_, has_debug_tools);
-            //ImGui::MenuItem("Debug Log", NULL, &show_app_debug_log, has_debug_tools);
-            //ImGui::MenuItem("Stack Tool", NULL, &show_app_stack_tool, has_debug_tools);
-            //ImGui::MenuItem("Style Editor", NULL, &show_app_style_editor);
-            //ImGui::MenuItem("About Dear ImGui", NULL, &show_app_about);
-            //ImGui::EndMenu();
-
-
-
             ImGui::EndMenu();
         };
         // メニュー3
-        if (ImGui::BeginMenu("View")) { ImGui::EndMenu(); };
+        if (ImGui::BeginMenu("View")) {
+            for (auto& view : viewFlg_)
+            {
+                ImGui::MenuItem(Utility::WideStringToString(view.first).c_str(), NULL, &view.second);
+            }
+            ImGui::EndMenu();
+        };
         // メニュー4
         if (ImGui::BeginMenu("Project")) { ImGui::EndMenu(); };
         // メニュー5
         if (ImGui::BeginMenu("Desktop")) { ImGui::EndMenu(); };
         // メニュー6
-        if (ImGui::BeginMenu("Help")) { ImGui::EndMenu(); };
+        if (ImGui::BeginMenu("Help")) { 
+            std::string app = "start chrome.exe ";
+            std::filesystem::path result = std::filesystem::absolute("data/html/help.html");
+            std::string path = result.string();
+            if(ImGui::Button("ImGui Wiki")) { system("start chrome.exe https://github.com/ocornut/imgui/wiki"); }
+            if(ImGui::Button("help page")) { system((app+path).c_str()); }
+            ImGui::EndMenu(); };
 
         // カスタムのボタンを追加
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 20.0f - 25.0f);
@@ -452,6 +470,10 @@ void FreamMng::CreateMenuBer()
 void FreamMng::ObjectDrawField()
 {
     SetUseLighting(false);
+
+
+    models_->DrawSkyDome();
+
 
     models_->Draw(cubeTexture_);
     
@@ -506,6 +528,18 @@ void FreamMng::OptionWindow()
 
         ImGui::End();
     }
+}
 
-    console_->Update();
+void FreamMng::ViewWindow()
+{
+    for (auto& view : viewFlg_)
+    {
+        if (view.first == L"console")
+        {
+            if (view.second)
+            {
+                console_->Update();
+            }
+        }
+    }
 }

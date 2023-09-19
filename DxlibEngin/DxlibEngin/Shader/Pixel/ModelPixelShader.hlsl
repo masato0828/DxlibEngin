@@ -1,16 +1,5 @@
 #include "PixelShader3DHeader.hlsli"
 
-struct PsColorPram
-{
-    float3 diffuse;
-    float3 specular;
-};
-
-cbuffer cbD3D11_CONST_BUFFER_PS_COLOR_REAM : register(b3)
-{
-    PsColorPram colorPram;
-};
-
 PS_OUTPUT main(PS_INPUT input) : SV_TARGET
 {
     float4 result = float4(1.0f, 1.0f, 1.0f, 1.0f);

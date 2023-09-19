@@ -77,4 +77,13 @@
 	SamplerState cubeMapSampler : register(s11); // キューブマップテクスチャ
     TextureCube cubeMapTexture : register(t11); // キューブマップテクスチャ
 
+	SamplerState Sub0Sampler : register(s12); // サブ
+	Texture2D Sub0Texture : register(t12); // サブ
+
+	SamplerState Sub1Sampler : register(s13); // サブ
+	Texture2D Sub1Texture : register(t13); // サブ
+
+	SamplerState Sub2Sampler : register(s14); // サブ
+	Texture2D Sub2Texture : register(t14); // サブ
+
 #endif

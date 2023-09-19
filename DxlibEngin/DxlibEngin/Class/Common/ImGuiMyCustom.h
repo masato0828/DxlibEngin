@@ -23,7 +23,13 @@ namespace ImGui
     IMGUI_API bool  DragInt2(const char* label, Vector2* vec2, int v_speed = 1, int v_min = 0, int v_max = 0, const char* format = "%d", ImGuiSliderFlags flags = 0);
     IMGUI_API bool  DragFloat2(const char* label, Vector2Flt* vec2, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char* format = "%.3f", ImGuiSliderFlags flags = 0);
     IMGUI_API bool  DragDouble2(const char* label, Vector2Dbl* vec2, double v_speed = 1.0, double v_min = 0.0, double v_max = 0.0, const char* format = "%.3f", ImGuiSliderFlags flags = 0);
-
+    enum WindowZOrder {
+        WindowZOrder_Chat,
+        WindowZOrder_Scoreboard,
+        WindowZOrder_Menu,
+        WindowZOrder_Console,
+    };
+    bool Begin(const char* name, bool* p_open,WindowZOrder z_order, ImGuiWindowFlags flags);
   
 }
 

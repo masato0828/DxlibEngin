@@ -56,6 +56,8 @@ void Fream_FileDialog_CodeEditer::Update(std::filesystem::path filePath)
 
 	std::string maltbyteEncoding = Utility::DetectMaltbyteEncoding(code);
 
+	
+
 	// Imgui用ウィンドウクラスの作成
 	ImGuiWindowClass window_classview;
 	// ウィンドウの効果の編集(ウィンドウのドッキングは切っておく)
@@ -68,8 +70,7 @@ void Fream_FileDialog_CodeEditer::Update(std::filesystem::path filePath)
 		ImGuiDockNodeFlags_NoDockingOverEmpty;
 	ImGui::SetNextWindowClass(&window_classview);
 	ImGui::SetNextWindowSize(ImVec2(500, 700), ImGuiCond_Once);
-	ImGui::Begin("Code Editor");
-
+	ImGui::Begin("Code Editor",0, ImGuiWindowFlags_NoBringToFrontOnFocus);
 	ImGui::SetWindowFontScale(1.0f);
 
 	// loadボタンを押した場合
@@ -95,8 +96,6 @@ void Fream_FileDialog_CodeEditer::Update(std::filesystem::path filePath)
 		{
 
 			auto fileName = filePath;
-
-
 
 			if (Utility::ComparisonExtensionFile(fileName, L"cpp") ||
 				Utility::ComparisonExtensionFile(fileName, L"h"))

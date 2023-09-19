@@ -7,6 +7,8 @@ std::string consoleTextBuffer_;
 
 int consoleTextBufferCnt_;
 
+bool windowFlg_ = false;
+
 Fream_Console::Fream_Console()
 {
     Init();
@@ -30,8 +32,8 @@ void Fream_Console::Update()
 void Fream_Console::ConsoleWindow()
 {
     {
-        ImGui::SetNextWindowSize(ImVec2{ 400, 100 }, ImGuiCond_Once);
-        ImGui::Begin("Console");
+        ImGui::SetNextWindowSize(ImVec2{ 1000, 500 }, ImGuiCond_Once);
+        windowFlg_ = ImGui::Begin("Console");
 
         if (ImGui::SmallButton("clear"))
         {
@@ -49,15 +51,11 @@ void Fream_Console::ConsoleWindow()
         // コンソールテキストを表示
         ImGui::TextUnformatted(consoleTextBuffer_.c_str());
 
-
-
         // 操作していない時スクロールバーを固定
         if ((ImGui::GetScrollY() >= ImGui::GetScrollMaxY()))
         {
             ImGui::SetScrollHereY(1.0f);
         }
-
-
 
         ImGui::EndChild();
 
@@ -77,18 +75,21 @@ void Fream_Console::ConsoleWindow()
 
 void AddConsoleText(const std::string& text)
 {
-    std::string formattedText;
-    std::stringstream ss;
-    // n桁のゼロ埋め形式で文字列を生成
-    ss << std::setw(4) << std::setfill('0') << consoleTextBufferCnt_;
+    if (windowFlg_)
+    {
+        std::string formattedText;
+        std::stringstream ss;
+        // n桁のゼロ埋め形式で文字列を生成
+        ss << std::setw(4) << std::setfill('0') << consoleTextBufferCnt_;
 
-    consoleTextBufferCnt_++;
+        consoleTextBufferCnt_++;
 
-    // n桁のゼロ埋め形式で文字列を生成
-    ss.str("");
-    ss << std::setw(4) << std::setfill('0') << consoleTextBufferCnt_;
-    formattedText = ss.str();
+        // n桁のゼロ埋め形式で文字列を生成
+        ss.str("");
+        ss << std::setw(4) << std::setfill('0') << consoleTextBufferCnt_;
+        formattedText = ss.str();
 
-    // テキストをバッファに追加
-    consoleTextBuffer_ += "[" + formattedText + "]:" + text + "\n";
+        // テキストをバッファに追加
+        consoleTextBuffer_ += "[" + formattedText + "]:" + text + "\n";
+    }
 }

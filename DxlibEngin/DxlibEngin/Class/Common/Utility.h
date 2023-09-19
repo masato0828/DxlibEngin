@@ -114,6 +114,20 @@ namespace Utility
 	/// <returns>ˆê’vFtrue@•sˆê’vFfalse</returns>
 	bool IsMatch(const std::string& filepath, const std::wstring& target);
 
+	/// <summary>
+	/// •¶š—ñ‚©‚çIntŒ^‚Ö‚Ì•ÏŠ·
+	/// </summary>
+	/// <param name="val">•ÏŠ·‚µ‚½‚¢”’l</param>
+	/// <returns>IntŒ^</returns>
+	std::string StringToInt(const int& val);
+	
+	/// <summary>
+	/// IntŒ^‚©‚ç•¶š—ñ‚Ö‚Ì•ÏŠ·
+	/// </summary>
+	/// <param name="str">•ÏŠ·‚µ‚½‚¢•¶š</param>
+	/// <returns>stringŒ^</returns>
+	int IntToString(const std::string& str);
+
 }
 // vector‚©‚çindex”Ô–Ú‚Ì—v‘f‚ğíœ‚·‚é
 template<typename T>

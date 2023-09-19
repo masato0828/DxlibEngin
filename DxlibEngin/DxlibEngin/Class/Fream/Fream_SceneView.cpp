@@ -29,74 +29,72 @@ void Fream_SceneView::Update()
 
 
 void Fream_SceneView::Create()
-{ 
+{
     // Imgui用ウィンドウクラスの作成
     ImGuiWindowClass window_classview;
     // ウィンドウの効果の編集（今回はウィンドウの非表示を無くす設定とウィンドウタブを無くす処理）
     window_classview.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoWindowMenuButton;
     ImGui::SetNextWindowClass(&window_classview);
-    
+
     // ウィンドウの表示
-    if (ImGui::Begin("scene",0,ImGuiWindowFlags_NoMove))
+    ImGui::Begin("scene", 0, ImGuiWindowFlags_NoMove);
+    // シェーダ情報の作成
+    static ID3D11ShaderResourceView* my_shaderData = NULL;
+    // 画像の読み込み
+    bool ret = LoadBackGroundTextureFromFile(&my_shaderData, &defaultImageSize_.x_, &defaultImageSize_.y_);
+
+    auto sizeX = ImGui::GetWindowSize().x;
+    auto sizeY = ImGui::GetWindowSize().y;
+
+    // 横割合
+    auto rectX = ImGui::GetWindowDrawList()->GetClipRectMax().x - ImGui::GetWindowDrawList()->GetClipRectMin().x;
+    auto rectY = ImGui::GetWindowDrawList()->GetClipRectMax().y - ImGui::GetWindowDrawList()->GetClipRectMin().y - 20;
+    //auto x = ImGui::GetWindowSize().x / defaultImageSize_.x_;
+    auto x = rectX / defaultImageSize_.x_;
+    // 縦割合
+    //auto y = ImGui::GetWindowSize().y / defaultImageSize_.y_;
+    auto y = rectY / defaultImageSize_.y_;
+
+
+    // 係数
+    auto factor = (std::min)(x, y);
+
+    if (factor == 0)
     {
-        // シェーダ情報の作成
-        static ID3D11ShaderResourceView* my_shaderData = NULL;
-        // 画像の読み込み
-        bool ret = LoadBackGroundTextureFromFile(&my_shaderData, &defaultImageSize_.x_, &defaultImageSize_.y_);
-
-        auto sizeX = ImGui::GetWindowSize().x;
-        auto sizeY = ImGui::GetWindowSize().y;
-
-       // 横割合
-       auto rectX =ImGui::GetWindowDrawList()->GetClipRectMax().x - ImGui::GetWindowDrawList()->GetClipRectMin().x;
-       auto rectY =ImGui::GetWindowDrawList()->GetClipRectMax().y - ImGui::GetWindowDrawList()->GetClipRectMin().y-20;
-       //auto x = ImGui::GetWindowSize().x / defaultImageSize_.x_;
-       auto x = rectX / defaultImageSize_.x_;
-       // 縦割合
-       //auto y = ImGui::GetWindowSize().y / defaultImageSize_.y_;
-       auto y = rectY / defaultImageSize_.y_;
-       
-
-        // 係数
-        auto factor = (std::min)(x, y);
-
-        if (factor == 0)
-        {
-            ImGui::End();
-            return;
-        }
-        factor_ = factor;
-        ImGui::Image(
-            // 画像情報
-            (void*)my_shaderData,
-            // 画像サイズを割合で変える
-            ImVec2{ (float)defaultImageSize_.x_ * factor_, (float)defaultImageSize_.y_ * factor_ },
-            // UV1
-            ImVec2{ 0,0 },
-            // UV2
-            ImVec2{ 1,1 },
-            // 描画カラー
-            ImVec4{ 1,1,1,1 },
-            // 枠のカラー
-            ImVec4{ 0,0,0,0 });
-
-        
-        // このウィンドウの画像の左上
-        imageLeftUpCornor_ = {
-            ImGui::GetWindowDrawList()->VtxBuffer[0].pos.x,
-            ImGui::GetWindowDrawList()->VtxBuffer[0].pos.y 
-        };
-        // このウィンドウの画像の右下
-        imageRightDownCornor_ = {
-            ImGui::GetWindowDrawList()->VtxBuffer[2].pos.x,
-            ImGui::GetWindowDrawList()->VtxBuffer[2].pos.y
-        };
-
-        CreateDragAndDropHandle();
-
-        // ウィンドウの終了
         ImGui::End();
+        return;
     }
+    factor_ = factor;
+    ImGui::Image(
+        // 画像情報
+        (void*)my_shaderData,
+        // 画像サイズを割合で変える
+        ImVec2{ (float)defaultImageSize_.x_ * factor_, (float)defaultImageSize_.y_ * factor_ },
+        // UV1
+        ImVec2{ 0,0 },
+        // UV2
+        ImVec2{ 1,1 },
+        // 描画カラー
+        ImVec4{ 1,1,1,1 },
+        // 枠のカラー
+        ImVec4{ 0,0,0,0 });
+
+
+    // このウィンドウの画像の左上
+    imageLeftUpCornor_ = {
+        ImGui::GetWindowDrawList()->VtxBuffer[0].pos.x,
+        ImGui::GetWindowDrawList()->VtxBuffer[0].pos.y
+    };
+    // このウィンドウの画像の右下
+    imageRightDownCornor_ = {
+        ImGui::GetWindowDrawList()->VtxBuffer[2].pos.x,
+        ImGui::GetWindowDrawList()->VtxBuffer[2].pos.y
+    };
+
+    CreateDragAndDropHandle();
+
+    // ウィンドウの終了
+    ImGui::End();
 }
 
 float Fream_SceneView::GetFactor()

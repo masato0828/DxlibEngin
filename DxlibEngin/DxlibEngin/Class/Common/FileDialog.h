@@ -4,7 +4,7 @@
 
 struct OpenFileDialog
 {
-	std::string operator()(HWND hWnd = nullptr,std::string* title = nullptr,std::string* filter = nullptr)
+	std::filesystem::path operator()(HWND hWnd = nullptr,std::string* title = nullptr,std::string* filter = nullptr)
 	{
 		//現在のカンレントディレクトリを取得
 		auto directory = std::filesystem::current_path();

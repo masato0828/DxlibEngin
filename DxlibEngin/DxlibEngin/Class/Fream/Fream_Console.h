@@ -2,10 +2,6 @@
 #include <string>
 #include "FreamBase.h"
 
-
-
-
-
 /// <summary>
 /// コンソールにテキストを追加する関数
 /// </summary>

@@ -44,12 +44,12 @@ private:
 	void Inspector(); 
 
 	void OptionWindow();
+
+	void ViewWindow();
     
 	void CreateMenuBer();
 
 	void ObjectDrawField();
-
-	
 
 	std::unique_ptr<Fream_SceneView> sceneView_;
 	std::unique_ptr<Fream_DokingArea> dokingArea_;
@@ -65,6 +65,10 @@ private:
 	std::unique_ptr<Fream_Console> console_;
 
 	bool optionWindowFlg_;
+
+	std::map<std::wstring, bool> viewFlg_;
+	std::vector<std::wstring> viewName_;
+
 	bool demoWindowActivFlg_;
 
 	Vector2Flt copyWindowSize_;
@@ -83,13 +87,6 @@ private:
 
 	const int CUBE_TEXTURE_NUM = 6;
 
-	int testModel_;
-	
 	Vector3 scl = { 1.f,1.f,1.f };
-
-	// nåÖÇÃÉ[ÉçñÑÇﬂÇçsÇ§ç€ÇÃêîíl
-	const int ZERO_PADDING_DIGITS = 4;
-
-
 };
 

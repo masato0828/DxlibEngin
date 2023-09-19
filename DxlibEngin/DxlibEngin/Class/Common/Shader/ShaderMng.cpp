@@ -134,6 +134,7 @@ void ShaderMng::SetSkiningVertex(const std::wstring& name, const int& modelHandl
     int modelListNum = MV1GetTriangleListNum(modelHandle);
     int modelShaderType = DX_MV1_VERTEX_TYPE_1FRAME;
     int vsHandle = -1;
+    int psHandle = -1;
 
     // 頂点タイプの取得
     for (int i = 0; i < modelListNum; i++)
@@ -166,14 +167,17 @@ void ShaderMng::SetSkiningVertex(const std::wstring& name, const int& modelHandl
     case DX_MV1_VERTEX_TYPE_NMAP_1FRAME:
         // 法線マップ用の情報が含まれる１フレームの影響を受ける頂点
         vsHandle = LoadVertexShader("data/ShaderBinary/Vertex/ModelNormal1FrameVertexShader.vs");
+        psHandle = LoadPixelShader("data/ShaderBinary/Pixel/ModelNormalPixelShader.ps");
         break;
     case DX_MV1_VERTEX_TYPE_NMAP_4FRAME:
         // 法線マップ用の情報が含まれる１～４フレームの影響を受ける頂点
         vsHandle = LoadVertexShader("data/ShaderBinary/Vertex/ModelNormal4FrameVertexShader.vs");
+        psHandle = LoadPixelShader("data/ShaderBinary/Pixel/ModelNormalPixelShader.ps");
         break;
     case DX_MV1_VERTEX_TYPE_NMAP_8FRAME:
         // 法線マップ用の情報が含まれる５～８フレームの影響を受ける頂点
         vsHandle = LoadVertexShader("data/ShaderBinary/Vertex/ModelNormal8FrameVertexShader.vs");
+        psHandle = LoadPixelShader("data/ShaderBinary/Pixel/ModelNormalPixelShader.ps");
         break;
     case DX_MV1_VERTEX_TYPE_NMAP_FREE_FRAME:
         // 法線マップ用の情報が含まれる９フレーム以上の影響を受ける頂点
@@ -189,6 +193,12 @@ void ShaderMng::SetSkiningVertex(const std::wstring& name, const int& modelHandl
     }
 
     shaders_[name].first = vsHandle;
+
+    if (psHandle != -1)
+    {
+        shaders_[name].second = psHandle;
+    }
+
 }
 
 void ShaderMng::Draw(const std::wstring& name, const int& modelHandle)
@@ -203,8 +213,7 @@ void ShaderMng::Draw(const std::wstring& name, const int& modelHandle)
 
 bool ShaderMng::LoadShaderFile(const std::wstring& name, const std::wstring& filePath)
 {
-    //ID3DInclude* include = D3D_COMPILE_STANDARD_FILE_INCLUDE;
-    ID3DInclude* include = ((ID3DInclude*)(UINT_PTR)1);
+    ID3DInclude* include = D3D_COMPILE_STANDARD_FILE_INCLUDE;
     UINT flag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
     ID3DBlob* pErrorBlob = nullptr;
 
@@ -215,12 +224,9 @@ bool ShaderMng::LoadShaderFile(const std::wstring& name, const std::wstring& fil
         auto hr = D3DCompileFromFile(fullFilepath.c_str(), nullptr, include, "main",
             "ps_5_0", flag, 0, &pPSBlob, &pErrorBlob);
 
+        // コンパイル失敗
         if (FAILED(hr))
         {
-            /*std::string errstr;
-            errstr.resize(pErrorBlob->GetBufferSize());
-            std::copy_n((char*)pErrorBlob->GetBufferPointer(), pErrorBlob->GetBufferSize(), errstr.begin());*/
-            assert(0 && "ピクセルシェーダーのコンパイルに失敗しました");
             return false;
         }
     }
@@ -251,7 +257,7 @@ void ShaderMng::Updater(const std::wstring& name)
 
     if (ImGui::Button("shaderLoad"))
     {
-        bool result = LoadShaderFile(name,Utility::StringToWideString(OpenFileDialog()()));
+        bool result = LoadShaderFile(name,OpenFileDialog()());
 
         if (result)
         {

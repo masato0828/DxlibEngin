@@ -50,17 +50,14 @@ void Fream_FileDialog_Item::Update(FileData*& nowselect, std::filesystem::path& 
 	window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoTabBar;
 	ImGui::SetNextWindowClass(&window_class);
 
-	if (ImGui::Begin("ITEM"))
+	ImGui::Begin("ITEM");
+	if (nowSelect_ != nullptr)
 	{
-		if (nowSelect_ != nullptr)
-		{
-			IterateFilesAndFolders();
-		}
-		HandleContextMenu();
-		HandleFileRenamingWindow();
-
-		ImGui::End();
+		IterateFilesAndFolders();
 	}
+	HandleContextMenu();
+	HandleFileRenamingWindow();
+	ImGui::End();
 
 	fileFullPath = fileFullPaht_;
 	nowSelectFile = nowSelectFile_;
@@ -70,33 +67,31 @@ void Fream_FileDialog_Item::Update(FileData*& nowselect, std::filesystem::path& 
 
 void Fream_FileDialog_Item::DokingWindow()
 {
-	if (ImGui::Begin("##ItemWindow"))
+	ImGui::Begin("##ItemWindow");
+	// 強制ドッキング設定
+	ImGuiID dockspace_id = ImGui::GetID("ItemDock");
+	if (ImGui::DockBuilderGetNode(dockspace_id) == NULL)
 	{
-		// 強制ドッキング設定
-		ImGuiID dockspace_id = ImGui::GetID("ItemDock");
-		if (ImGui::DockBuilderGetNode(dockspace_id) == NULL)
-		{
-			ImGui::DockBuilderRemoveNode(dockspace_id); // Clear out existing layout
-			ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_NoDockingSplitMe); // Add empty node
+		ImGui::DockBuilderRemoveNode(dockspace_id); // Clear out existing layout
+		ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_NoDockingSplitMe); // Add empty node
 
-			ImGuiID dock_main_id = dockspace_id;
-			ImGuiID dock_id_FileDialog = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.01f, NULL, &dock_main_id);
-			ImGuiID dock_id_FileLog = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.01f, NULL, &dock_main_id);
+		ImGuiID dock_main_id = dockspace_id;
+		ImGuiID dock_id_FileDialog = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.01f, NULL, &dock_main_id);
+		ImGuiID dock_id_FileLog = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.01f, NULL, &dock_main_id);
 
-			ImGui::DockBuilderSetNodeSize(dock_main_id, ImVec2(300, 400));
-			ImGui::DockBuilderSetNodeSize(dock_id_FileDialog, ImVec2(ImGui::GetWindowWidth(), ImGui::GetTextLineHeight()*2));
-			ImGui::DockBuilderSetNodeSize(dock_id_FileLog, ImVec2(ImGui::GetWindowWidth(), ImGui::GetTextLineHeight()+10));
+		ImGui::DockBuilderSetNodeSize(dock_main_id, ImVec2(300, 400));
+		ImGui::DockBuilderSetNodeSize(dock_id_FileDialog, ImVec2(ImGui::GetWindowWidth(), ImGui::GetTextLineHeight() * 2));
+		ImGui::DockBuilderSetNodeSize(dock_id_FileLog, ImVec2(ImGui::GetWindowWidth(), ImGui::GetTextLineHeight() + 10));
 
-			ImGui::DockBuilderDockWindow("FileNameLog", dock_id_FileDialog);
-			ImGui::DockBuilderDockWindow("FileLog", dock_id_FileLog);
-			ImGui::DockBuilderDockWindow("ITEM", dock_main_id);
+		ImGui::DockBuilderDockWindow("FileNameLog", dock_id_FileDialog);
+		ImGui::DockBuilderDockWindow("FileLog", dock_id_FileLog);
+		ImGui::DockBuilderDockWindow("ITEM", dock_main_id);
 
-			ImGui::DockBuilderFinish(dockspace_id);
-		}
-		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f));
-
-		ImGui::End();
+		ImGui::DockBuilderFinish(dockspace_id);
 	}
+	ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f));
+
+	ImGui::End();
 }
 
 void Fream_FileDialog_Item::FileNameWindow()
@@ -104,29 +99,27 @@ void Fream_FileDialog_Item::FileNameWindow()
 	// Imgui用ウィンドウクラスの作成
 	ImGuiWindowClass window_class;
 	// ウィンドウの効果の編集（今回はウィンドウの非表示を無くす設定とウィンドウタブを無くす処理）
-	window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoTabBar| ImGuiDockNodeFlags_NoResizeFlagsMask_;
+	window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoResizeFlagsMask_;
 	ImGui::SetNextWindowClass(&window_class);
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f));
-	if (ImGui::Begin("FileNameLog"))
-	{
-		std::wstring fileName = nowSelectFile_;
-		std::wstring extractedText = L"";
-		// 文字列を逆順に探索して最後の'\\'の位置を見つける
-		size_t lastBackslashPos = fileName.rfind('\\');
+	ImGui::Begin("FileNameLog");
+	std::wstring fileName = nowSelectFile_;
+	std::wstring extractedText = L"";
+	// 文字列を逆順に探索して最後の'\\'の位置を見つける
+	size_t lastBackslashPos = fileName.rfind('\\');
 
-		if (lastBackslashPos != std::string::npos) {
-			// 最後の'\\'の次の位置から文字列の最後までを抽出
-			extractedText = fileName.substr(lastBackslashPos + 1);
-			ImGui::Text(Utility::WStringToUTF8(extractedText).c_str());
-		}
-		else {
-
-			ImGui::Text(Utility::WStringToUTF8(fileName).c_str());
-		}
-
-		
-		ImGui::End();
+	if (lastBackslashPos != std::string::npos) {
+		// 最後の'\\'の次の位置から文字列の最後までを抽出
+		extractedText = fileName.substr(lastBackslashPos + 1);
+		ImGui::Text(Utility::WStringToUTF8(extractedText).c_str());
 	}
+	else {
+
+		ImGui::Text(Utility::WStringToUTF8(fileName).c_str());
+	}
+
+
+	ImGui::End();
 	ImGui::PopStyleColor();
 }
 
@@ -161,7 +154,10 @@ void Fream_FileDialog_Item::Recovery(FileData* selectData)
 	}
 	ImGui::SameLine();
 	// ボタンのサイズと文字の配置を設定する
-	if (ImGui::SmallButton(Utility::WStringToUTF8(selectData->myName).c_str()))
+
+	auto wstr = Utility::WStringToUTF8(selectData->myName);
+	auto cstr = wstr.c_str();
+	if (ImGui::SmallButton(cstr))
 	{
 		std::wstring find = L"\\";
 		std::wstring findName = find + nowSelect_->myName;

@@ -103,3 +103,11 @@ void ImGuiCustom::HelpMarker(const char* desc)
         ImGui::EndTooltip();
     }
 }
+
+bool ImGui::Begin(const char* name, bool* p_open, WindowZOrder z_order, ImGuiWindowFlags flags)
+{
+    bool result = ImGui::Begin(name, p_open, flags);
+    ImGui::GetCurrentWindow()->BeginOrderWithinContext = z_order;
+
+    return result;
+}

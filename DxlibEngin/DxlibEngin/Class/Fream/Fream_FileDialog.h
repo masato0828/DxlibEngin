@@ -23,6 +23,7 @@ public:
     ~Fream_FileDialog();
     void Init();
     void Update();
+    void Update(bool codeEditerWindowOpenFlg);
 
     std::filesystem::path GetNowFile();
 private:

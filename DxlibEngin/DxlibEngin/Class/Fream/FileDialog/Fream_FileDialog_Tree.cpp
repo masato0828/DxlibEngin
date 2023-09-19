@@ -33,46 +33,44 @@ void Fream_FileDialog_Tree::Update(
 	nowSelectPath_ = nowSelectPath;
 	nowSelectFileName_ = nowSelectFileName;
 
-	if (ImGui::Begin("FileTree"))
+	ImGui::Begin("FileTree");
+	//現在のカンレントディレクトリを取得
+	auto directory = std::filesystem::current_path();
+
+	ImGuiTreeNodeFlags node_flags =
+		ImGuiTreeNodeFlags_OpenOnArrow |
+		ImGuiTreeNodeFlags_OpenOnDoubleClick
+		| ImGuiTreeNodeFlags_SpanAvailWidth;
+
+	if (&fileData == nowSelect)
 	{
-		//現在のカンレントディレクトリを取得
-		auto directory = std::filesystem::current_path();
-
-		ImGuiTreeNodeFlags node_flags =
-			ImGuiTreeNodeFlags_OpenOnArrow |
-			ImGuiTreeNodeFlags_OpenOnDoubleClick
-			| ImGuiTreeNodeFlags_SpanAvailWidth;
-
-		if (&fileData == nowSelect)
-		{
-			node_flags |= ImGuiTreeNodeFlags_Selected;
-		}
-
-		if (nowSelect->parentFile_ != NULL)
-		{
-			if (Utility::IsMatch(directory.string(), nowSelect->parentFile_->myName))
-			{
-				// ツリーを開く
-				ImGui::SetNextItemOpen(true);
-			}
-		}
-
-		bool is_open = ImGui::TreeNodeEx((void*)&fileData, node_flags, Utility::WStringToUTF8(fileData.myName).c_str());
-
-		// ツリーを選択
-		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
-		{
-			// 現在選択中
-			nowSelect = &fileData;
-		}
-		if (is_open)
-		{
-			Tree(directory, fileData,nowSelect);
-			ImGui::TreePop();
-		}
-
-		ImGui::End();
+		node_flags |= ImGuiTreeNodeFlags_Selected;
 	}
+
+	if (nowSelect->parentFile_ != NULL)
+	{
+		if (Utility::IsMatch(directory.string(), nowSelect->parentFile_->myName))
+		{
+			// ツリーを開く
+			ImGui::SetNextItemOpen(true);
+		}
+	}
+
+	bool is_open = ImGui::TreeNodeEx((void*)&fileData, node_flags, Utility::WStringToUTF8(fileData.myName).c_str());
+
+	// ツリーを選択
+	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+	{
+		// 現在選択中
+		nowSelect = &fileData;
+	}
+	if (is_open)
+	{
+		Tree(directory, fileData, nowSelect);
+		ImGui::TreePop();
+	}
+
+	ImGui::End();
 
 	nowSelectPath = nowSelectPath_;
 	nowSelectFileName = nowSelectFileName_;

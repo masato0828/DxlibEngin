@@ -45,7 +45,6 @@ void Gizumo::Init()
 
 void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 {
-	ImGui::Begin("test");
 	pos = modelPos;
 
 	// マウスボタンの入力状態を更新
@@ -107,8 +106,6 @@ void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 			moveY = (float)(ScreenPos.y - CatchMouseY);
 			moveZ = moveX - moveY;
 
-			ImGui::Text("move\n%f;%f;%f", moveX, moveY, moveY);
-
 			if (selectStick2_ == STICK_TYPE::X)
 			{
 				modelPos.x_ = moveX + catchPos_.x;
@@ -126,14 +123,6 @@ void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 
 	
 	
-	ImGui::Text("modelPos\n %f;%f;%f" , modelPos.x_, modelPos.y_, modelPos.z_);
-	ImGui::Text("selectStick_\n %d", selectStick2_);
-
-	if (Catch)
-	{
-		ImGui::Text("catchPos\n  :%f;%f;%f", catchPos_.x, catchPos_.y, catchPos_.z);
-	}
-	ImGui::End();
 
 	for (int i = 0; i < stick_.size(); i++)
 	{

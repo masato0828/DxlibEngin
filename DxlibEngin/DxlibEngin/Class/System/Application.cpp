@@ -3,6 +3,8 @@
 #include "../../imGui/imgui.h"
 #include "../../imGui/imgui_impl_dx11.h"
 #include "../../imGui/imgui_impl_win32.h"
+#include "../Fream/Fream_Console.h"
+#include "../Common/Utility.h"
 
 
 
@@ -91,11 +93,7 @@ bool Application::Run()
 
 		ScreenFlip();
 
-		auto a = GetDrawCallCount();
-
-		ImGui::Begin("DrawCall");
-		ImGui::Text("DrawCall:%d",a);
-		ImGui::End();
+		AddConsoleText(Utility::StringToInt(GetDrawCallCount()));
 
 		// •`‰æ
 		freamMng_->Render();

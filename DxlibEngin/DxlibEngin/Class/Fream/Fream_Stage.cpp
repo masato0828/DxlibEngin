@@ -18,6 +18,8 @@ Fream_Stage::Fream_Stage()
 
 Fream_Stage::~Fream_Stage()
 {
+    MV1DeleteModel(modelH_);
+    DeleteGraph(screen_);
 }
 
 void Fream_Stage::Init()

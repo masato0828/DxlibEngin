@@ -4,6 +4,7 @@
 #include "../Common/Utility.h"
 #include "../Common/Shader/ShaderMng.h"
 #include"../Common/FileDialog.h"
+#include "../../strconv/strconv.h"
 
 Fream_Model::Fream_Model():freamData_(nullptr,L"")
 {
@@ -12,6 +13,21 @@ Fream_Model::Fream_Model():freamData_(nullptr,L"")
 
 Fream_Model::~Fream_Model()
 {
+	MV1DeleteModel(skyDomeHnadle_);
+	for (auto &m:model_)
+	{
+		MV1RefreshReferenceMesh(m.second.handle, -1, TRUE);
+		MV1DeleteModel(m.second.handle);
+
+		for (auto& tex:m.second.textureHnadle)
+		{
+			if (tex.second.second == -1)
+			{
+				continue;
+			}
+			DeleteGraph(tex.second.second);
+		}
+	}
 }
 
 void Fream_Model::Init()
@@ -209,6 +225,9 @@ void Fream_Model::SetModelPath(const std::filesystem::path& path)
 		{SLOT_TYPE::TOON_SPECULAR_GRAD,std::make_pair("toon_specular",-1)},
 		{SLOT_TYPE::TOON_SPHERE_MAP,std::make_pair("toon_sphere",-1)},
 		{SLOT_TYPE::CUBE_MAP,std::make_pair("cube_map",-1)},
+		{SLOT_TYPE::SUB_0,std::make_pair("sub_0",-1)},
+		{SLOT_TYPE::SUB_1,std::make_pair("sub_1",-1)},
+		{SLOT_TYPE::SUB_2,std::make_pair("sub_2",-1)},
 	};
 	
 	Model model = { name,handle,pos,rot,scl,fream,false,materials,allChangeColor,textureHnadle};
@@ -276,6 +295,10 @@ void Fream_Model::Draw(int cubeTexture)
 		// テクスチャの入力
 		for (auto & tex:modelHandle.second.textureHnadle)
 		{
+			if (tex.second.second == -1)
+			{
+				continue;
+			}
 			lpShaderMng.SetTexture(tex.first, tex.second.second);
 		}
 
@@ -286,10 +309,13 @@ void Fream_Model::Draw(int cubeTexture)
 		// テクスチャの入力
 		for (auto& tex : modelHandle.second.textureHnadle)
 		{
+			if (tex.second.second == -1)
+			{
+				continue;
+			}
 			lpShaderMng.EndTextere(tex.first);
 		}
 		lpShaderMng.DrawEnd();
-        //MV1RefreshReferenceMesh(modelHandle.second, -1, TRUE);
         MV1RefreshReferenceMesh(modelHandle.second.handle, -1, TRUE);
 
 		int index = 0;
@@ -299,7 +325,6 @@ void Fream_Model::Draw(int cubeTexture)
 			MV1SetMaterialSpcColor(modelHandle.second.handle, index, material.color.at(COLOR_TYPE::SPC));
 			MV1SetMaterialAmbColor(modelHandle.second.handle, index, material.color.at(COLOR_TYPE::AMB));
 			MV1SetMaterialEmiColor(modelHandle.second.handle, index, material.color.at(COLOR_TYPE::EMI));
-
 			MV1SetMaterialSpcPower(modelHandle.second.handle, index, material.spcPower);
 			index++;
 		}
@@ -375,12 +400,15 @@ void Fream_Model::CustomStatus()
 	ColorEdit("[spc]", COLOR_TYPE::SPC);
 	ColorEdit("[amb]", COLOR_TYPE::AMB);
 	ColorEdit("[emi]", COLOR_TYPE::EMI);
-	
-	for (auto& m : model_.at(nowSelectFreamName_).material)
+	if (ImGui::TreeNode("spcPower"))
 	{
-		std::string materialName = Utility::WideStringToString(m.materialName);
-		std::string spcPName = materialName + "spcPower";
-		ImGui::SliderFloat(spcPName.c_str(), &m.spcPower, 0.0f, 256.0f);
+		for (auto& m : model_.at(nowSelectFreamName_).material)
+		{
+			std::string materialName = Utility::WideStringToString(m.materialName);
+			std::string spcPName = materialName + "spcPower";
+			ImGui::SliderFloat(spcPName.c_str(), &m.spcPower, 0.0f, 256.0f);
+		}
+		ImGui::TreePop();
 	}
 	lpShaderMng.Updater(model_.at(nowSelectFreamName_).name);
 
@@ -516,6 +544,8 @@ Vector3& Fream_Model::GetModelPos()
 
 void Fream_Model::DrawSkyDome()
 {
+	static float rotationPos = 0;
+	MV1SetRotationXYZ(skyDomeHnadle_,VGet(0,rotationPos += Utility::Deg2Rad(0.01f), 0));
 	MV1SetScale(skyDomeHnadle_,VGet(100,100,100));
 	MV1DrawModel(skyDomeHnadle_);
 }
@@ -588,7 +618,9 @@ void Fream_Model::LoadTexture(std::string tagName,SLOT_TYPE type)
 		std::string name = "テクスチャ画像の読み込み";
 		std::string filter = ".png";
 		std::filesystem::path tPath = (OpenFileDialog()(nullptr,&name,&filter));
-		int handle = LoadGraph(tPath.u8string().c_str());
+		auto strSjis = wide_to_sjis(tPath);
+		auto castStr = strSjis.c_str();
+		int handle = LoadGraph(castStr);
 		model_.at(nowSelectFreamName_).textureHnadle[type].second = handle;
 	}
 }

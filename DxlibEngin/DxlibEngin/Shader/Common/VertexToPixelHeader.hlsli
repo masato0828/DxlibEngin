@@ -14,8 +14,8 @@
 		    float4 svPos : SV_POSITION;		//位置(プロジェクション)
 		    float3 worldPos : POSITION0;	//位置(ワールド)
 		    float3 viewPos : POSITION1;		//位置(ビュー)
-		    float3 viewNorm : NORMAL0;		//法線
-		    float4 diffuse : COLOR0;		//拡散反射色
+			float3 viewNorm : NORMAL0;		//法線		    
+			float4 diffuse : COLOR0;		//拡散反射色
 		    float4 specular : COLOR1;		//鏡面反射色
 		    float2 uv : TEXCOORD;			//UV値
 		};

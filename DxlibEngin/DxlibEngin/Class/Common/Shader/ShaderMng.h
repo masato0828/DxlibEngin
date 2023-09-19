@@ -27,6 +27,9 @@ enum class SLOT_TYPE
     SHADOW_MAP_1,
     SHADOW_MAP_2,
     CUBE_MAP,
+    SUB_0,
+    SUB_1,
+    SUB_2,
 };
 
 class ShaderMng

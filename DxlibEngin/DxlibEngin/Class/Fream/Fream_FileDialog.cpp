@@ -46,6 +46,10 @@ void Fream_FileDialog::Init()
 
 void Fream_FileDialog::Update()
 {
+}
+
+void Fream_FileDialog::Update(bool codeEditerWindowOpenFlg)
+{
 	// Imgui用ウィンドウクラスの作成
 	ImGuiWindowClass window_class;
 	// ウィンドウの効果の編集（今回はウィンドウの非表示を無くす設定とウィンドウタブを無くす処理）
@@ -58,9 +62,10 @@ void Fream_FileDialog::Update()
 	ImGui::SetNextWindowClass(&window_class);
 	item_->Update(nowSelect,fileFullPaht_, nowSelectFile_, nowSelectFileName_);
 	
-	//EditMainCppCode();
-	codeEditer_->Update(fileFullPaht_ /= nowSelectFile_);
-
+	if (codeEditerWindowOpenFlg)
+	{
+		codeEditer_->Update(fileFullPaht_ /= nowSelectFile_);
+	}
 	item_->GetButton_Click() = false;
 }
 
