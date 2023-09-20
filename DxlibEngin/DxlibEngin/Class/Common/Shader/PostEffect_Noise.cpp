@@ -32,7 +32,6 @@ void PostEffect_Noise::Draw(std::wstring name, const int imageHnadle)
 {
     if (name == L"noise")
     {
-        MV1SetUseOrigShader(true);
         // postEffect
         lpShaderMng.DrawBegin(name);
         lpShaderMng.SetTexture(SLOT_TYPE::DEFFUSE, imageHnadle);
@@ -49,7 +48,6 @@ void PostEffect_Noise::Draw(std::wstring name, const int imageHnadle)
         MyDrawGraph(0, 0, imageHnadle);
         //DrawGraph(0,0,screen_,true);
         lpShaderMng.DrawEnd();
-        MV1SetUseOrigShader(false);
     }
 }
 

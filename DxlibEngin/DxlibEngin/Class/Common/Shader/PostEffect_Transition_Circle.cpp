@@ -42,7 +42,6 @@ void PostEffect_Transition_Circle::Draw(std::wstring name, const int imageHnadle
     if (name == L"circle")
     {
         DrawGraph(0, 0, imageHnadle, true);
-        MV1SetUseOrigShader(true);
         // postEffect
         lpShaderMng.DrawBegin(name);
         lpShaderMng.SetTexture(SLOT_TYPE::DEFFUSE, imageHnadle);
@@ -63,7 +62,6 @@ void PostEffect_Transition_Circle::Draw(std::wstring name, const int imageHnadle
         MyDrawGraph(0, 0, imageHnadle);
         //
         lpShaderMng.DrawEnd();
-        MV1SetUseOrigShader(false);
     }
 }
 

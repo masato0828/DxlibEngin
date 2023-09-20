@@ -9,7 +9,7 @@ struct PixelInput
 SamplerState _MainTex_sampler;
 Texture2D _MainTex : register(t0); // テクスチャ
 
-cbuffer args : register(b7)
+cbuffer args : register(b5)
 {
     float4 color; // 出力する色
     float2 screenSize; // 画面のサイズ

@@ -15,9 +15,8 @@ canvas {
     position: absolute;
     width: 100%;
     height: 100%;
-    /*background-color: #000000;*/
-    background: linear-gradient(to top, rgba(217, 175, 217, 0.7) 0%, rgba(151, 217, 225, 0.7) 100%),url("https://raw.githubusercontent.com/JulianLaval/canvas-particle-network/master/img/demo-bg.jpg"); /* ”wŒi‰æ‘œŽw’è */
-    /*background-image: url("https://raw.githubusercontent.com/JulianLaval/canvas-particle-network/master/img/demo-bg.jpg");*/
+    background-color: #b61924;
+    background-image: url("");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: 50% 50%;
