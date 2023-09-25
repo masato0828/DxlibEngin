@@ -8,3 +8,4 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	lpApplication.Run();
 	return 0;
 }
+

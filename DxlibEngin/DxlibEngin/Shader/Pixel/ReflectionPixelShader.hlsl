@@ -28,7 +28,7 @@ PS_OUTPUT main(PS_INPUT input) : SV_TARGET
    
     float3 cubeRef = reflect(-ray, normal);
     
-    float4 cubeColor = 1.0f * cubeMapTexture.Sample(cubeMapSampler,cubeRef);
+    float4 cubeColor = 0.0f * cubeMapTexture.Sample(cubeMapSampler,cubeRef);
     
     //ライティング処理での合計色
     float3 totalDiffuse = (0, 0, 0);
