@@ -114,7 +114,7 @@ void ShaderMng::DrawEnd()
     MV1SetUseOrigShader(false);
 }
 
-void ShaderMng::SetTexture(SLOT_TYPE slot, int imageHnadle)
+void ShaderMng::SetModelTexture(SLOT_TYPE slot, int imageHnadle)
 {
     if (imageHnadle == -1)
     {

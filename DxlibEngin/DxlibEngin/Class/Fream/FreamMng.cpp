@@ -253,11 +253,11 @@ void FreamMng::Draw()
     RefreshDxLibDirect3DSetting();
     ClearDrawScreen();
 
-    
+    postEffect_->Draw(screen_);
 
     camera_->Set();
 
-    postEffect_->Draw(screen_);
+    
 
 }
 

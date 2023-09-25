@@ -282,6 +282,7 @@ void Fream_Model::Draw(int cubeTexture)
 
         //DrawSphere3D(minRP, 10, 10, lineCol, lineCol, true);
         //DrawSphere3D(maxRP, 10, 10, lineCol, lineCol, true);
+
 		MV1SetScale(modelHandle.second.handle, modelHandle.second.scl.toVECTOR());
 		MV1SetPosition(modelHandle.second.handle, modelHandle.second.pos.toVECTOR());
 		MV1SetRotationXYZ(modelHandle.second.handle, modelHandle.second.rot.toVECTOR());
@@ -299,12 +300,15 @@ void Fream_Model::Draw(int cubeTexture)
 			{
 				continue;
 			}
-			lpShaderMng.SetTexture(tex.first, tex.second.second);
+			lpShaderMng.SetModelTexture(tex.first, tex.second.second);
 		}
 
 		//Draw();
-		//MV1DrawModel(modelHandle.second.handle);
-		lpShaderMng.Draw(modelHandle.first,modelHandle.second.handle);
+
+		
+
+		MV1DrawModel(modelHandle.second.handle);
+		//lpShaderMng.Draw(modelHandle.first,modelHandle.second.handle);
 
 		// テクスチャの入力
 		for (auto& tex : modelHandle.second.textureHnadle)

@@ -35,7 +35,7 @@ void PostEffect_Noise::Draw(std::wstring name, const int imageHnadle)
         MV1SetUseOrigShader(true);
         // postEffect
         lpShaderMng.DrawBegin(name);
-        lpShaderMng.SetTexture(SLOT_TYPE::DEFFUSE, imageHnadle);
+        lpShaderMng.SetModelTexture(SLOT_TYPE::DEFFUSE, imageHnadle);
         Noise_Effect* cbBuf = (Noise_Effect*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
         cbBuf[0].time = pram_.time;
         cbBuf[0].noise1 = pram_.noise1;

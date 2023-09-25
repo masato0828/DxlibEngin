@@ -51,7 +51,7 @@ void PostEffect_Transition_OuterCircumference::Draw(std::wstring name, const int
         MV1SetUseOrigShader(true);
         // postEffect
         lpShaderMng.DrawBegin(name);
-        lpShaderMng.SetTexture(SLOT_TYPE::DEFFUSE, imageHnadle);
+        lpShaderMng.SetModelTexture(SLOT_TYPE::DEFFUSE, imageHnadle);
         Transition_OuterCircumference* cbBuf = (Transition_OuterCircumference*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
         cbBuf[0].color = pram_.color;
         cbBuf[0].screenSize = pram_.screenSize;

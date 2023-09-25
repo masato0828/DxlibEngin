@@ -102,7 +102,7 @@ public:
     /// </summary>
     /// <param name="slot">シェーダーのどのスロットにセットするか</param>
     /// <param name="imageHnadle">画像のハンドル</param>
-    void SetTexture(SLOT_TYPE slot,int imageHnadle);
+    void SetModelTexture(SLOT_TYPE slot,int imageHnadle);
 
     void EndTextere(SLOT_TYPE slot);
 

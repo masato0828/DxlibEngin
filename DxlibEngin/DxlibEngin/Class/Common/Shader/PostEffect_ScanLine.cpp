@@ -40,7 +40,7 @@ void PostEffect_ScanLine::Draw(std::wstring name, const int imageHnadle)
     {
         // postEffect
         lpShaderMng.DrawBegin(name);
-        lpShaderMng.SetTexture(SLOT_TYPE::DEFFUSE, imageHnadle);
+        lpShaderMng.SetModelTexture(SLOT_TYPE::DEFFUSE, imageHnadle);
         ScanLine* cbBuf = (ScanLine*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
         cbBuf[0].time = pram_.time;
         cbBuf[0].pram1 = pram_.pram1;

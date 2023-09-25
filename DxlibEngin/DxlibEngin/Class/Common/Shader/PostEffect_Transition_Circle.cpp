@@ -45,7 +45,7 @@ void PostEffect_Transition_Circle::Draw(std::wstring name, const int imageHnadle
         MV1SetUseOrigShader(true);
         // postEffect
         lpShaderMng.DrawBegin(name);
-        lpShaderMng.SetTexture(SLOT_TYPE::DEFFUSE, imageHnadle);
+        lpShaderMng.SetModelTexture(SLOT_TYPE::DEFFUSE, imageHnadle);
         Transition_Circle* cbBuf = (Transition_Circle*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
         cbBuf[0].color = pram_.color;
         cbBuf[0].screenSize = pram_.screenSize;
