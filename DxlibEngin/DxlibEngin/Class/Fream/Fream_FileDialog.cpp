@@ -13,7 +13,6 @@
 #include "../Common/Utility.h"
 #include "../../imGui/imgui_impl_dx11.h"
 #include "../../imGui/ImGuiColorTextEdit/TextEditor.h"
-#include "FileDialog\TextEditerSetUp.h"
 
 Fream_FileDialog::Fream_FileDialog():fileData_(nullptr, (--std::filesystem::current_path().end())->wstring())
 {
@@ -38,10 +37,6 @@ void Fream_FileDialog::Init()
 	project_ = std::make_unique<Fream_FileDialog_Project>();
 	item_ = std::make_unique<Fream_FileDialog_Item>();
 	codeEditer_ = std::make_unique<Fream_FileDialog_CodeEditer>();
-
-	fontNum_ = 0;
-
-	is_update_ = false;
 }
 
 void Fream_FileDialog::Update()
@@ -72,73 +67,4 @@ void Fream_FileDialog::Update(bool codeEditerWindowOpenFlg)
 std::filesystem::path Fream_FileDialog::GetNowFile()
 {
 	return fileFullPaht_ /= nowSelectFile_;
-}
-
-void Fream_FileDialog::EditMainCppCode()
-{
-	std::filesystem::path f = fileFullPaht_ /= nowSelectFile_;
-
-	std::ifstream file(f);
-
-	std::string code((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-	
-	std::string maltbyteEncoding = Utility::DetectMaltbyteEncoding(code);
-
-	ImGui::Begin("Code Editor");
-
-	ImGui::SetWindowFontScale(1.0f);
-
-	if (ImGui::Button("update")|| item_->GetButton_Click())
-	{
-		is_update_ = true;
-	}
-
-	if (maltbyteEncoding == "UTF-8")
-	{
-		if (is_update_)
-		{
-			lines.clear();
-
-			// 改行文字（'\n'）で文字列を分割して行ごとにベクターに格納
-			std::string line;
-
-			std::istringstream iss(code);
-			while (std::getline(iss, line))
-			{
-				lines.push_back(line);
-			}
-
-			is_update_ = false;
-		}
-	}
-	else
-	{
-		if (is_update_)
-		{
-			lines.clear();
-
-			// 改行文字（'\n'）で文字列を分割して行ごとにベクターに格納
-			std::string line;
-
-			auto w_maltbyte = Utility::MultiByteToUnicode(code);
-
-			auto maltbyte = Utility::WStringToUTF8(w_maltbyte);
-
-			std::istringstream iss(maltbyte);
-			while (std::getline(iss, line))
-			{
-				lines.push_back(line);
-			}
-
-			is_update_ = false;
-		}
-	}
-
-	for (const auto& line : lines)
-	{
-		ImVec4 color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-		ImGui::TextColored(color, line.c_str());
-	}
-	item_->GetButton_Click() = false;
-	ImGui::End();
 }

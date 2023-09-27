@@ -18,7 +18,7 @@ Fream_FileDialog_CodeEditer::~Fream_FileDialog_CodeEditer()
 
 void Fream_FileDialog_CodeEditer::Init()
 {
-	editor.SetLanguageDefinition(TextEditor::LanguageDefinition::CPlusPlus());
+	editor_.SetLanguageDefinition(TextEditor::LanguageDefinition::CPlusPlus());
 
 	// ルールを追加するための正規表現と色のインデックスのペアを作成
 	TextEditor::LanguageDefinition::TokenRegexStrings customRegexStrings;
@@ -27,18 +27,18 @@ void Fream_FileDialog_CodeEditer::Init()
 	customRegexStrings.push_back(std::make_pair("\\b(if|else|while|for)\\b", TextEditor::PaletteIndex::Custom2_Include));
 
 	// カスタムのシンタックスハイライトルールをテキストエディタに設定
-	TextEditor::LanguageDefinition customLanguage = editor.GetLanguageDefinition();
+	TextEditor::LanguageDefinition customLanguage = editor_.GetLanguageDefinition();
 	customLanguage.mTokenRegexStrings = customRegexStrings;
 
 	// 関数名の色を設定
-	TextEditor::Palette customPalette = editor.GetDarkPalette();
+	TextEditor::Palette customPalette = editor_.GetDarkPalette();
 	customPalette[(unsigned)TextEditor::PaletteIndex::Custom1_Function] = 0xff7070e0;		// 
 	customPalette[(unsigned)TextEditor::PaletteIndex::MultiLineComment] = 0xffaaffaa;
 	customPalette[(unsigned)TextEditor::PaletteIndex::Comment] = 0xffaaffaa;
 	// パレットをテキストエディタに設定
-	editor.SetPalette(customPalette);
+	editor_.SetPalette(customPalette);
 
-	editor.SetLanguageDefinition(customLanguage);
+	editor_.SetLanguageDefinition(customLanguage);
 
 	isText_ = false;
 }
@@ -90,7 +90,7 @@ void Fream_FileDialog_CodeEditer::Update(std::filesystem::path filePath)
 
 		if (maltbyteEncoding == "UTF-8")
 		{
-			editor.SetText(code);
+			editor_.SetText(code);
 		}
 		else
 		{
@@ -102,28 +102,28 @@ void Fream_FileDialog_CodeEditer::Update(std::filesystem::path filePath)
 			{
 				auto w_maltbyte = Utility::MultiByteToUnicode(code);
 				auto maltbyte = Utility::WStringToUTF8(w_maltbyte);
-				editor.SetText(maltbyte);
+				editor_.SetText(maltbyte);
 			}
 			else if (Utility::ComparisonExtensionFile(fileName, L"hlsl"))
 			{
 				auto w_maltbyte = Utility::MultiByteToUnicode(code);
 				auto maltbyte = Utility::WStringToUTF8(w_maltbyte);
-				editor.SetLanguageDefinition(TextEditor::LanguageDefinition::HLSL());
+				editor_.SetLanguageDefinition(TextEditor::LanguageDefinition::HLSL());
 
 				// 関数名の色を設定
-				TextEditor::Palette customPalette = editor.GetDarkPalette();
+				TextEditor::Palette customPalette = editor_.GetDarkPalette();
 				customPalette[(unsigned)TextEditor::PaletteIndex::Custom1_Function] = 0xff7070e0;
 				// パレットをテキストエディタに設定
-				editor.SetPalette(customPalette);
+				editor_.SetPalette(customPalette);
 
 
-				editor.SetText(maltbyte);
+				editor_.SetText(maltbyte);
 			}
 			else
 			{
 				auto w_maltbyte = Utility::MultiByteToUnicode(code);
 				auto maltbyte = Utility::WStringToUTF8(w_maltbyte);
-				editor.SetText(maltbyte);
+				editor_.SetText(maltbyte);
 			}
 
 		}
@@ -133,7 +133,7 @@ void Fream_FileDialog_CodeEditer::Update(std::filesystem::path filePath)
 		isText_ = false;
 	}
 
-	editor.Render("##codeEditor", ImVec2(-1, -1));
+	editor_.Render("##codeEditor", ImVec2(-1, -1));
 	
 	
 

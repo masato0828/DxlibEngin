@@ -95,7 +95,7 @@ public:
     /// </summary>
     /// <param name="name">key値</param>
     /// <returns>バッファハンドル</returns>
-    int GetConstansBufferHnadle(const std::wstring& name) { return constansBuffers_[name]->GetHandle(); };
+    int GetConstansBufferHnadle(const std::wstring& constansBufferMapKey) { return constansBuffers_[constansBufferMapKey]->GetHandle(); };
 
     /// <summary>
     /// テクスチャのセット(DrawBeginの後)
@@ -103,16 +103,36 @@ public:
     /// <param name="slot">シェーダーのどのスロットにセットするか</param>
     /// <param name="imageHnadle">画像のハンドル</param>
     void SetModelTexture(SLOT_TYPE slot,int imageHnadle);
+    void SetTexture(int slotNum, int imageHnadle);
 
+    /// <summary>
+    /// テクスチャの削除
+    /// </summary>
+    /// <param name="slot">スロット番号</param>
     void EndTextere(SLOT_TYPE slot);
+    void EndTexture(int slotNum);
 
-    void SetSkiningVertex(const std::wstring& name,const int& modelHandle);
+    /// <summary>
+    /// モデルの頂点タイプで読み込むシェーダーを変える
+    /// </summary>
+    /// <param name="name">シェーダーマップのキー値</param>
+    /// <param name="modelHandle">読み込むモデルハンドル</param>
+    void SetSkiningVertex(const std::wstring& shaderMapKey,const int& modelHandle);
 
-    void Draw(const std::wstring& name,const int& modelHandle);
+    /// <summary>
+    /// ピクセルシェーダーのコンパイル
+    /// </summary>
+    /// <param name="name">シェーダーマップのキー値</param>
+    /// <param name="filePath">読み込むシェーダーのパス</param>
+    /// <returns>成功：true 失敗：false</returns>
+    bool LoadShaderFile(const std::wstring& shaderMapKey,const std::wstring& filePath);
 
-    bool LoadShaderFile(const std::wstring& name,const std::wstring& filePath);
 
-    void Updater(const std::wstring& name);
+    /// <summary>
+    /// シェーダーのカスタム用
+    /// </summary>
+    /// <param name="name">ファイルパスマップのキー値</param>
+    void Updater(const std::wstring& fileMapKey);
 
 
 private:

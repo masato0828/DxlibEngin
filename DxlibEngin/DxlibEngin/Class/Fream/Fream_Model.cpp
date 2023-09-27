@@ -45,8 +45,6 @@ void Fream_Model::Init()
 
 	handleCnt_ = 0;
 
-	nullPos_ = {0,0,0};
-
 	skyDomeHnadle_ = MV1LoadModel("data/modelData/SkyDome/Skydome.mv1");
 	//SetModelPath("data/modelData/SkyDome/Skydome.mv1");
 }

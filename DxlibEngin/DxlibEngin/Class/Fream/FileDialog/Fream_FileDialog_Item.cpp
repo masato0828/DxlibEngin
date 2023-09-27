@@ -279,7 +279,7 @@ void Fream_FileDialog_Item::RenameWindow()
 	ImGui::InputText("##テキスト入力", buffer, sizeof(buffer));
 	ImGui::SameLine();
 	ImGuiCustom::HelpMarker(
-	u8"すいません日本語入力対応してないです、なるべく実装できるようにします"
+	u8"現在日本語入力対応してないです。"
 	);
 
 	if (ImGui::Button(u8"変更の確定"))

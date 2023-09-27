@@ -34,10 +34,10 @@ void Gizumo::Init()
 
 
 	// マウス関連変数の初期化
-	NowInput = 0;
-	EdgeInput = 0;
-	PrevInput = 0;
-	Catch = 0;
+	nowInput_ = 0;
+	edgeInput_ = 0;
+	prevInput_ = 0;
+	catch_ = 0;
 
 	selectStick_ = STICK_TYPE::MAX;
 	
@@ -48,20 +48,20 @@ void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 	pos = modelPos;
 
 	// マウスボタンの入力状態を更新
-	PrevInput = NowInput;
-	NowInput = GetMouseInput();
-	EdgeInput = NowInput & ~PrevInput;
+	prevInput_ = nowInput_;
+	nowInput_ = GetMouseInput();
+	edgeInput_ = nowInput_ & ~prevInput_;
 
 	// マウスの画面座標を x, y にセット
-	ScreenPos.x = (float)sceneMousePoint.x_;
-	ScreenPos.y = (float)sceneMousePoint.y_;
+	screenPos_.x = (float)sceneMousePoint.x_;
+	screenPos_.y = (float)sceneMousePoint.y_;
 
 	// z をそれぞれ 0.0f と 1.0f にして2回 ConvScreenPosToWorldPos を呼ぶ
-	ScreenPos.z = 0.0f;
-	start = ConvScreenPosToWorldPos(ScreenPos);
+	screenPos_.z = 0.0f;
+	start = ConvScreenPosToWorldPos(screenPos_);
 
-	ScreenPos.z = 1.0f;
-	end = ConvScreenPosToWorldPos(ScreenPos);
+	screenPos_.z = 1.0f;
+	end = ConvScreenPosToWorldPos(screenPos_);
 
 	for (int i = 0; i < stick_.size(); i++)
 	{
@@ -69,17 +69,17 @@ void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 
 		if (result.HitFlag)
 		{
-			if (EdgeInput & MOUSE_INPUT_1)
+			if (edgeInput_ & MOUSE_INPUT_1)
 			{
-				Catch = true;
+				catch_ = true;
 				catchPos_ = result.Position;
 
 				// 掴んだ時のスクリーン座標
-				CatchMouseX = ScreenPos.x;
-				CatchMouseY = ScreenPos.y;
+				catchMouseX_ = screenPos_.x;
+				catchMouseY_ = screenPos_.y;
 
-				Catch3DHitPosition = result.Position;
-				Catch2DHitPosition = ConvWorldPosToScreenPos(result.Position);
+				catch3DHitPosition_ = result.Position;
+				catch2DHitPosition_ = ConvWorldPosToScreenPos(result.Position);
 				selectStick_ = static_cast<STICK_TYPE>(i);
 				selectStick2_ = static_cast<STICK_TYPE>(i);
 			}
@@ -88,13 +88,13 @@ void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 		selectStick_ = STICK_TYPE::MAX;
 	}
 
-	if (Catch)
+	if (catch_)
 	{
 		// 掴んでいる処理
 		// マウスの左クリックが離されていたら掴み状態を解除
-		if ((NowInput & MOUSE_INPUT_1) == 0)
+		if ((nowInput_ & MOUSE_INPUT_1) == 0)
 		{
-			Catch = 0;
+			catch_ = 0;
 			selectStick2_ = STICK_TYPE::MAX;
 		}
 		else
@@ -102,8 +102,8 @@ void Gizumo::Update(Vector2Flt sceneMousePoint,Vector3& modelPos)
 			float moveX = 0, moveY = 0, moveZ = 0;
 
 			// 移動分
-			moveX = (float)(ScreenPos.x - CatchMouseX);
-			moveY = (float)(ScreenPos.y - CatchMouseY);
+			moveX = (float)(screenPos_.x - catchMouseX_);
+			moveY = (float)(screenPos_.y - catchMouseY_);
 			moveZ = moveX - moveY;
 
 			if (selectStick2_ == STICK_TYPE::X)

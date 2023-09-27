@@ -25,8 +25,6 @@ void Fream_Camera::Init()
 
 	targetPos_ = { 0,0,0 };
 
-	isTarget_ = false;
-
 	aftorMousePoint_ = beforMousePoint_ = mousePointDiff_ = Vector2Dbl(0.0, 0.0);
 
 	mouseX_ = 0;
@@ -36,10 +34,6 @@ void Fream_Camera::Init()
 	sens_ = 0.46f;
 	// マウス初期位置の設定
 	//SetMousePoint(1600 / 2 - 80, 720 / 2);
-
-
-
-	mauseHWheel_ = 0;
 
 	moveSpeed_ = 5.0f;
 	moveSpeedBoost_ = 2;
@@ -62,7 +56,7 @@ void Fream_Camera::Update(Vector2 mousePoint, Vector2Flt windowHlfeSize,Vector2 
 	if (mouseMove_)
 	{
 		cnt_++;
-		MouseMove(centerPoint);
+		MouseAngle(centerPoint);
 		if (CheckHitKey(KEY_INPUT_SPACE))
 		{
 			mouseMove_ = false;
@@ -75,18 +69,11 @@ void Fream_Camera::Update(Vector2 mousePoint, Vector2Flt windowHlfeSize,Vector2 
 		cnt_ = 0;
 
 		// マウスのボタンを押しながらマウス操作
-		PushMouseMove();
+		PushMouseAngle();
 	}
 	
 
 	//MouseMove();
-
-
-	// マウスホイール取得
-	mauseHWheel_ = DxLib::GetMouseWheelRotVol();
-
-	// 拡大（要修正）
-	pos_.z_ += mauseHWheel_ * 30;
 
 	
 }
@@ -212,16 +199,16 @@ Vector3 Fream_Camera::GetCameraPos()
 	return pos_;
 }
 
-void Fream_Camera::Set()
+void Fream_Camera::Set(int cameraNear, int cameraFar)
 {
 	// クリップ距離を設定する(SetDrawScreenでリセットされる)
 	// カメラのクリッピング距離を設定
-	SetCameraNearFar(10.0f, 300000.0f);
+	SetCameraNearFar(cameraNear, cameraFar);
 	// クリップ距離を設定する(SetDrawScreenでリセットされる)
 	SetCameraPositionAndAngle(pos_.toVECTOR(), rot_.x_, rot_.y_, rot_.z_);
 }
 
-void Fream_Camera::PushMouseMove()
+void Fream_Camera::PushMouseAngle()
 {
 	// 一フレーム前のマウス位置
 	beforMousePoint_ = {static_cast<double>(mouseX_),static_cast<double>(mouseY_) };
@@ -243,7 +230,7 @@ void Fream_Camera::PushMouseMove()
 	}
 }
 
-void Fream_Camera::MouseMove(Vector2 centerPoint)
+void Fream_Camera::MouseAngle(Vector2 centerPoint)
 {
 	// 真ん中を0とする
 	Vector2Flt nowPoint = { mousePoint_.x_ - windowHlfeSize_.x_ ,mousePoint_.y_ - windowHlfeSize_.y_ };

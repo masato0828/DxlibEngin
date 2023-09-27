@@ -92,20 +92,25 @@ private:
 	void HandleFileRenamingWindow();
 
 
-
+	// 現在のファイルデータ
 	FileData* nowSelect_;
+	// ファイルのフルパス保持
 	std::filesystem::path fileFullPaht_;
+	// 現在の選択ファイルの名前保持
 	std::wstring nowSelectFileName_;
+	// 現在の選択ファイル
 	std::wstring nowSelectFile_;
 
+	// コンテキストメニューの表示状態フラグ
 	bool contextMenuFlg_;
 
-	
-
+	// ボタンクリック状態
 	bool button_click_;
 
+	// ファイルの名前
 	std::wstring fileName_;
 
+	// リネームウィンドウ表示フラグ
 	bool context_renameFlg_;
 
 	std::unique_ptr<CreateIcons> icon_;

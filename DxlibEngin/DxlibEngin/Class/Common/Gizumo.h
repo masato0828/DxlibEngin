@@ -60,17 +60,16 @@ private:
 	std::map<STICK_TYPE,int> defoStickColor_;
 
 	// マウス関連
-	int NowInput, EdgeInput, PrevInput;
-	int Catch;
-	int CatchMouseX, CatchMouseY;
+	int nowInput_, edgeInput_, prevInput_;
+	int catch_;
+	int catchMouseX_, catchMouseY_;
 	VECTOR catchPos_;
 
 	// 位置関連
-	VECTOR Catch3DModelPosition;
-	VECTOR Catch3DHitPosition;
-	VECTOR Catch2DHitPosition;
-
-	VECTOR ScreenPos;
+	VECTOR catch3DModelPosition_;
+	VECTOR catch3DHitPosition_;
+	VECTOR catch2DHitPosition_;
+	VECTOR screenPos_;
 
 	// 選択している棒
 	STICK_TYPE selectStick2_;

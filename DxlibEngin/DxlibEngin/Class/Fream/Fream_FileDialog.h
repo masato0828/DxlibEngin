@@ -21,39 +21,47 @@ public:
 
     Fream_FileDialog();
     ~Fream_FileDialog();
+    
+    /// <summary>
+    /// 初期化
+    /// </summary>
     void Init();
+
+    /// <summary>
+    /// 更新
+    /// </summary>
     void Update();
+
+    /// <summary>
+    /// 更新
+    /// </summary>
+    /// <param name="codeEditerWindowOpenFlg">ウィンドウの表示フラグ</param>
     void Update(bool codeEditerWindowOpenFlg);
 
+    /// <summary>
+    /// 現在のファイルパスの取得
+    /// </summary>
+    /// <returns>現在のファイルパス</returns>
     std::filesystem::path GetNowFile();
 private:
-
-    void EditMainCppCode();
-
+    // ダイアログの表示フラグ
     bool fileDialogFlg_;
-
+    // ファイルデータ
     FileData fileData_;
+    // 選択中ファイルデータ
     FileData* nowSelect;
+    // 選択中のファイルパス
     std::filesystem::path nowSelectPath_;
-
+    // ファイルのフルパス
     std::filesystem::path fileFullPaht_;
+    // 選択中のファイルのフルパス
     std::wstring nowSelectFileName_;
-
+    // 現在のファイル名
     std::wstring nowSelectFile_;
 
     std::unique_ptr<Fream_FileDialog_Tree>tree_;
     std::unique_ptr<Fream_FileDialog_Project>project_;
     std::unique_ptr<Fream_FileDialog_Item>item_;
     std::unique_ptr<Fream_FileDialog_CodeEditer>codeEditer_;
-
-    std::vector<std::string> lines;  // 文字列を行ごとに分割するためのベクター
-
-
-    bool is_update_;
-
-    TextEditor editor;
-
-
-    int fontNum_;
 };
 

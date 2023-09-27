@@ -224,27 +224,27 @@ bool CreateIcons::CreateModelIcon(std::filesystem::path path, std::wstring key)
 	// クリップ距離を設定する(SetDrawScreenでリセットされる)(カメラの位置、カメラの回転)
 	SetCameraPositionAndAngle(VGet(-293.486f, 185.f, -279.488f), 0.264f, 0.808f, 0.0f);
 
-	while (true)
-	{
-		// モデルの全フレームのポリゴンの情報を取得
-		RefPoly = MV1GetReferenceMesh(model, -1, TRUE);
-		// 頂点を更新
-		maxRP = RefPoly.MaxPosition;
-		minRP = RefPoly.MinPosition;
+	//while (true)
+	//{
+	//	// モデルの全フレームのポリゴンの情報を取得
+	//	RefPoly = MV1GetReferenceMesh(model, -1, TRUE);
+	//	// 頂点を更新
+	//	maxRP = RefPoly.MaxPosition;
+	//	minRP = RefPoly.MinPosition;
 
-		// カメラ内に入りきっているか
-		if (!CheckCameraViewClip(maxRP) &&
-			!CheckCameraViewClip(minRP))
-		{
-			scl *= 1.9f;
-			MV1SetScale(model, scl.toVECTOR());
-			MV1RefreshReferenceMesh(model, -1, TRUE);
-		}
-		else
-		{
-			break;
-		}	
-	}
+	//	// カメラ内に入りきっているか
+	//	if (!CheckCameraViewClip(maxRP) &&
+	//		!CheckCameraViewClip(minRP))
+	//	{
+	//		scl *= 1.9f;
+	//		MV1SetScale(model, scl.toVECTOR());
+	//		MV1RefreshReferenceMesh(model, -1, TRUE);
+	//	}
+	//	else
+	//	{
+	//		break;
+	//	}	
+	//}
 
 	while (true)
 	{
@@ -291,10 +291,11 @@ bool CreateIcons::CreateModelIcon(std::filesystem::path path, std::wstring key)
 	int textureSizeY;
 	// テクスチャ描画
 	ImguiSup::LoadTextureFromFile(handle, &fileImageShaderDatas_.at(key), &textureSizeX, &textureSizeY);
-
+	
+	MV1TerminateReferenceMesh(model, -1, TRUE);
 	MV1DeleteModel(model);
 	DeleteGraph(handle);
-	MV1TerminateReferenceMesh(model, -1, TRUE);
+	
 	
 	return true;
 }

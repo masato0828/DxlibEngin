@@ -139,7 +139,6 @@ void FreamMng::Update(bool window_open_flg)
         // ウィンドウの作成（ウィンドウの名前、開いているか、ウィンドウの効果）
         if (ImGui::Begin("##model view", &m_show,ImGui::WindowZOrder::WindowZOrder_Menu, window_flags))
         {
-            //hwnd_ = (HWND)ImGui::GetWindowViewport()->PlatformHandleRaw;
             hwnd_ = (HWND)ImGui::GetMainViewport()->PlatformHandleRaw;
 
             // メニューバーの作成
@@ -425,7 +424,7 @@ void FreamMng::CreateMenuBer()
             std::filesystem::path result = std::filesystem::absolute("data/html/help.html");
             std::string path = result.string();
             if(ImGui::Button("ImGui Wiki")) { system("start chrome.exe https://github.com/ocornut/imgui/wiki"); }
-            if(ImGui::Button("help page")) { system((app+path).c_str()); }
+            //if(ImGui::Button("help page")) { system((app+path).c_str()); }
             ImGui::EndMenu(); };
 
         // カスタムのボタンを追加

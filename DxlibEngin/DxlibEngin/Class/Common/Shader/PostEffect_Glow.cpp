@@ -40,7 +40,6 @@ void PostEffect_Glow::Init()
 
 void PostEffect_Glow::Update()
 {
-	//pram_.time += 0.1f;
 }
 
 void PostEffect_Glow::Draw(std::wstring name, const int imageHnadle)

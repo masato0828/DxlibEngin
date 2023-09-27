@@ -123,9 +123,23 @@ void ShaderMng::SetModelTexture(SLOT_TYPE slot, int imageHnadle)
     SetUseTextureToShader(static_cast<int>(slot),imageHnadle);
 }
 
+void ShaderMng::SetTexture(int slotNum, int imageHnadle)
+{
+    if (imageHnadle == -1)
+    {
+        return;
+    }
+    SetUseTextureToShader(slotNum, imageHnadle);
+}
+
 void ShaderMng::EndTextere(SLOT_TYPE slot)
 {
     SetUseTextureToShader(static_cast<int>(slot), -1);			//設定されたテクスチャを解除する
+}
+
+void ShaderMng::EndTexture(int slotNum)
+{
+    SetUseTextureToShader(slotNum, -1);			//設定されたテクスチャを解除する
 }
 
 void ShaderMng::SetSkiningVertex(const std::wstring& name, const int& modelHandle)
@@ -199,16 +213,6 @@ void ShaderMng::SetSkiningVertex(const std::wstring& name, const int& modelHandl
         shaders_[name].second = psHandle;
     }
 
-}
-
-void ShaderMng::Draw(const std::wstring& name, const int& modelHandle)
-{
-    //モデル中のトライアングルリストの数だけ回す
-    const auto triangleListNum = MV1GetTriangleListNum(modelHandle);
-    for (int i = 0; i < triangleListNum; i++)
-    {
-       MV1DrawTriangleList(modelHandle, i);		//トライアングルリスト単位での描画
-    }
 }
 
 bool ShaderMng::LoadShaderFile(const std::wstring& name, const std::wstring& filePath)
