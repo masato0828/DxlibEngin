@@ -36,13 +36,6 @@ std::wstring Utility::StringToWideString(const std::string& str)
 }
 
 std::string Utility::WideStringToString(const std::wstring& wideString)
-//{
-//	auto wbe = wideString.begin();
-//	auto wen = wideString.end();
-//	auto string = std::string(wbe, wen);
-//
-//	return string;
-//}
 {
 	int bufferSize = WideCharToMultiByte(CP_UTF8, 0, wideString.c_str(), -1, nullptr, 0, nullptr, nullptr);
 	if (bufferSize == 0) {

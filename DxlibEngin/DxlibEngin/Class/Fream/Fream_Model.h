@@ -114,6 +114,8 @@ private:
     std::map<std::wstring, Model> model_;
     // モデルのデフォルト情報
     std::map<std::wstring, Model> defoModelData_;
+    // 名前管理（重複チェック）用
+    std::vector<std::wstring> chackName_;
 
     /// <summary>
     /// フレームツリー
@@ -143,7 +145,7 @@ private:
     bool contextMenuFlg_;
 
     // 削除するモデルの名前
-    std::wstring deleteModelName_;
+    std::wstring selectModelName_;
 
     /// <summary>
     /// フレーム移動回転拡縮
@@ -194,6 +196,22 @@ private:
     /// <param name="tagName">表示用の名前</param>
     /// <param name="type">画像のタイプ</param>
     void LoadTexture(std::string tagName,SLOT_TYPE type);
+
+    /// <summary>
+    /// モデルデータ作成
+    /// </summary>
+    /// <param name="handle">モデルハンドル</param>
+    /// <param name="modelName">モデルのファイル名</param>
+    /// <returns></returns>
+    Model CreateModelData(const int& handle, const std::wstring& modelName);
+
+    /// <summary>
+    /// 選択中データの取得
+    /// </summary>
+    /// <returns>モデルデータ</returns>
+    Model GetSingleData();
+
+
 
     // 同一名モデルのカウント
     int handleCnt_;

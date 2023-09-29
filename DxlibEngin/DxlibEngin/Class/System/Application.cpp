@@ -98,6 +98,7 @@ bool Application::Run()
 		// •`‰æ
 		freamMng_->Render();
 	}
+	
 
 	freamMng_->ShutDown();
 

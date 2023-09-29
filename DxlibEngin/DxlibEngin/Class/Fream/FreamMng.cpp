@@ -50,6 +50,8 @@ void FreamMng::Init()
     firstWindowFlg_ = false;
     windowMaxFlag_ = false;
     windowMinFlag_ = false;
+    outputWindowFlg_ = false;
+    inputWindowFlg_ = false;
 
     m_show = true;
 
@@ -285,7 +287,6 @@ void FreamMng::ShutDown()
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
-    DxLib_End();
 }
 
 void FreamMng::SysNewFream()
@@ -389,10 +390,17 @@ void FreamMng::CreateMenuBer()
                 }
             }
             // メニューの中身
-            if (ImGui::BeginMenu("open data"))
+            if (ImGui::BeginMenu("input data"))
             {
+                inputWindowFlg_ = true;
                 ImGui::EndMenu();
             };
+            if (ImGui::BeginMenu("output data"))
+            {
+                outputWindowFlg_ = true;
+                ImGui::EndMenu();
+            }
+
             ImGui::EndMenu();
         }
         // メニュー2
@@ -477,6 +485,24 @@ void FreamMng::ObjectDrawField()
     models_->Draw(cubeTexture_);
     
     //gizumo_->Draw();
+}
+
+void FreamMng::OutputSystemWindow()
+{
+    ImGui::Begin("output");
+    ImGui::Text("model");
+    ImGui::Separator();
+    ImGui::Text("singleData");
+    ImGui::Text("allData");
+
+    ImGui::Separator();
+    ImGui::End();
+}
+
+void FreamMng::InputSystemWindow()
+{
+    ImGui::Begin("input");
+    ImGui::End();
 }
 
 void FreamMng::OptionWindow()

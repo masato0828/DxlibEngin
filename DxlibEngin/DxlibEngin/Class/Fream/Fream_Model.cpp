@@ -94,7 +94,7 @@ void Fream_Model::Update()
 			{
 				// 右クリックされたファイル名を保持し、コンテキストメニューのフラグを立てる
 				//fileName_ = name.c_str();
-				deleteModelName_ = handleM.first;
+				selectModelName_ = handleM.first;
 				contextMenuFlg_ = true;
 			}
 
@@ -138,10 +138,8 @@ void Fream_Model::SetModelPath(const std::filesystem::path& path)
 	}
 
 	int handle = 0;
-	Vector3 pos;
-	Vector3 rot;
-	Vector3 scl;
-	std::vector<ModelFream>fream;
+	
+	std::wstring duplicateName;
 
 	std::filesystem::path filePath = path;
 	auto ext = filePath.extension().wstring().substr(1);
@@ -149,93 +147,48 @@ void Fream_Model::SetModelPath(const std::filesystem::path& path)
 
 	if (ext == L"mv1")
 	{
-		//同じ名前のモデルが存在しているとき
-		if (model_.count(fileName))
-		{
-			FileCnt(fileName);
-			auto fileHandle = model_.at(fileName.filename()).handle;
-			std::wstring name = fileName.wstring() + std::to_wstring(handleCnt_);
-			handle = MV1DuplicateModel(fileHandle);
-		}
-		else
+		//モデルが存在していない
+		if(!model_.count(fileName))
 		{
 			handle = MV1LoadModel(filePath.string().c_str());
+			freamData_.freamMap_.try_emplace(fileName,
+				FreamData(&freamData_, fileName));
+
+			Model model = CreateModelData(handle,fileName);
+
+			model_.emplace(fileName, model);
+			defoModelData_.emplace(fileName, model);
+			LoadShaderProc(fileName);
+			chackName_.push_back(fileName);
+			return;
 		}
-
-		handleCnt_ = 0;
 	}
-	freamData_.freamMap_.try_emplace(fileName,
-		FreamData(&freamData_, fileName));
 
-	std::wstring name = fileName;
-
-
-	// フレーム初期値-----------------------------------------------
-	int freamNum = MV1GetFrameNum(handle);
-
-	for (auto itr = 0; itr < freamNum; itr++)
+	for (auto name: chackName_)
 	{
-		// ローカル行列を取得
-		MATRIX matrix = MV1GetFrameBaseLocalMatrix(handle, itr);
+		handleCnt_++;
+		//同じ名前のモデルがすでに存在しているとき
+		if (model_.count(name))
+		{
+			auto fileHandle = model_.at(fileName.filename()).handle;
+			auto name = fileName.wstring() + L"_" + std::to_wstring(handleCnt_);
+			handle = MV1DuplicateModel(fileHandle);
 
-		// 位置を取得
-		Vector3 position;
-		position.x_ = matrix.m[3][0];
-		position.y_ = matrix.m[3][1];
-		position.z_ = matrix.m[3][2];
+			freamData_.freamMap_.try_emplace(name,
+				FreamData(&freamData_, name));
 
-		// 回転を取得
-		Vector3 rotation;
-		rotation.x_ = -atan2f(matrix.m[2][1], matrix.m[2][2]);
-		rotation.y_ = atan2f(-matrix.m[2][0], sqrtf(matrix.m[2][1] * matrix.m[2][1] + matrix.m[2][2] * matrix.m[2][2]));
-		rotation.z_ = atan2f(matrix.m[1][0], matrix.m[0][0]);
+			Model modelData = CreateModelData(handle,name);
 
-		// 拡大率を取得
-		Vector3 scale;
-		scale.x_ = sqrtf(matrix.m[0][0] * matrix.m[0][0] + matrix.m[0][1] * matrix.m[0][1] + matrix.m[0][2] * matrix.m[0][2]);
-		scale.y_ = sqrtf(matrix.m[1][0] * matrix.m[1][0] + matrix.m[1][1] * matrix.m[1][1] + matrix.m[1][2] * matrix.m[1][2]);
-		scale.z_ = sqrtf(matrix.m[2][0] * matrix.m[2][0] + matrix.m[2][1] * matrix.m[2][1] + matrix.m[2][2] * matrix.m[2][2]);
+			model_.emplace(name, modelData);
 
-		fream.push_back({ position, rotation, scale });
+			defoModelData_.emplace(name, modelData);
+			LoadShaderProc(name);
+
+			chackName_.push_back(name);
+			break;
+		}
+		
 	}
-
-	scl = Vector3(1, 1, 1);
-	pos = Vector3(0, 0, 0);
-	rot = Vector3(0, 0, 0);
-	std::vector<Material> materials = CreateMaterialData(handle);
-
-	std::map<COLOR_TYPE, bool>allChangeColor = { 
-		{COLOR_TYPE::DIF,false}, 
-		{COLOR_TYPE::SPC,false},
-		{COLOR_TYPE::AMB,false},
-		{COLOR_TYPE::EMI,false} };
-
-	std::map < SLOT_TYPE, std::pair<std::string,int>>textureHnadle = {
-		{SLOT_TYPE::DEFFUSE,std::make_pair("deffuse",-1)},
-		{SLOT_TYPE::NORMAL_MAP,std::make_pair("normal",-1)},
-		{SLOT_TYPE::SHADOW_MAP_0,std::make_pair("shadow_map0",-1)},
-		{SLOT_TYPE::SHADOW_MAP_1,std::make_pair("shadow_map1",-1)},
-		{SLOT_TYPE::SHADOW_MAP_2,std::make_pair("shadow_map2",-1)},
-		{SLOT_TYPE::SPECULAR_MAP,std::make_pair("specular_map",-1)},
-		{SLOT_TYPE::SUB,std::make_pair("sub",-1)},
-		{SLOT_TYPE::TOON_DEFFUSE_GRAD,std::make_pair("toon_deffuse",-1)},
-		{SLOT_TYPE::TOON_RGB_TO_MAXRGB_VOLUME,std::make_pair("toon_rgb",-1)},
-		{SLOT_TYPE::TOON_SPECULAR_GRAD,std::make_pair("toon_specular",-1)},
-		{SLOT_TYPE::TOON_SPHERE_MAP,std::make_pair("toon_sphere",-1)},
-		{SLOT_TYPE::CUBE_MAP,std::make_pair("cube_map",-1)},
-		{SLOT_TYPE::SUB_0,std::make_pair("sub_0",-1)},
-		{SLOT_TYPE::SUB_1,std::make_pair("sub_1",-1)},
-		{SLOT_TYPE::SUB_2,std::make_pair("sub_2",-1)},
-	};
-	
-	Model model = { name,handle,pos,rot,scl,fream,false,materials,allChangeColor,textureHnadle};
-
-	materials.clear();
-	
-	model_.emplace(fileName, model);
-	defoModelData_.emplace(fileName, model);
-	LoadShaderProc(fileName);
-
 }
 
 void Fream_Model::Draw(int cubeTexture)
@@ -526,7 +479,7 @@ int Fream_Model::FileCnt(const std::wstring& fileName)
     if (model_.count(fileName))
     {
 		handleCnt_++;
-        FileCnt(fileName+std::to_wstring(handleCnt_));
+        FileCnt(fileName + L"_" + std::to_wstring(handleCnt_));
     }
     return handleCnt_;
 }
@@ -627,6 +580,81 @@ void Fream_Model::LoadTexture(std::string tagName,SLOT_TYPE type)
 	}
 }
 
+Fream_Model::Model Fream_Model::CreateModelData(const int& handle, const std::wstring& modelName)
+{
+	Vector3 pos;
+	Vector3 rot;
+	Vector3 scl;
+	std::vector<ModelFream>fream;
+
+	// フレーム初期値-----------------------------------------------
+	int freamNum = MV1GetFrameNum(handle);
+
+	for (auto itr = 0; itr < freamNum; itr++)
+	{
+		// ローカル行列を取得
+		MATRIX matrix = MV1GetFrameBaseLocalMatrix(handle, itr);
+
+		// 位置を取得
+		Vector3 position;
+		position.x_ = matrix.m[3][0];
+		position.y_ = matrix.m[3][1];
+		position.z_ = matrix.m[3][2];
+
+		// 回転を取得
+		Vector3 rotation;
+		rotation.x_ = -atan2f(matrix.m[2][1], matrix.m[2][2]);
+		rotation.y_ = atan2f(-matrix.m[2][0], sqrtf(matrix.m[2][1] * matrix.m[2][1] + matrix.m[2][2] * matrix.m[2][2]));
+		rotation.z_ = atan2f(matrix.m[1][0], matrix.m[0][0]);
+
+		// 拡大率を取得
+		Vector3 scale;
+		scale.x_ = sqrtf(matrix.m[0][0] * matrix.m[0][0] + matrix.m[0][1] * matrix.m[0][1] + matrix.m[0][2] * matrix.m[0][2]);
+		scale.y_ = sqrtf(matrix.m[1][0] * matrix.m[1][0] + matrix.m[1][1] * matrix.m[1][1] + matrix.m[1][2] * matrix.m[1][2]);
+		scale.z_ = sqrtf(matrix.m[2][0] * matrix.m[2][0] + matrix.m[2][1] * matrix.m[2][1] + matrix.m[2][2] * matrix.m[2][2]);
+
+		fream.push_back({ position, rotation, scale });
+	}
+
+	scl = Vector3(1, 1, 1);
+	pos = Vector3(0, 0, 0);
+	rot = Vector3(0, 0, 0);
+	std::vector<Material> materials = CreateMaterialData(handle);
+
+	std::map<COLOR_TYPE, bool>allChangeColor = {
+		{COLOR_TYPE::DIF,false},
+		{COLOR_TYPE::SPC,false},
+		{COLOR_TYPE::AMB,false},
+		{COLOR_TYPE::EMI,false} };
+
+	std::map < SLOT_TYPE, std::pair<std::string, int>>textureHnadle = {
+		{SLOT_TYPE::DEFFUSE,std::make_pair("deffuse",-1)},
+		{SLOT_TYPE::NORMAL_MAP,std::make_pair("normal",-1)},
+		{SLOT_TYPE::SHADOW_MAP_0,std::make_pair("shadow_map0",-1)},
+		{SLOT_TYPE::SHADOW_MAP_1,std::make_pair("shadow_map1",-1)},
+		{SLOT_TYPE::SHADOW_MAP_2,std::make_pair("shadow_map2",-1)},
+		{SLOT_TYPE::SPECULAR_MAP,std::make_pair("specular_map",-1)},
+		{SLOT_TYPE::SUB,std::make_pair("sub",-1)},
+		{SLOT_TYPE::TOON_DEFFUSE_GRAD,std::make_pair("toon_deffuse",-1)},
+		{SLOT_TYPE::TOON_RGB_TO_MAXRGB_VOLUME,std::make_pair("toon_rgb",-1)},
+		{SLOT_TYPE::TOON_SPECULAR_GRAD,std::make_pair("toon_specular",-1)},
+		{SLOT_TYPE::TOON_SPHERE_MAP,std::make_pair("toon_sphere",-1)},
+		{SLOT_TYPE::CUBE_MAP,std::make_pair("cube_map",-1)},
+		{SLOT_TYPE::SUB_0,std::make_pair("sub_0",-1)},
+		{SLOT_TYPE::SUB_1,std::make_pair("sub_1",-1)},
+		{SLOT_TYPE::SUB_2,std::make_pair("sub_2",-1)},
+	};
+
+	Model model = { modelName,handle,pos,rot,scl,fream,false,materials,allChangeColor,textureHnadle };
+
+	return model;
+}
+
+Fream_Model::Model Fream_Model::GetSingleData()
+{
+	return model_.at(nowSelect_->myName);
+}
+
 void Fream_Model::Tree(std::pair<const std::wstring, Model>& handleData, FreamData& freamData, FreamData*& nowSelect)
 {
 	int freamNum = MV1GetFrameNum(handleData.second.handle);
@@ -686,19 +714,19 @@ void Fream_Model::ContextMenu()
 		if (ImGui::BeginPopup("ContextMenu"))
 		{
 			// コンテキストメニューの内容をここに記述
-
-			if (ImGui::MenuItem(u8"削除")) // ユニークなIDを指定する
+			if (ImGui::MenuItem(u8"削除"))
 			{
-				MV1TerminateReferenceMesh(model_.at(deleteModelName_).handle, -1, TRUE);
-				MV1DeleteModel(model_.at(deleteModelName_).handle);
-				model_.erase(deleteModelName_);
+				MV1TerminateReferenceMesh(model_.at(selectModelName_).handle, -1, TRUE);
+				MV1DeleteModel(model_.at(selectModelName_).handle);
+				model_.erase(selectModelName_);
 
-				if (deleteModelName_ == nowSelectFreamName_)
+				auto result = std::find(chackName_.begin(), chackName_.end(),selectModelName_);
+				chackName_.erase(result);
+
+				if (selectModelName_ == nowSelectFreamName_)
 				{
 					nowSelectFreamName_ = L"";
 				}
-
-				// オプション1が選択されたときの処理
 				contextMenuFlg_ = false;
 			}
 			ImGui::EndPopup();

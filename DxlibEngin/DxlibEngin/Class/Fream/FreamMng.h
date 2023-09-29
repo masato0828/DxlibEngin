@@ -51,6 +51,9 @@ private:
 
 	void ObjectDrawField();
 
+	void OutputSystemWindow();
+	void InputSystemWindow();
+
 	std::unique_ptr<Fream_SceneView> sceneView_;
 	std::unique_ptr<Fream_DokingArea> dokingArea_;
 	std::unique_ptr<Fream_Stage> stage_;
@@ -76,6 +79,8 @@ private:
 	bool windowMaxFlag_;
 	bool windowMinFlag_;
 	bool firstWindowFlg_;
+	bool outputWindowFlg_;
+	bool inputWindowFlg_;
 
 	HWND hwnd_;
 
