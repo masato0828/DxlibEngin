@@ -63,6 +63,10 @@ Application::Application()
 
 Application::~Application()
 {
+	freamMng_->ShutDown();
+
+	// Dxlibの終了
+	DxLib_End();
 }
 
 bool Application::Run()
@@ -83,10 +87,11 @@ bool Application::Run()
 
 	// メインループ
 	while (!ProcessMessage()&& freamMng_->GetShowWindow())
+	//while (!ProcessMessage()&& CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 	{
 
 		freamMng_->SysNewFream();
-		//// 更新
+		// 更新
 		freamMng_->Update(true);
 
 		freamMng_->Draw();
@@ -98,12 +103,6 @@ bool Application::Run()
 		// 描画
 		freamMng_->Render();
 	}
-	
-
-	freamMng_->ShutDown();
-
-	// Dxlibの終了
-	DxLib_End();
 
 	return true;
 }
@@ -122,7 +121,7 @@ bool Application::SysInit()
 	// 背景色
 	//SetBackgroundColor(60, 60, 60, 255);
 	// Direct3Dのバージョン
-	SetUseDirect3DVersion(DX_DIRECT3D_11);
+	//SetUseDirect3DVersion(DX_DIRECT3D_11);
 	//SetUseDirect3DVersion(DX_DIRECT3D_9EX);
 	// ウィンドウプロシージャルの設定
 	SetHookWinProc(WndProc);
@@ -141,6 +140,7 @@ bool Application::SysInit()
 		return false;
 	}
 
+	
 	return true;
 }
 

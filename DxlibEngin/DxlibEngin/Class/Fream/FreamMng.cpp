@@ -270,11 +270,11 @@ void FreamMng::Draw()
 void FreamMng::Render()
 {
     ImGuiContext* ctx = ImGui::GetCurrentContext();
-    /*std::stable_sort(ctx->Windows.begin(), ctx->Windows.end(),
+    std::stable_sort(ctx->Windows.begin(), ctx->Windows.end(),
         [](const ImGuiWindow* a, const ImGuiWindow* b) {
             return a->BeginOrderWithinContext < b->BeginOrderWithinContext;
         }
-    );*/
+    );
 
 
 	ImGui::Render();
@@ -301,9 +301,9 @@ bool FreamMng::GetShowWindow()
 
 void FreamMng::SysNewFream()
 {
-
+    ImGui_ImplWin32_NewFrame();
 	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
+	
     
 	ImGui::NewFrame();
 
@@ -321,14 +321,9 @@ void FreamMng::Style()
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontFromFileTTF("c:\\WINDOWS\\FONTS\\MEIRYO.TTC", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
-    (void)io;
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-
-    //こうなのか…？うまくいかず
-    ImGui::GetMainViewport()->PlatformHandleRaw = (void*)GetMainWindowHandle();
-
 	// 全てのウィンドウでのビューポートを表示
 	io.ConfigViewportsNoAutoMerge = true;
 
@@ -338,15 +333,17 @@ void FreamMng::Style()
 
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 	{
+        float rounding = 0.5f;
+
 		//　ウィンドウの丸み
-        style.WindowRounding = 1.0f;
-        style.ChildRounding = 1.0f;
-        style.FrameRounding = 1.0f;
-        style.PopupRounding = 1.0f;
-        style.ScrollbarRounding = 1.0f;
-        style.GrabRounding = 1.0f;
-        style.LogSliderDeadzone = 1.0f;
-        style.TabRounding = 1.0f;
+        style.WindowRounding = rounding;
+        style.ChildRounding = rounding;
+        style.FrameRounding = rounding;
+        style.PopupRounding = rounding;
+        style.ScrollbarRounding = rounding;
+        style.GrabRounding = rounding;
+        style.LogSliderDeadzone = rounding;
+        style.TabRounding = rounding;
 
 		// 指定ウィンドウ（ここでは背景）の変更
 		style.Colors[ImGuiCol_WindowBg].w = 0.5f;
