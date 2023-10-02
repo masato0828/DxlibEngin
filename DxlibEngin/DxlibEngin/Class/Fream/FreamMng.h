@@ -33,6 +33,9 @@ public:
 	void Render();
 	// ImGui終了処理
 	void ShutDown();
+
+	// ウィンドウ状態の取得
+	bool GetShowWindow();
 private:
 
 	// 初期化
@@ -93,5 +96,7 @@ private:
 	const int CUBE_TEXTURE_NUM = 6;
 
 	Vector3 scl = { 1.f,1.f,1.f };
+
+	bool is_close_;
 };
 

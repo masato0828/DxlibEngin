@@ -205,6 +205,11 @@ void FreamMng::Update(bool window_open_flg)
     {
         m_show = true;
     }
+
+    if (CheckHitKey(KEY_INPUT_ESCAPE))
+    {
+        std::exit(0);
+    }
 }
 
 void FreamMng::Draw()
@@ -265,11 +270,11 @@ void FreamMng::Draw()
 void FreamMng::Render()
 {
     ImGuiContext* ctx = ImGui::GetCurrentContext();
-    std::stable_sort(ctx->Windows.begin(), ctx->Windows.end(),
+    /*std::stable_sort(ctx->Windows.begin(), ctx->Windows.end(),
         [](const ImGuiWindow* a, const ImGuiWindow* b) {
             return a->BeginOrderWithinContext < b->BeginOrderWithinContext;
         }
-    );
+    );*/
 
 
 	ImGui::Render();
@@ -287,6 +292,11 @@ void FreamMng::ShutDown()
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+}
+
+bool FreamMng::GetShowWindow()
+{
+    return m_show;
 }
 
 void FreamMng::SysNewFream()

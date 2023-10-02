@@ -200,6 +200,8 @@ void Fream_Model::Draw(int cubeTexture)
 
     for (auto& modelHandle : model_)
     {
+		
+
         MV1_REF_POLYGONLIST RefPoly;
 
         // モデルの全フレームのポリゴンの情報を取得
@@ -238,50 +240,53 @@ void Fream_Model::Draw(int cubeTexture)
 		MV1SetPosition(modelHandle.second.handle, modelHandle.second.pos.toVECTOR());
 		MV1SetRotationXYZ(modelHandle.second.handle, modelHandle.second.rot.toVECTOR());
 
-		
-
-		lpShaderMng.DrawBegin(modelHandle.first);
-
-		modelHandle.second.textureHnadle[SLOT_TYPE::CUBE_MAP].second = cubeTexture;
-
-		// テクスチャの入力
-		for (auto & tex:modelHandle.second.textureHnadle)
+		if (modelHandle.second.isShader)
 		{
-			if (tex.second.second == -1)
-			{
-				continue;
-			}
-			lpShaderMng.SetModelTexture(tex.first, tex.second.second);
-		}
-
-		//Draw();
-
 		
+			lpShaderMng.DrawBegin(modelHandle.first);
+
+			modelHandle.second.textureHnadle[SLOT_TYPE::CUBE_MAP].second = cubeTexture;
+
+			// テクスチャの入力
+			for (auto& tex : modelHandle.second.textureHnadle)
+			{
+				if (tex.second.second == -1)
+				{
+					continue;
+				}
+				lpShaderMng.SetModelTexture(tex.first, tex.second.second);
+			}
+		}
 
 		MV1DrawModel(modelHandle.second.handle);
 		//lpShaderMng.Draw(modelHandle.first,modelHandle.second.handle);
 
-		// テクスチャの入力
-		for (auto& tex : modelHandle.second.textureHnadle)
+		if (modelHandle.second.isShader)
 		{
-			if (tex.second.second == -1)
+			// テクスチャの入力
+			for (auto& tex : modelHandle.second.textureHnadle)
 			{
-				continue;
+				if (tex.second.second == -1)
+				{
+					continue;
+				}
+				lpShaderMng.EndTextere(tex.first);
 			}
-			lpShaderMng.EndTextere(tex.first);
-		}
-		lpShaderMng.DrawEnd();
-        MV1RefreshReferenceMesh(modelHandle.second.handle, -1, TRUE);
+			lpShaderMng.DrawEnd();
 
-		int index = 0;
-		for (auto material : modelHandle.second.material)
-		{
-			MV1SetMaterialDifColor(modelHandle.second.handle,index,material.color.at(COLOR_TYPE::DIF));
-			MV1SetMaterialSpcColor(modelHandle.second.handle, index, material.color.at(COLOR_TYPE::SPC));
-			MV1SetMaterialAmbColor(modelHandle.second.handle, index, material.color.at(COLOR_TYPE::AMB));
-			MV1SetMaterialEmiColor(modelHandle.second.handle, index, material.color.at(COLOR_TYPE::EMI));
-			MV1SetMaterialSpcPower(modelHandle.second.handle, index, material.spcPower);
-			index++;
+
+			MV1RefreshReferenceMesh(modelHandle.second.handle, -1, TRUE);
+
+			int index = 0;
+			for (auto material : modelHandle.second.material)
+			{
+				MV1SetMaterialDifColor(modelHandle.second.handle, index, material.color.at(COLOR_TYPE::DIF));
+				MV1SetMaterialSpcColor(modelHandle.second.handle, index, material.color.at(COLOR_TYPE::SPC));
+				MV1SetMaterialAmbColor(modelHandle.second.handle, index, material.color.at(COLOR_TYPE::AMB));
+				MV1SetMaterialEmiColor(modelHandle.second.handle, index, material.color.at(COLOR_TYPE::EMI));
+				MV1SetMaterialSpcPower(modelHandle.second.handle, index, material.spcPower);
+				index++;
+			}
 		}
 		
     }
@@ -365,16 +370,23 @@ void Fream_Model::CustomStatus()
 		}
 		ImGui::TreePop();
 	}
-	lpShaderMng.Updater(model_.at(nowSelectFreamName_).name);
 
-	if (ImGui::TreeNode("Texture"))
+
+	if (model_.at(nowSelectFreamName_).isShader)
 	{
-		for (auto& m : model_.at(nowSelectFreamName_).textureHnadle)
+		lpShaderMng.Updater(model_.at(nowSelectFreamName_).name);
+
+		if (ImGui::TreeNode("Texture"))
 		{
-			LoadTexture(m.second.first, m.first);
+			for (auto& m : model_.at(nowSelectFreamName_).textureHnadle)
+			{
+				LoadTexture(m.second.first, m.first);
+			}
+			ImGui::TreePop();
 		}
-		ImGui::TreePop();
 	}
+
+	ImGui::Checkbox("isShader",&model_.at(nowSelectFreamName_).isShader);
 
 }
 
@@ -645,7 +657,7 @@ Fream_Model::Model Fream_Model::CreateModelData(const int& handle, const std::ws
 		{SLOT_TYPE::SUB_2,std::make_pair("sub_2",-1)},
 	};
 
-	Model model = { modelName,handle,pos,rot,scl,fream,false,materials,allChangeColor,textureHnadle };
+	Model model = { modelName,handle,pos,rot,scl,fream,false,materials,allChangeColor,textureHnadle,false };
 
 	return model;
 }

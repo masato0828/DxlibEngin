@@ -82,11 +82,11 @@ bool Application::Run()
 	}
 
 	// メインループ
-	while (!ProcessMessage() && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
+	while (!ProcessMessage()&& freamMng_->GetShowWindow())
 	{
 
 		freamMng_->SysNewFream();
-		// 更新
+		//// 更新
 		freamMng_->Update(true);
 
 		freamMng_->Draw();
@@ -123,6 +123,7 @@ bool Application::SysInit()
 	//SetBackgroundColor(60, 60, 60, 255);
 	// Direct3Dのバージョン
 	SetUseDirect3DVersion(DX_DIRECT3D_11);
+	//SetUseDirect3DVersion(DX_DIRECT3D_9EX);
 	// ウィンドウプロシージャルの設定
 	SetHookWinProc(WndProc);
 	// ウィンドウを表示するかどうか

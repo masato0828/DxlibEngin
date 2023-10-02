@@ -108,6 +108,7 @@ private:
         std::vector<Material> material;// マテリアル情報
         std::map<COLOR_TYPE, bool> allChangeColor;// 色情報
         std::map < SLOT_TYPE, std::pair<std::string, int>> textureHnadle;// 画像のハンドル情報
+        bool isShader;
     };
 
     // モデル管理
