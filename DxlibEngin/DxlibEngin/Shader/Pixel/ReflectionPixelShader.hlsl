@@ -3,7 +3,7 @@
 //エントリーポイント
 PS_OUTPUT main(PS_INPUT input) : SV_TARGET
 {    
-    float4 result = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float4 result = float4(0.5f, 0.5f, 0.5f, 0.5f);
     
     const float3 ray = normalize(input.viewPos); //カメラ→自身のベクトル
     
