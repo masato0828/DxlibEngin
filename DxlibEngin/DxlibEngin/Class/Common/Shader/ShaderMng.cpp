@@ -3,7 +3,8 @@
 #include "ConstantBuffer.h"
 #include "../../Common/Utility.h"
 #include "../FileDialog.h"
-
+#include <fstream>
+#include <sstream>
 #include <algorithm>
 
 ShaderMng::~ShaderMng()
@@ -11,7 +12,7 @@ ShaderMng::~ShaderMng()
     Clear();
 }
 
-bool ShaderMng::LoadShader(const std::wstring& name, const std::string& vsPath, const std::string& psPath, int bufferSize)
+bool ShaderMng::LoadShader(const std::wstring& name, const std::string& vsPath, const std::string& psPath, int registerNumber , int registerNumberLoss)
 {
     // 頂点シェーダの読み込み
     int vsHandle = LoadVertexShader(vsPath.c_str());
@@ -33,8 +34,16 @@ bool ShaderMng::LoadShader(const std::wstring& name, const std::string& vsPath, 
     pixelFilePath_[name] = psPath;
     
     constansBuffers_[name] = std::make_unique<ConstantBuffer>();
-    constansBuffers_[name]->Create(bufferSize);
+    constansBuffers_[name]->Create(registerNumber);
 
+    CreateRegisterData(name,psPath, registerNumber,registerNumberLoss);
+
+    return true;
+}
+
+bool ShaderMng::LoadShader(const std::wstring& name, const std::string& vsPath, const std::string& psPath, int bufferSize)
+{
+    LoadShader(name,vsPath,psPath,bufferSize,0);
     return true;
 }
 
@@ -267,3 +276,141 @@ void ShaderMng::Updater(const std::wstring& name)
         }
     }
 };
+
+void ShaderMng::RegisterCustom(const std::wstring& key)
+{
+    ImGui::Begin("register");
+    std::filesystem::path bufferKey = key;
+
+    for (auto& b : constantBufferMap_[key])
+    {
+        //if (ImGui::CollapsingHeader(b.first.c_str()))
+        {
+            auto* cbBuf = (float*)GetBufferShaderConstantBuffer(b.second.bufferHandle);
+            for (auto& var : b.second.bufferData)
+            {
+                if (var.typeName == "float4")
+                {
+                    ImGui::Text((bufferKey.string() + var.varName).c_str());
+                    ImGui::DragFloat4(("##" + bufferKey.string() + var.varName).c_str(), (float*)&var.data);
+                    cbBuf[0] = var.data.x;
+                    cbBuf[1] = var.data.y;
+                    cbBuf[2] = var.data.z;
+                    cbBuf[3] = var.data.w;
+                    cbBuf += 4;
+                }
+                if (var.typeName == "float3")
+                {
+                    ImGui::Text((bufferKey.string() + var.varName).c_str());
+                    ImGui::DragFloat3(("##" + bufferKey.string() + var.varName).c_str(), (float*)&var.data);
+                    cbBuf[0] = var.data.x;
+                    cbBuf[1] = var.data.y;
+                    cbBuf[2] = var.data.z;
+                    cbBuf[3] = var.data.w;
+                    cbBuf += 4;
+                }
+                if (var.typeName == "float2")
+                {
+                    ImGui::Text((bufferKey.string() + var.varName).c_str());
+                    ImGui::DragFloat2(("##" + bufferKey.string() + var.varName).c_str(), (float*)&var.data);
+                    cbBuf[0] = var.data.x;
+                    cbBuf[1] = var.data.y;
+                    cbBuf += 2;
+                }
+                if (var.typeName == "float")
+                {
+                    ImGui::Text((bufferKey.string() + var.varName).c_str());
+                    ImGui::DragFloat(("##" + bufferKey.string() + var.varName).c_str(), (float*)&var.data);
+                    cbBuf[0] = var.data.x;
+                    cbBuf += 1;
+                }
+                UpdateShaderConstantBuffer(b.second.bufferHandle);
+                SetShaderConstantBuffer(b.second.bufferHandle, DX_SHADERTYPE_PIXEL, b.second.registerNumber);
+            }
+        }
+
+    }
+    ImGui::End();
+}
+
+void ShaderMng::RegisterCustom(const std::wstring& key, const std::string varName, float data)
+{
+
+   std::filesystem::path bufferKey = key;
+
+    for (auto& b : constantBufferMap_[key])
+    {
+        //if (ImGui::CollapsingHeader(b.first.c_str()))
+        {
+            auto* cbBuf = (float*)GetBufferShaderConstantBuffer(b.second.bufferHandle);
+            for (auto& var : b.second.bufferData)
+            {
+                if (var.varName != varName)
+                {
+                    cbBuf += 1;
+                    continue;
+                }
+                if (var.typeName == "float")
+                {
+                    cbBuf[0] = data;
+                    cbBuf += 1;
+                }
+                UpdateShaderConstantBuffer(b.second.bufferHandle);
+                SetShaderConstantBuffer(b.second.bufferHandle, DX_SHADERTYPE_PIXEL, b.second.registerNumber);
+            }
+        }
+    }
+}
+
+void ShaderMng::CreateRegisterData(const std::wstring& key, const std::string& psPath, const int registerNumber, const int registerNumberLoss)
+{
+    std::ifstream infile(psPath, std::ios::binary); // シェーダー（バイナリ）を読み込む
+    std::vector<char> data;
+    data.resize(infile.seekg(0, std::ios::end).tellg());
+    infile.seekg(0, std::ios::beg).read(data.data(), data.size());
+
+    Microsoft::WRL::ComPtr<ID3D12ShaderReflection> shaderRef;
+    D3DReflect(data.data(), data.size(), IID_PPV_ARGS(&shaderRef));
+
+    std::stringstream ss;
+    D3D12_SHADER_DESC desc{};
+    shaderRef->GetDesc(&desc);
+
+    std::map<std::string, RegisterData> registerMap;
+    const auto cbCount = desc.ConstantBuffers;
+    for (auto i = registerNumberLoss; i < cbCount; ++i)
+    {
+        D3D12_SHADER_BUFFER_DESC shaderBuffer{};
+        auto cbuffer = shaderRef->GetConstantBufferByIndex(i);
+        cbuffer->GetDesc(&shaderBuffer);
+
+        std::vector<BufferData> bufferData;
+        RegisterData registerData;
+        auto constantHandle = CreateShaderConstantBuffer(shaderBuffer.Size);
+        // コンスタントバッファ内
+        for (auto j = 0; j < shaderBuffer.Variables; ++j)
+        {
+            D3D12_SHADER_VARIABLE_DESC varDesc{};
+            D3D12_SHADER_TYPE_DESC typeDesc;
+            auto shaderReflection = cbuffer->GetVariableByIndex(j);
+            auto varTypeRefl = shaderReflection->GetType();
+
+            shaderReflection->GetDesc(&varDesc);
+            varTypeRefl->GetDesc(&typeDesc);
+
+            std::string varName = varDesc.Name;
+            std::string var = typeDesc.Name;
+            size_t varSize = varDesc.Size;
+            std::string Name = varDesc.Name;
+            FLOAT4 f4 = {0,0,0,0};
+            BufferData bdata = { var, varName, varSize, f4 };
+            bufferData.push_back(bdata);
+            //registerData = RegisterData(constantHandle, i + 1, bufferData);
+            registerData = { constantHandle, i + registerNumber, bufferData };
+        }
+
+        registerMap.emplace(shaderBuffer.Name, registerData);
+    }
+
+    constantBufferMap_.emplace(key, registerMap);
+}

@@ -111,6 +111,7 @@ bool Application::SysInit()
 {
 	// 描画画面のサイズに対するメインウインドウサイズの比率を設定する(ディスプレイ拡大率)
 	SetWindowSizeExtendRate(1.0);
+
 	int DesktopW, DesktopH;
 	// 起動時のデスクトップの画面情報を取得する
 	GetDefaultState(&DesktopW, &DesktopH, NULL);

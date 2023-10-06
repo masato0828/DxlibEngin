@@ -1,10 +1,13 @@
 #pragma once
 #include <memory>
 #include <string>
+#include <DxLib.h>
 #include <unordered_map>
 #include "ConstantBuffer.h"
 #include <wrl/client.h>
 #include <assert.h>
+#include <vector>
+#include <map>
 
 #include <d3dcompiler.h>
 #include <dxgi.h>
@@ -52,7 +55,8 @@ public:
     /// <param name="psPath">ピクセルシェーダのパス</param>
     /// <param name="bufferSize">バッファのサイズ</param>
     /// <returns>読み込み成功：true　失敗：false</returns>
-    bool LoadShader(const std::wstring& name, const std::string& vsPath, const std::string& psPath, int bufferSize);
+    bool LoadShader(const std::wstring& name, const std::string& vsPath, const std::string& psPath, int registerNumber,int registerNumberLoss);
+    bool LoadShader(const std::wstring& name, const std::string& vsPath, const std::string& psPath,int bufferSize);
 
     /// <summary>
     /// 指定されたシェーダーハンドル、バッファの解放
@@ -134,7 +138,12 @@ public:
     /// <param name="name">ファイルパスマップのキー値</param>
     void Updater(const std::wstring& fileMapKey);
 
+    void RegisterCustom(const std::wstring& key);
+    void RegisterCustom(const std::wstring& key,const std::string varName,float data);
 
+
+
+    void CreateRegisterData(const std::wstring& key, const std::string& psPath, const int registerNumber, const int registerNumberLoss);
 private:
 
     // シェーダーの管理(key値,頂点シェーダハンドル,ピクセルシェーダハンドル)
@@ -149,4 +158,23 @@ private:
 
     ShaderMng() = default;
     ~ShaderMng();
+
+    struct BufferData
+    {
+        std::string typeName;
+        std::string varName;
+        size_t varSize;
+        FLOAT4 data;
+    };
+
+    struct RegisterData
+    {
+        int bufferHandle;
+        int registerNumber;
+        std::vector<BufferData> bufferData;
+    };
+
+    std::map < std::wstring, std::map<std::string, RegisterData>> constantBufferMap_;
+    std::vector<std::string> registerName_;
+
 };
