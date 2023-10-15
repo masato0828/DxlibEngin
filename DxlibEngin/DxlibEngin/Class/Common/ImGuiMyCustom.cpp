@@ -51,6 +51,16 @@ IMGUI_API bool ImGuiCustom::ColorEdit3(const char* label, COLOR_F* col, ImGuiCol
     col->a = color[3];
     return flg;
 }
+IMGUI_API bool ImGuiCustom::ColorEdit3(const char* label, FLOAT4* col, ImGuiColorEditFlags flags)
+{
+    float color[4] = { col->x,col->y ,col->z,col->w };
+    bool flg = ImGui::ColorEdit4(label, color, flags | ImGuiColorEditFlags_NoAlpha);
+    col->x = color[0];
+    col->y = color[1];
+    col->z = color[2];
+    col->w = color[3];
+    return flg;
+}
 IMGUI_API bool ImGuiCustom::ColorEdit4(const char* label, IM_COLOR* col, ImGuiColorEditFlags flags)
 {
     float color[4] = { col->red,col->green ,col->blue,col->alpha };
@@ -70,6 +80,17 @@ IMGUI_API bool ImGuiCustom::ColorEdit4(const char* label, COLOR_F* col, ImGuiCol
     col->g = color[1];
     col->b = color[2];
     col->a = color[3];
+    return flg;
+}
+
+IMGUI_API bool ImGuiCustom::ColorEdit4(const char* label, FLOAT4* col, ImGuiColorEditFlags flags)
+{
+    float color[4] = { col->x,col->y ,col->z,col->w };
+    bool flg = ImGui::ColorEdit4(label, color, flags);
+    col->x = color[0];
+    col->y = color[1];
+    col->z = color[2];
+    col->w = color[3];
     return flg;
 }
 

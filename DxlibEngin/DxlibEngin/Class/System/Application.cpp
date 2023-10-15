@@ -63,10 +63,10 @@ Application::Application()
 
 Application::~Application()
 {
-	freamMng_->ShutDown();
+	//freamMng_->ShutDown();
 
 	// Dxlib‚ÌI—¹
-	DxLib_End();
+	//DxLib_End();
 }
 
 bool Application::Run()

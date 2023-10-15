@@ -47,8 +47,10 @@ namespace ImGuiCustom
     // 色の変更カスタム
     IMGUI_API bool  ColorEdit3(const char* label, IM_COLOR* col, ImGuiColorEditFlags flags = 0);
     IMGUI_API bool  ColorEdit3(const char* label, COLOR_F* col, ImGuiColorEditFlags flags = 0);
+    IMGUI_API bool  ColorEdit3(const char* label, FLOAT4* col, ImGuiColorEditFlags flags = 0);
     IMGUI_API bool  ColorEdit4(const char* label, IM_COLOR* col, ImGuiColorEditFlags flags = 0);
     IMGUI_API bool  ColorEdit4(const char* label, COLOR_F* col, ImGuiColorEditFlags flags = 0);
+    IMGUI_API bool  ColorEdit4(const char* label, FLOAT4* col, ImGuiColorEditFlags flags = 0);
 
     /// <summary>
    /// ウィンドウを真ん中へのドッキングを無効にする

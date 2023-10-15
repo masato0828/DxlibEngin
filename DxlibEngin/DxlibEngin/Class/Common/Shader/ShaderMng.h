@@ -139,9 +139,8 @@ public:
     void Updater(const std::wstring& fileMapKey);
 
     void RegisterCustom(const std::wstring& key);
-    void RegisterCustom(const std::wstring& key,const std::string varName,float data);
-
-
+    void RegisterUpdate(const std::wstring& key);
+    void RegisterUpdate();
 
     void CreateRegisterData(const std::wstring& key, const std::string& psPath, const int registerNumber, const int registerNumberLoss);
 private:
@@ -165,16 +164,32 @@ private:
         std::string varName;
         size_t varSize;
         FLOAT4 data;
+        BufferData() {};
+        BufferData(std::string t, std::string v, size_t s, FLOAT4 d)
+        {
+            typeName = t;
+            varName =  v;
+            varSize = s;
+            data = d;
+        }
     };
 
     struct RegisterData
     {
         int bufferHandle;
         int registerNumber;
-        std::vector<BufferData> bufferData;
+        std::map<std::string, BufferData> bufferData;
+        RegisterData() {};
+        RegisterData(int b, int r, std::map<std::string, BufferData> bm) {
+            bufferHandle = b;
+            registerNumber = r;
+            bufferData = bm;
+        };
     };
 
     std::map < std::wstring, std::map<std::string, RegisterData>> constantBufferMap_;
     std::vector<std::string> registerName_;
 
+public:
+    std::map<std::string, ShaderMng::BufferData>& DataAcsess(const std::wstring& key, const std::string& registerMapKey);
 };

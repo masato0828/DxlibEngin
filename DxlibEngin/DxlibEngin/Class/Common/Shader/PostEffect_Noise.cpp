@@ -18,7 +18,7 @@ void PostEffect_Noise::Init()
     auto size = sizeof(Noise_Effect) * 8;
 
 	//lpShaderMng.LoadShader(L"noise", "", "data/ShaderBinary/Pixel/screen_ps.ps",size );
-	lpShaderMng.LoadShader(L"noise", "", "data/ShaderBinary/Pixel/screen_ps.ps",5,0);
+	lpShaderMng.LoadShader(L"noise", "", "data/ShaderBinary/Pixel/screen_ps.ps",10,0);
 
 	pram_.time = 0.0f;
 	pram_.noise1 = 8.7819f;
@@ -50,11 +50,10 @@ void PostEffect_Noise::Draw(std::wstring name, const int imageHnadle)
         //SetShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name), DX_SHADERTYPE_PIXEL, 5);
 
         
-        //lpShaderMng.RegisterCustom(name);
-        lpShaderMng.RegisterCustom(name, "time", pram_.time);
-        lpShaderMng.RegisterCustom(name, "noise1", pram_.noise1);
-        lpShaderMng.RegisterCustom(name, "noise2", pram_.noise2);
-        lpShaderMng.RegisterCustom(name, "noise3", pram_.noise3);
+        //lpShaderMng.RegisterCustom(name, "time", pram_.time);
+        //lpShaderMng.RegisterCustom(name, "noise1", pram_.noise1);
+        //lpShaderMng.RegisterCustom(name, "noise2", pram_.noise2);
+        //lpShaderMng.RegisterCustom(name, "noise3", pram_.noise3);
         
         MyDrawGraph(0, 0, imageHnadle);
         //DrawGraph(0,0,screen_,true);
@@ -67,4 +66,12 @@ void PostEffect_Noise::Custom()
     ImGui::DragFloat("noise1",&pram_.noise1,0.001f);
     ImGui::DragFloat("noise2",&pram_.noise2,0.001f);
     ImGui::DragFloat("noise3",&pram_.noise3,0.001f);
+
+    auto& noise = lpShaderMng.DataAcsess(L"noise", "args");
+    noise["time"].data = { pram_.time,0,0,0 };
+    noise["noise1"].data = { pram_.noise1,0,0,0 };
+    noise["noise2"].data = { pram_.noise2,0,0,0 };
+    noise["noise3"].data = { pram_.noise3,0,0,0 };
+
+    lpShaderMng.RegisterUpdate();
 }

@@ -1,4 +1,3 @@
-#include <Dxlib.h>
 #include "ShaderMng.h"
 #include "ConstantBuffer.h"
 #include "../../Common/Utility.h"
@@ -6,10 +5,16 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <vector>
 
 ShaderMng::~ShaderMng()
 {
     Clear();
+}
+
+std::map<std::string, ShaderMng::BufferData>& ShaderMng::DataAcsess(const std::wstring& key, const std::string& registerMapKey)
+{
+    return constantBufferMap_[key][registerMapKey].bufferData;
 }
 
 bool ShaderMng::LoadShader(const std::wstring& name, const std::string& vsPath, const std::string& psPath, int registerNumber , int registerNumberLoss)
@@ -275,6 +280,8 @@ void ShaderMng::Updater(const std::wstring& name)
             shaders_[name].second = handle;
         }
     }
+
+    RegisterUpdate();
 };
 
 void ShaderMng::RegisterCustom(const std::wstring& key)
@@ -289,54 +296,54 @@ void ShaderMng::RegisterCustom(const std::wstring& key)
             auto* cbBuf = (float*)GetBufferShaderConstantBuffer(b.second.bufferHandle);
             for (auto& var : b.second.bufferData)
             {
-                if (var.typeName == "float4")
+                if (var.second.typeName == "float4")
                 {
-                    ImGui::Text((bufferKey.string() + var.varName).c_str());
-                    ImGui::DragFloat4(("##" + bufferKey.string() + var.varName).c_str(), (float*)&var.data);
-                    cbBuf[0] = var.data.x;
-                    cbBuf[1] = var.data.y;
-                    cbBuf[2] = var.data.z;
-                    cbBuf[3] = var.data.w;
+                    ImGui::Text((bufferKey.string() + var.second.varName).c_str());
+                    ImGuiCustom::ColorEdit4((bufferKey.string() + var.second.varName).c_str(), &var.second.data);
+                    cbBuf[0] = var.second.data.x;
+                    cbBuf[1] = var.second.data.y;
+                    cbBuf[2] = var.second.data.z;
+                    cbBuf[3] = var.second.data.w;
                     cbBuf += 4;
                 }
-                if (var.typeName == "float3")
+                if (var.second.typeName == "float3")
                 {
-                    ImGui::Text((bufferKey.string() + var.varName).c_str());
-                    ImGui::DragFloat3(("##" + bufferKey.string() + var.varName).c_str(), (float*)&var.data);
-                    cbBuf[0] = var.data.x;
-                    cbBuf[1] = var.data.y;
-                    cbBuf[2] = var.data.z;
-                    cbBuf[3] = var.data.w;
+                    ImGui::Text((bufferKey.string() + var.second.varName).c_str());
+                    ImGuiCustom::ColorEdit3((bufferKey.string() + var.second.varName).c_str(), &var.second.data);
+                    cbBuf[0] = var.second.data.x;
+                    cbBuf[1] = var.second.data.y;
+                    cbBuf[2] = var.second.data.z;
+                    cbBuf[3] = var.second.data.w;
                     cbBuf += 4;
                 }
-                if (var.typeName == "float2")
+                if (var.second.typeName == "float2")
                 {
-                    ImGui::Text((bufferKey.string() + var.varName).c_str());
-                    ImGui::DragFloat2(("##" + bufferKey.string() + var.varName).c_str(), (float*)&var.data);
-                    cbBuf[0] = var.data.x;
-                    cbBuf[1] = var.data.y;
+                    ImGui::Text((bufferKey.string() + var.second.varName).c_str());
+                    ImGui::DragFloat2((bufferKey.string() + var.second.varName).c_str(), (float*)&var.second.data, 0.1f, 0.0f, 1.0f);
+                    cbBuf[0] = var.second.data.x;
+                    cbBuf[1] = var.second.data.y;
                     cbBuf += 2;
                 }
-                if (var.typeName == "float")
+                if (var.second.typeName == "float")
                 {
-                    ImGui::Text((bufferKey.string() + var.varName).c_str());
-                    ImGui::DragFloat(("##" + bufferKey.string() + var.varName).c_str(), (float*)&var.data);
-                    cbBuf[0] = var.data.x;
+                    ImGui::Text((bufferKey.string() + var.second.varName).c_str());
+                    ImGui::DragFloat((bufferKey.string() + var.second.varName).c_str(), (float*)&var.second.data, 0.1f, 0.0f, 1.0f);
+                    cbBuf[0] = var.second.data.x;
                     cbBuf += 1;
                 }
-                UpdateShaderConstantBuffer(b.second.bufferHandle);
-                SetShaderConstantBuffer(b.second.bufferHandle, DX_SHADERTYPE_PIXEL, b.second.registerNumber);
+
             }
+            UpdateShaderConstantBuffer(b.second.bufferHandle);
+            SetShaderConstantBuffer(b.second.bufferHandle, DX_SHADERTYPE_PIXEL, b.second.registerNumber);
         }
 
     }
     ImGui::End();
 }
 
-void ShaderMng::RegisterCustom(const std::wstring& key, const std::string varName, float data)
+void ShaderMng::RegisterUpdate(const std::wstring& key)
 {
-
-   std::filesystem::path bufferKey = key;
+    std::filesystem::path bufferKey = key;
 
     for (auto& b : constantBufferMap_[key])
     {
@@ -345,20 +352,46 @@ void ShaderMng::RegisterCustom(const std::wstring& key, const std::string varNam
             auto* cbBuf = (float*)GetBufferShaderConstantBuffer(b.second.bufferHandle);
             for (auto& var : b.second.bufferData)
             {
-                if (var.varName != varName)
+                if (var.second.typeName == "float4")
                 {
-                    cbBuf += 1;
-                    continue;
+                    cbBuf[0] = var.second.data.x;
+                    cbBuf[1] = var.second.data.y;
+                    cbBuf[2] = var.second.data.z;
+                    cbBuf[3] = var.second.data.w;
+                    cbBuf += 4;
                 }
-                if (var.typeName == "float")
+                if (var.second.typeName == "float3")
                 {
-                    cbBuf[0] = data;
+                    cbBuf[0] = var.second.data.x;
+                    cbBuf[1] = var.second.data.y;
+                    cbBuf[2] = var.second.data.z;
+                    cbBuf[3] = var.second.data.w;
+                    cbBuf += 4;
+                }
+                if (var.second.typeName == "float2")
+                {
+                    cbBuf[0] = var.second.data.x;
+                    cbBuf[1] = var.second.data.y;
+                    cbBuf += 2;
+                }
+                if (var.second.typeName == "float")
+                {
+                    cbBuf[0] = var.second.data.x;
                     cbBuf += 1;
                 }
                 UpdateShaderConstantBuffer(b.second.bufferHandle);
                 SetShaderConstantBuffer(b.second.bufferHandle, DX_SHADERTYPE_PIXEL, b.second.registerNumber);
             }
         }
+
+    }
+}
+
+void ShaderMng::RegisterUpdate()
+{
+    for (auto& cbuffer : constantBufferMap_)
+    {
+        RegisterUpdate(cbuffer.first);
     }
 }
 
@@ -384,7 +417,7 @@ void ShaderMng::CreateRegisterData(const std::wstring& key, const std::string& p
         auto cbuffer = shaderRef->GetConstantBufferByIndex(i);
         cbuffer->GetDesc(&shaderBuffer);
 
-        std::vector<BufferData> bufferData;
+        std::map<std::string, BufferData> bufferData;
         RegisterData registerData;
         auto constantHandle = CreateShaderConstantBuffer(shaderBuffer.Size);
         // コンスタントバッファ内
@@ -402,14 +435,14 @@ void ShaderMng::CreateRegisterData(const std::wstring& key, const std::string& p
             std::string var = typeDesc.Name;
             size_t varSize = varDesc.Size;
             std::string Name = varDesc.Name;
-            FLOAT4 f4 = {0,0,0,0};
-            BufferData bdata = { var, varName, varSize, f4 };
-            bufferData.push_back(bdata);
-            //registerData = RegisterData(constantHandle, i + 1, bufferData);
-            registerData = { constantHandle, i + registerNumber, bufferData };
+
+            FLOAT4 forfloat = {1,1,1,1};
+            bufferData.emplace(varName.c_str(),BufferData(var,varName,varSize, forfloat));
+
+            registerData = RegisterData(constantHandle, i + registerNumber, bufferData);
         }
 
-        registerMap.emplace(shaderBuffer.Name, registerData);
+        registerMap.emplace((std::string)shaderBuffer.Name, registerData);
     }
 
     constantBufferMap_.emplace(key, registerMap);

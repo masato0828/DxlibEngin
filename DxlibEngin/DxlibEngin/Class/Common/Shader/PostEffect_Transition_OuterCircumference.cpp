@@ -16,9 +16,11 @@ PostEffect_Transition_OuterCircumference::~PostEffect_Transition_OuterCircumfere
 
 void PostEffect_Transition_OuterCircumference::Init()
 {
-	lpShaderMng.LoadShader(L"outerCircumference", "data/ShaderBinary/Vertex/OuterCircumference_vs.vs", "data/ShaderBinary/Pixel/OuterCircumference_ps.ps", sizeof(Transition_OuterCircumference) * 16);
+	//lpShaderMng.LoadShader(L"outerCircumference", "data/ShaderBinary/Vertex/OuterCircumference_vs.vs", "data/ShaderBinary/Pixel/OuterCircumference_ps.ps", sizeof(Transition_OuterCircumference) * 16);
+	lpShaderMng.LoadShader(L"outerCircumference", "", "data/ShaderBinary/Pixel/OuterCircumference_ps.ps", 8,0);
 
-    timespeed_ = 1.0f;
+    //timespeed_ = 1.0f;
+    timespeed_ = 0.01f;
 
     pram_.div = 100.0f;
     pram_.color = {1.0f,1.0f,1.0f,1.0f};
@@ -48,35 +50,38 @@ void PostEffect_Transition_OuterCircumference::Draw(std::wstring name, const int
     if (name == L"outerCircumference")
     {
         DrawGraph(0, 0, imageHnadle, true);
-        MV1SetUseOrigShader(true);
+        //MV1SetUseOrigShader(true);
         // postEffect
         lpShaderMng.DrawBegin(name);
         lpShaderMng.SetModelTexture(SLOT_TYPE::DEFFUSE, imageHnadle);
-        Transition_OuterCircumference* cbBuf = (Transition_OuterCircumference*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
-        cbBuf[0].color = pram_.color;
-        cbBuf[0].screenSize = pram_.screenSize;
-        cbBuf[0].aspect = pram_.aspect;
-        cbBuf[0].time = pram_.time;
-        cbBuf[0].div = pram_.div;
-        cbBuf[0].direction = pram_.direction;
-        cbBuf[0].rotation = pram_.rotation;
-        cbBuf[0].size = pram_.size;
+        //Transition_OuterCircumference* cbBuf = (Transition_OuterCircumference*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
+        //cbBuf[0].color = pram_.color;
+        //cbBuf[0].screenSize = pram_.screenSize;
+        //cbBuf[0].aspect = pram_.aspect;
+        //cbBuf[0].time = pram_.time;
+        //cbBuf[0].div = pram_.div;
+        //cbBuf[0].direction = pram_.direction;
+        //cbBuf[0].rotation = pram_.rotation;
+        //cbBuf[0].size = pram_.size;
 
-        //// ピクセルシェーダー用の定数バッファを更新して書き込んだ内容を反映する
-        UpdateShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
-        //// ピクセルシェーダー用の定数バッファを定数バッファレジスタにセット
-        //// 引数の三番目はレジスタに設定している番号
-        SetShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name), DX_SHADERTYPE_PIXEL, 7);
+        ////// ピクセルシェーダー用の定数バッファを更新して書き込んだ内容を反映する
+        //UpdateShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name));
+        ////// ピクセルシェーダー用の定数バッファを定数バッファレジスタにセット
+        ////// 引数の三番目はレジスタに設定している番号
+        //SetShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(name), DX_SHADERTYPE_PIXEL, 7);
+
+
+
         MyDrawGraph(0, 0, imageHnadle);
         //
         lpShaderMng.DrawEnd();
-        MV1SetUseOrigShader(false);
+        ///MV1SetUseOrigShader(false);
     }
 }
 
 void PostEffect_Transition_OuterCircumference::Custom()
 {
-    ImGuiCustom::ColorEdit4("color",&pram_.color);
+   /* ImGuiCustom::ColorEdit4("color",&pram_.color);
 
     ImGui::DragFloat("time",&pram_.time,0.1f);
     ImGui::DragFloat("div", &pram_.div, 1.0f);
@@ -92,5 +97,13 @@ void PostEffect_Transition_OuterCircumference::Custom()
     }
     ImGui::DragFloat("rotation",&pram_.rotation,0.1f);
     ImGui::DragFloat("size",&pram_.size,0.1f);
+    ImGui::DragFloat("pramspeed", &timespeed_, 1.0f);*/
+    
     ImGui::DragFloat("pramspeed", &timespeed_, 1.0f);
+    auto& args = lpShaderMng.DataAcsess(L"outerCircumference", "args");
+    args["time"].data = { pram_.time,0,0,0 };
+
+    lpShaderMng.RegisterUpdate();
+
+    //lpShaderMng.Updater(L"outerCircumference");
 }

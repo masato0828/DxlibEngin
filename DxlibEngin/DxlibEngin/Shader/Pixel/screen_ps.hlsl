@@ -15,7 +15,7 @@ struct PS_OUTPUT
 SamplerState mainSampler; // サンプラ(後述)
 Texture2D mainTexture : register(t0); // テクスチャ
 
-cbuffer args : register(b5)
+cbuffer args : register(b10)
 {
     float time;
     float noise1;
