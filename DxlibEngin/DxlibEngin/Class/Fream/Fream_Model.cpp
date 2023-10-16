@@ -539,7 +539,7 @@ bool Fream_Model::IsModelSelect()
 
 void Fream_Model::LoadShaderProc(const std::wstring& name)
 {
-	lpShaderMng.LoadShader(name, "", "data/ShaderBinary/Pixel/ModelPixelShader.ps", 0);
+	lpShaderMng.LoadShader(name, "", "data/ShaderBinary/Pixel/ModelPixelShader.ps", 0,2);
 	lpShaderMng.SetSkiningVertex(name, model_.at(name).handle);
 }
 

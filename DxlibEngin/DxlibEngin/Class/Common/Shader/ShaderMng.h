@@ -143,6 +143,7 @@ public:
     void RegisterUpdate();
 
     void CreateRegisterData(const std::wstring& key, const std::string& psPath, const int registerNumber, const int registerNumberLoss);
+    void CreateRegisterData(const std::wstring& key, const std::string& psPath);
 private:
 
     // シェーダーの管理(key値,頂点シェーダハンドル,ピクセルシェーダハンドル)
@@ -189,6 +190,8 @@ private:
 
     std::map < std::wstring, std::map<std::string, RegisterData>> constantBufferMap_;
     std::vector<std::string> registerName_;
+
+    void CmdPronpt(std::string fileName, std::string outPutFile);
 
 public:
     std::map<std::string, ShaderMng::BufferData>& DataAcsess(const std::wstring& key, const std::string& registerMapKey);

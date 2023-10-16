@@ -7,9 +7,65 @@
 #include <algorithm>
 #include <vector>
 
+
+#include <direct.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <errno.h>
+
 ShaderMng::~ShaderMng()
 {
     Clear();
+}
+
+void ShaderMng::CmdPronpt(std::string fileName, std::string outPutFile)
+{
+    SECURITY_ATTRIBUTES saAttr;
+    saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
+    saAttr.bInheritHandle = TRUE;
+    saAttr.lpSecurityDescriptor = NULL;
+
+    HANDLE hChildStdinRd, hChildStdinWr;
+    CreatePipe(&hChildStdinRd, &hChildStdinWr, &saAttr, 0);
+
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+
+    ZeroMemory(&si, sizeof(STARTUPINFO));
+    si.cb = sizeof(STARTUPINFO);
+    si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+    si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+    si.hStdInput = hChildStdinRd;
+    si.dwFlags |= STARTF_USESTDHANDLES;
+
+    // コマンドプロンプトを起動
+    CreateProcess(NULL, (LPSTR)"cmd", NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+
+    
+   // const char* text = "fxc.exe screen_ps.hlsl /T ps_5_0 /Fo Test.ps\n";
+    const char* text = fileName.c_str();
+    DWORD bytesWritten;
+    WriteFile(hChildStdinWr, text, strlen(text), &bytesWritten, NULL);
+
+   /* text = "exit\n";
+    bytesWritten;
+    WriteFile(hChildStdinWr, text, strlen(text), &bytesWritten, NULL);*/
+    // 標準入力への書き込み
+   /* const char* inputText = "echo Hello from C++!\n";
+    DWORD bytesWritten;
+    WriteFile(hChildStdinWr, inputText, strlen(inputText), &bytesWritten, NULL);*/
+
+    // パイプを閉じる
+    CloseHandle(hChildStdinWr);
+
+    // プロセスの終了を待つ
+    //WaitForSingleObject(pi.hProcess, INFINITE);
+    Sleep(1);  // 5000:5秒待機（適切な時間に調整してください）
+
+    // ハンドルのクローズ
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+    CloseHandle(hChildStdinRd);
 }
 
 std::map<std::string, ShaderMng::BufferData>& ShaderMng::DataAcsess(const std::wstring& key, const std::string& registerMapKey)
@@ -271,15 +327,41 @@ void ShaderMng::Updater(const std::wstring& name)
 
     if (ImGui::Button("shaderLoad"))
     {
-        bool result = LoadShaderFile(name,OpenFileDialog()());
+        std::filesystem::path fileName = OpenFileDialog()();
+        bool result = LoadShaderFile(name,fileName);
 
         if (result)
         {
             int handle = LoadPixelShaderFromMem(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize());
 
             shaders_[name].second = handle;
+
+            auto currentPath = std::filesystem::current_path();
+            std::string targetPath = currentPath.string() + "\\Shader\\Pixel";
+            _chdir(targetPath.c_str());
+
+            //system("cmd");
+        //C:\Program Files(x86)\Microsoft DirectX SDK(June 2010)\Utilities\bin\x64\fxc.exe
+
+            //// 標準入力への書き込み
+            std::string exe("fxc.exe ");
+            std::string fileNames = fileName.filename().stem().string()+".hlsl";
+            std::string inputfileDirectry("../../data\\ShaderBinary\\Pixel\\");
+            std::string input("T ps_5_0 /Fo " + inputfileDirectry+ fileName.filename().stem().string() + ".ps\n");
+            std::string test = exe + fileNames + " /"+input;
+
+            CmdPronpt(test, fileName.filename().stem().string());
+
+            targetPath = currentPath.string();
+            _chdir(targetPath.c_str());
+
+            CreateRegisterData(name,std::string("data\\ShaderBinary\\Pixel\\"+ fileName.filename().stem().string() + ".ps"));
+
+            shaders_[name].second = LoadPixelShader(std::string("data\\ShaderBinary\\Pixel\\" + fileName.filename().stem().string() + ".ps").c_str());
         }
     }
+
+    RegisterCustom(name);
 
     RegisterUpdate();
 };
@@ -319,7 +401,7 @@ void ShaderMng::RegisterCustom(const std::wstring& key)
                 if (var.second.typeName == "float2")
                 {
                     ImGui::Text((bufferKey.string() + var.second.varName).c_str());
-                    ImGui::DragFloat2((bufferKey.string() + var.second.varName).c_str(), (float*)&var.second.data, 0.1f, 0.0f, 1.0f);
+                    ImGui::DragFloat2((bufferKey.string() + var.second.varName).c_str(), (float*)&var.second.data);
                     cbBuf[0] = var.second.data.x;
                     cbBuf[1] = var.second.data.y;
                     cbBuf += 2;
@@ -327,7 +409,7 @@ void ShaderMng::RegisterCustom(const std::wstring& key)
                 if (var.second.typeName == "float")
                 {
                     ImGui::Text((bufferKey.string() + var.second.varName).c_str());
-                    ImGui::DragFloat((bufferKey.string() + var.second.varName).c_str(), (float*)&var.second.data, 0.1f, 0.0f, 1.0f);
+                    ImGui::DragFloat((bufferKey.string() + var.second.varName).c_str(), (float*)&var.second.data);
                     cbBuf[0] = var.second.data.x;
                     cbBuf += 1;
                 }
@@ -445,5 +527,10 @@ void ShaderMng::CreateRegisterData(const std::wstring& key, const std::string& p
         registerMap.emplace((std::string)shaderBuffer.Name, registerData);
     }
 
-    constantBufferMap_.emplace(key, registerMap);
+        constantBufferMap_[key].swap(registerMap);
+}
+
+void ShaderMng::CreateRegisterData(const std::wstring& key, const std::string& psPath)
+{
+    CreateRegisterData(key, psPath, 0, 0);
 }

@@ -1,0 +1,1 @@
+D:\aso3年\github\ModelViewer\DxlibEngin\DxlibEngin\Thirdparty\Lib>fxc.exe screen_ps.hlsl /T ps_5_0 /Fo Test.ps
