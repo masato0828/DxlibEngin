@@ -27,6 +27,7 @@
     <ClCompile Include="Class\Common\Shader\PostEffectMng.cpp" />
     <ClCompile Include="Class\Common\Shader\PostEffect_Base.cpp" />
     <ClCompile Include="Class\Common\Shader\PostEffect_Glow.cpp" />
+    <ClCompile Include="Class\Common\Shader\PostEffect_Led.cpp" />
     <ClCompile Include="Class\Common\Shader\PostEffect_Noise.cpp" />
     <ClCompile Include="Class\Common\Shader\PostEffect_ScanLine.cpp" />
     <ClCompile Include="Class\Common\Shader\PostEffect_Transition_Circle.cpp" />
@@ -78,6 +79,7 @@
     <ClInclude Include="Class\Common\Shader\PostEffectMng.h" />
     <ClInclude Include="Class\Common\Shader\PostEffect_Base.h" />
     <ClInclude Include="Class\Common\Shader\PostEffect_Glow.h" />
+    <ClInclude Include="Class\Common\Shader\PostEffect_Led.h" />
     <ClInclude Include="Class\Common\Shader\PostEffect_Noise.h" />
     <ClInclude Include="Class\Common\Shader\PostEffect_ScanLine.h" />
     <ClInclude Include="Class\Common\Shader\PostEffect_Transition_Circle.h" />
@@ -171,6 +173,19 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)data\ShaderBinary\Pixel\%(Filename).ps</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)data\ShaderBinary\Pixel\%(Filename).ps</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)data\ShaderBinary\Pixel\%(Filename).ps</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)data\ShaderBinary\Pixel\%(Filename).ps</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Shader\Pixel\LedPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)data\ShaderBinary\Pixel\%(Filename).ps</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)data\ShaderBinary\Pixel\%(Filename).ps</ObjectFileOutput>

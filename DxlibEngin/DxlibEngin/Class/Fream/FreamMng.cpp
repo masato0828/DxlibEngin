@@ -60,6 +60,8 @@ void FreamMng::Init()
     screen_ = MakeScreen(ww,wh,true);
     systemUIScreen_ = MakeScreen(ww,wh,true);
 
+    move_screen_ = MakeScreen(ww,wh,true);
+
     SetCubeMapTextureCreateFlag(true);
     cubeTexture_ = MakeScreen(1024,1024,true);
     SetCubeMapTextureCreateFlag(false);
@@ -69,6 +71,11 @@ void FreamMng::Init()
         {L"codeEditer",false},
     };
 
+
+    movehandle_ = LoadGraph("アイマイミー .mp4");	// 動画ファイルの再生
+    SeekMovieToGraph(movehandle_, 1000);
+    toPlay_ = false;
+    black_ = true;
 }
 
 void FreamMng::Update(bool window_open_flg)
@@ -210,14 +217,62 @@ void FreamMng::Update(bool window_open_flg)
     {
         std::exit(0);
     }
+
+
+    
+    if(toPlay_)
+    {
+        PlayMovieToGraph(movehandle_);
+    }
+    else
+    {
+        PauseMovieToGraph(movehandle_);
+    }
+
+    static int cnt = 0;
+
+    if (CheckHitKey(KEY_INPUT_SPACE))
+    {
+        cnt++;
+    }
+    else
+    {
+        cnt = 0;
+    }
+
+
+    if (cnt == 1)
+    {
+        black_ = false;
+        if (!toPlay_)
+        {
+            toPlay_ = true;
+        }
+        else
+        {
+            toPlay_ = false;
+        }
+    }
+
 }
 
 void FreamMng::Draw()
 {
+    
     // 上から見たカメラに変更
     camera_->Update(mouse_->GetSceneMousePoint().int_cast(), sceneView_->GetScreenSize() / 2, sceneView_->GetWindowCenterPoint());
     // 2Dの上から見たステージの作成
     stage_->PreviewMake();
+
+    SetDrawScreen(move_screen_);
+    ClearDrawScreen();
+    
+    DrawExtendGraph(0, 0, 1980, 1080, movehandle_, true);
+    if (black_)
+    {
+        DrawBox(0, 0, 1980, 1080, 0x000000, true);
+    }
+
 
     // ギズモ用のスクリーン作成
     SetUseLighting(true);
@@ -490,8 +545,12 @@ void FreamMng::ObjectDrawField()
 
 
     models_->Draw(cubeTexture_);
-    
     //gizumo_->Draw();
+
+    lpShaderMng.DrawBegin(L"led");
+    lpShaderMng.SetModelTexture(SLOT_TYPE::DEFFUSE, move_screen_);
+    MyDrawGraph3D(0,0,0, move_screen_);
+    lpShaderMng.DrawEnd();
 }
 
 void FreamMng::OutputSystemWindow()

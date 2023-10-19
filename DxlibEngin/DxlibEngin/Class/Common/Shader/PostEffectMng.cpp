@@ -4,6 +4,7 @@
 #include "PostEffect_Transition_OuterCircumference.h"
 #include "PostEffect_Transition_Circle.h"
 #include "PostEffect_Glow.h"
+#include "PostEffect_Led.h"
 #include "../../../imGui/imgui.h"
 #include "../../../imGui/imgui_internal.h"
 #include "../../Common/Utility.h"
@@ -28,6 +29,7 @@ void PostEffectMng::Init()
 	postEffect_[L"outerCircumference"] = std::make_unique<PostEffect_Transition_OuterCircumference>();
 	postEffect_[L"circle"] = std::make_unique<PostEffect_Transition_Circle>();
 	postEffect_[L"glow"] = std::make_unique<PostEffect_Glow>();
+	postEffect_[L"led"] = std::make_unique<PostEffect_Led>();
 
 	// 初期要素の名前
 	selectName_ = L"none";
@@ -75,7 +77,7 @@ void PostEffectMng::Custom()
 {
 	//const char* listbox_items[] = { "none","noise" };
 	// 要素追加時に数値を増やす
-	const char* listbox_items[6];
+	const char* listbox_items[7];
 
 	std::vector<std::string>name;
 
