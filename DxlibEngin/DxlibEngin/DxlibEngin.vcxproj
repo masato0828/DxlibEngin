@@ -144,6 +144,10 @@
     <None Include="Shader\Vertex\VertexShader3DHeader.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Shader\Pixel\Circle_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)data\ShaderBinary\Pixel\%(Filename).ps</ObjectFileOutput>
+    </FxCompile>
     <FxCompile Include="Shader\Pixel\GaussianHPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>

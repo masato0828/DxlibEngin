@@ -81,43 +81,46 @@ static void MyDrawGraph3D(int x, int y,int z, int imgHandle)
 		v.binorm = VGet(0, 0, 0);
 
 	}
+
+	auto s = 50;
+
 	// ç∂è„
 	verts[0].pos.x = static_cast<float>(x - (wi / 2));
 	verts[0].pos.y = static_cast<float>(y + (he / 2));
-	verts[0].pos.z = static_cast<float>(z-1);
+	verts[0].pos.z = static_cast<float>(z-s);
 	verts[0].u = 0.0f;
 	verts[0].v = 0.0f;
 
 	// âEè„
 	verts[1].pos.x = static_cast<float>(x + (wi / 2));
 	verts[1].pos.y = static_cast<float>(y + (he / 2));
-	verts[1].pos.z = static_cast<float>(z-1);
+	verts[1].pos.z = static_cast<float>(z-s);
 	verts[1].u = 1.0f;
 	verts[1].v = 0.0f;
 
 	// ç∂â∫
 	verts[2].pos.x = static_cast<float>(x - (wi / 2));
 	verts[2].pos.y = static_cast<float>(y - (he / 2));
-	verts[2].pos.z = static_cast<float>(z-1);
+	verts[2].pos.z = static_cast<float>(z-s);
 	verts[2].u = 0.0f;
 	verts[2].v = 1.0f;
 
 	// âEâ∫
 	verts[3].pos.x = static_cast<float>(x + (wi / 2));
 	verts[3].pos.y = static_cast<float>(y - (he / 2));
-	verts[3].pos.z = static_cast<float>(z-1);
+	verts[3].pos.z = static_cast<float>(z-s);
 	verts[3].u = 1.0f;
 	verts[3].v = 1.0f;
 
 	verts[4].pos.x = static_cast<float>(x - (wi / 2));
 	verts[4].pos.y = static_cast<float>(y + (he / 2));
-	verts[4].pos.z = static_cast<float>(z+1);
+	verts[4].pos.z = static_cast<float>(z+s);
 	verts[4].u = 0.0f;
 	verts[4].v = 0.0f;
 
 	verts[5].pos.x = static_cast<float>(x + (wi / 2));
 	verts[5].pos.y = static_cast<float>(y + (he / 2));
-	verts[5].pos.z = static_cast<float>(z + 1);
+	verts[5].pos.z = static_cast<float>(z + s);
 	verts[5].u = 1.0f;
 	verts[5].v = 0.0f;
 
@@ -129,7 +132,7 @@ static void MyDrawGraph3D(int x, int y,int z, int imgHandle)
 
 	verts[7].pos.x = static_cast<float>(x + (wi / 2));
 	verts[7].pos.y = static_cast<float>(y - (he / 2));
-	verts[7].pos.z = static_cast<float>(z + 1);
+	verts[7].pos.z = static_cast<float>(z +s);
 	verts[7].u = 1.0f;
 	verts[7].v = 1.0f;
 

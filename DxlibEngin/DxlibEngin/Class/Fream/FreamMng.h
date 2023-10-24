@@ -98,12 +98,5 @@ private:
 	Vector3 scl = { 1.f,1.f,1.f };
 
 	bool is_close_;
-
-
-
-	bool toPlay_;
-	int movehandle_;
-	int move_screen_;
-	bool black_;
 };
 

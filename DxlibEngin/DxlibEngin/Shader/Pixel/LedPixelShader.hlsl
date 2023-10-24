@@ -22,7 +22,7 @@ PS_OUTPUT main(PS_INPUT input) : SV_TARGET
     // 1920,1080
     
     ///float vlines = floor(input.uv.x * 1920 * 0.5f);
-    float vlines = floor(input.uv.x * 1920*5*0.5);
+    float vlines = floor(input.uv.x * 1920/2*0.5);
     float vrep = fmod(vlines,3.0f);
     
     tc += float3(0.15, 0.3, 0.45);
@@ -30,7 +30,7 @@ PS_OUTPUT main(PS_INPUT input) : SV_TARGET
     tc += float3(0.0, 0.5, 0.) * float(vrep == 1.);
     tc += float3(0.0, 0., 0.5) * float(vrep == 2.);
     
-    float hlines = floor(input.uv.y * 1080*5);
+    float hlines = floor(input.uv.y * 1080/2);
     float hrep = mod(hlines, 4.0f);
     
     tc *= step(hrep,2.0f);
