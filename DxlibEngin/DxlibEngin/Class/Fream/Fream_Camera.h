@@ -80,13 +80,13 @@ private:
 	Vector3 targetPos_;
 
 	// マウス用
-	Vector2Dbl aftorMousePoint_;// 更新位置
-	Vector2Dbl beforMousePoint_;// 更新前位置
-	Vector2Dbl mousePointDiff_;// 更新差分
-	float sens_;// マウス感度
-	int mouseX_;// マウスのX座標
-	int mouseY_;// マウスのY座標
-	int input_;// マウスの押下状態
+	Vector2Dbl aftorMousePoint_;	// 更新位置
+	Vector2Dbl beforMousePoint_;	// 更新前位置
+	Vector2Dbl mousePointDiff_;		// 更新差分
+	float sens_;	// マウス感度
+	int mouseX_;	// マウスのX座標
+	int mouseY_;	// マウスのY座標
+	int input_;		// マウスの押下状態
 
 	// 移動スピード
 	float moveSpeed_;

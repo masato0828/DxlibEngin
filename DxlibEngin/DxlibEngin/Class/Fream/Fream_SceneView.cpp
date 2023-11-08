@@ -9,6 +9,7 @@
 #include "../../imGui/imgui_internal.h"
 #include "../Common/ImGuiMyCustom.h"
 #include "../Common/Utility.h"
+#include "../../imGui/guizmo/ImGuizmo.h"
 
 Fream_SceneView::Fream_SceneView()
 {
@@ -21,6 +22,7 @@ Fream_SceneView::~Fream_SceneView()
 
 void Fream_SceneView::Init()
 {
+    
 }
 
 void Fream_SceneView::Update()
@@ -36,8 +38,10 @@ void Fream_SceneView::Create()
     window_classview.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoWindowMenuButton;
     ImGui::SetNextWindowClass(&window_classview);
 
+    ImGuiIO& io = ImGui::GetIO();
+    static ImGuiWindowFlags gizmoWindowFlags = 0;
     // ウィンドウの表示
-    ImGui::Begin("scene", 0, ImGuiWindowFlags_NoMove);
+    ImGui::Begin("scene", 0, gizmoWindowFlags);
     // シェーダ情報の作成
     static ID3D11ShaderResourceView* my_shaderData = NULL;
     // 画像の読み込み
@@ -92,6 +96,34 @@ void Fream_SceneView::Create()
     };
 
     CreateDragAndDropHandle();
+
+    
+    ImGuizmo::BeginFrame();
+    ImGuizmo::SetDrawlist();
+    /*float windowWidth = (float)ImGui::GetWindowWidth();
+    float windowHeight = (float)ImGui::GetWindowHeight();
+    ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+    viewManipulateRight = ImGui::GetWindowPos().x + windowWidth;
+    viewManipulateTop = ImGui::GetWindowPos().y;*/
+    
+    float windowWidth = imageRightDownCornor_.x_;
+    float windowHeight = imageRightDownCornor_.y_;
+    ImGuizmo::SetRect(imageLeftUpCornor_.x_, imageLeftUpCornor_.y_, windowWidth, windowHeight);
+    float viewManipulateRight = imageLeftUpCornor_.x_ + windowWidth;
+    float viewManipulateTop = imageLeftUpCornor_.y_;
+
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    gizmoWindowFlags = ImGui::IsWindowHovered() && ImGui::IsMouseHoveringRect(window->InnerRect.Min, window->InnerRect.Max) ? ImGuiWindowFlags_NoMove : 0;
+
+    auto cameraview = GetCameraViewMatrix();
+    auto cameraprojection = GetCameraProjectionMatrix();
+
+    static const float identityMatrix[16] =
+    { 1.f, 0.f, 0.f, 0.f,
+        0.f, 1.f, 0.f, 0.f,
+        0.f, 0.f, 1.f, 0.f,
+        0.f, 0.f, 0.f, 1.f };
+    ImGuizmo::DrawGrid((float*)&cameraview, (float*)&cameraprojection, identityMatrix, 100.f);
 
     // ウィンドウの終了
     ImGui::End();

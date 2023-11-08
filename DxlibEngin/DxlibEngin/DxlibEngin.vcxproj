@@ -54,6 +54,11 @@
     <ClCompile Include="Class\System\System_FileCreate.cpp" />
     <ClCompile Include="Class\Fream\FileDialog\CreateIcon\CreateIcons.cpp" />
     <ClCompile Include="imGui\CustomFont.cpp" />
+    <ClCompile Include="imGui\guizmo\GraphEditor.cpp" />
+    <ClCompile Include="imGui\guizmo\ImCurveEdit.cpp" />
+    <ClCompile Include="imGui\guizmo\ImGradient.cpp" />
+    <ClCompile Include="imGui\guizmo\ImGuizmo.cpp" />
+    <ClCompile Include="imGui\guizmo\ImSequencer.cpp" />
     <ClCompile Include="imGui\ImFileDialog.cpp" />
     <ClCompile Include="imGui\imgui.cpp" />
     <ClCompile Include="imGui\ImGuiColorTextEdit\TextEditor.cpp" />
@@ -108,6 +113,12 @@
     <ClInclude Include="Class\System\System_FileCreate.h" />
     <ClInclude Include="Class\Fream\FileDialog\CreateIcon\CreateIcons.h" />
     <ClInclude Include="imGui\CustomFont.h" />
+    <ClInclude Include="imGui\guizmo\GraphEditor.h" />
+    <ClInclude Include="imGui\guizmo\ImCurveEdit.h" />
+    <ClInclude Include="imGui\guizmo\ImGradient.h" />
+    <ClInclude Include="imGui\guizmo\ImGuizmo.h" />
+    <ClInclude Include="imGui\guizmo\ImSequencer.h" />
+    <ClInclude Include="imGui\guizmo\ImZoomSlider.h" />
     <ClInclude Include="imGui\imconfig.h" />
     <ClInclude Include="imGui\ImFileDialog.h" />
     <ClInclude Include="imGui\imgui.h" />
@@ -221,6 +232,10 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\Pixel\planePixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)data\ShaderBinary\Pixel\%(Filename).ps</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shader\Pixel\ReflectionPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

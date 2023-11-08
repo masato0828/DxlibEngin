@@ -57,6 +57,47 @@ struct OpenFileDialog
 	}
 };
 
+
+struct ExpoterFileDialog
+{
+	std::filesystem::path operator()(HWND hWnd = nullptr, std::string* fileName = nullptr)
+	{
+		OPENFILENAME			ofn{};
+		static TCHAR            szPath[MAX_PATH];
+		static std::string		filePass;
+		filePass.resize(MAX_PATH);
+		if (fileName == nullptr)
+		{
+			filePass = (LPSTR)"outputfile.json";
+		}
+		else
+		{
+			filePass = &fileName->at(0);       // 選択ファイル格納
+		}
+
+		if (szPath[0] == TEXT('\0')) {
+			GetCurrentDirectory(MAX_PATH, szPath);
+		}
+		if (ofn.lStructSize == 0) {
+			ofn.lStructSize = sizeof(OPENFILENAME);
+			ofn.hwndOwner = hWnd;
+			ofn.lpstrInitialDir = szPath;       // 初期フォルダ位置
+			//ofn.lpstrFile = szFile;       // 選択ファイル格納
+			ofn.lpstrFile = &filePass.at(0);       // 選択ファイル格納
+			ofn.nMaxFile = MAX_PATH;
+			ofn.lpstrDefExt = TEXT(".json");
+			ofn.lpstrFilter = TEXT("jsonファイル(*.json)\0*.json\0すべてのファイル(*.*)\0*.*\0");
+			ofn.lpstrTitle = TEXT("ファイル名を付けて保存");
+			ofn.Flags = OFN_OVERWRITEPROMPT;
+		}
+		if (GetSaveFileName(&ofn)) {
+			MessageBox(hWnd, &filePass.at(0), TEXT("ファイル名を付けて保存"), MB_OK);
+		}
+		return &filePass.at(0);
+	}
+};
+
+
 struct FilePathErase
 {
 	std::string operator()(std::string fileNameFull)

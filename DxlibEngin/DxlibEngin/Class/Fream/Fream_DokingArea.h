@@ -6,8 +6,20 @@ class Fream_DokingArea :
 public:
     Fream_DokingArea();
     ~Fream_DokingArea();
+
+    /// <summary>
+    /// ‰Šú‰»
+    /// </summary>
     void Init()override;
+
+    /// <summary>
+    /// XV
+    /// </summary>
     void Update()override;
+    
+    /// <summary>
+    /// ì¬
+    /// </summary>
     void Create();
 
 private:

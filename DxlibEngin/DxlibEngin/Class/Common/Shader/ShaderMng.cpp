@@ -1,3 +1,4 @@
+#include <DxLib.h>
 #include "ShaderMng.h"
 #include "ConstantBuffer.h"
 #include "../../Common/Utility.h"
@@ -6,6 +7,7 @@
 #include <sstream>
 #include <algorithm>
 #include <vector>
+
 
 
 #include <direct.h>
@@ -68,9 +70,9 @@ void ShaderMng::CmdPronpt(std::string fileName, std::string outPutFile)
     CloseHandle(hChildStdinRd);
 }
 
-std::map<std::string, ShaderMng::BufferData>& ShaderMng::DataAcsess(const std::wstring& key, const std::string& registerMapKey)
+std::unordered_map<std::string, ShaderMng::BufferData>& ShaderMng::DataAcsess(const std::wstring& key, const std::string& registerMapKey)
 {
-    return constantBufferMap_[key][registerMapKey].bufferData;
+    return constantBufferMap_[key].registerMap[registerMapKey].bufferData;
 }
 
 bool ShaderMng::LoadShader(const std::wstring& name, const std::string& vsPath, const std::string& psPath, int registerNumber , int registerNumberLoss)
@@ -368,104 +370,112 @@ void ShaderMng::Updater(const std::wstring& name)
 
 void ShaderMng::RegisterCustom(const std::wstring& key)
 {
-    ImGui::Begin("register");
+    //ImGui::Begin("register");
     std::filesystem::path bufferKey = key;
 
-    for (auto& b : constantBufferMap_[key])
+    for (auto& b : constantBufferMap_[key].registerMap)
     {
-        //if (ImGui::CollapsingHeader(b.first.c_str()))
+        // シェーダー用定数バッファハンドルの定数バッファのアドレスを取得する
+        auto* cbBuf = (float*)GetBufferShaderConstantBuffer(b.second.bufferHandle);
+        for (auto& var : b.second.bufferData)
         {
-            auto* cbBuf = (float*)GetBufferShaderConstantBuffer(b.second.bufferHandle);
-            for (auto& var : b.second.bufferData)
+            if (var.second.typeName == "float4")
             {
-                if (var.second.typeName == "float4")
-                {
-                    ImGui::Text((bufferKey.string() + var.second.varName).c_str());
-                    ImGuiCustom::ColorEdit4((bufferKey.string() + var.second.varName).c_str(), &var.second.data);
-                    cbBuf[0] = var.second.data.x;
-                    cbBuf[1] = var.second.data.y;
-                    cbBuf[2] = var.second.data.z;
-                    cbBuf[3] = var.second.data.w;
-                    cbBuf += 4;
-                }
-                if (var.second.typeName == "float3")
-                {
-                    ImGui::Text((bufferKey.string() + var.second.varName).c_str());
-                    ImGuiCustom::ColorEdit3((bufferKey.string() + var.second.varName).c_str(), &var.second.data);
-                    cbBuf[0] = var.second.data.x;
-                    cbBuf[1] = var.second.data.y;
-                    cbBuf[2] = var.second.data.z;
-                    cbBuf[3] = var.second.data.w;
-                    cbBuf += 4;
-                }
-                if (var.second.typeName == "float2")
-                {
-                    ImGui::Text((bufferKey.string() + var.second.varName).c_str());
-                    ImGui::DragFloat2((bufferKey.string() + var.second.varName).c_str(), (float*)&var.second.data);
-                    cbBuf[0] = var.second.data.x;
-                    cbBuf[1] = var.second.data.y;
-                    cbBuf += 2;
-                }
-                if (var.second.typeName == "float")
-                {
-                    ImGui::Text((bufferKey.string() + var.second.varName).c_str());
-                    ImGui::DragFloat((bufferKey.string() + var.second.varName).c_str(), (float*)&var.second.data);
-                    cbBuf[0] = var.second.data.x;
-                    cbBuf += 1;
-                }
-
+                ImGui::Text((bufferKey.string() + var.second.varName).c_str());
+                ImGuiCustom::ColorEdit4(("##" + bufferKey.string() + var.second.varName).c_str(), &var.second.data);
+                cbBuf[0] = var.second.data.x;
+                cbBuf[1] = var.second.data.y;
+                cbBuf[2] = var.second.data.z;
+                cbBuf[3] = var.second.data.w;
+                cbBuf += 4;
             }
-            UpdateShaderConstantBuffer(b.second.bufferHandle);
-            SetShaderConstantBuffer(b.second.bufferHandle, DX_SHADERTYPE_PIXEL, b.second.registerNumber);
+            if (var.second.typeName == "float3")
+            {
+                ImGui::Text((bufferKey.string() + var.second.varName).c_str());
+                ImGuiCustom::ColorEdit3(("##" + bufferKey.string() + var.second.varName).c_str(), &var.second.data);
+                cbBuf[0] = var.second.data.x;
+                cbBuf[1] = var.second.data.y;
+                cbBuf[2] = var.second.data.z;
+                cbBuf[3] = var.second.data.w;
+                cbBuf += 4;
+            }
+            if (var.second.typeName == "float2")
+            {
+                ImGui::Text((bufferKey.string() + var.second.varName).c_str());
+                ImGui::DragFloat2(("##" + bufferKey.string() + var.second.varName).c_str(), (float*)&var.second.data, 0.1f);
+                cbBuf[0] = var.second.data.x;
+                cbBuf[1] = var.second.data.y;
+                cbBuf += 2;
+            }
+            if (var.second.typeName == "float")
+            {
+                ImGui::Text((bufferKey.string() + var.second.varName).c_str());
+                ImGui::DragFloat(("##" + bufferKey.string() + var.second.varName).c_str(), (float*)&var.second.data, 0.1f);
+                cbBuf[0] = var.second.data.x;
+                cbBuf += 1;
+            }
         }
-
+        // シェーダー用定数バッファハンドルの定数バッファへの変更を適用する
+        UpdateShaderConstantBuffer(b.second.bufferHandle);
+        // シェーダー用定数バッファハンドルの定数バッファを指定のシェーダーの指定のスロットにセットする
+        SetShaderConstantBuffer(b.second.bufferHandle, DX_SHADERTYPE_PIXEL, b.second.registerNumber);
     }
-    ImGui::End();
+
+    ImGui::Separator();
+    if (ImGui::Button("output"))
+    {
+        ExportFile(key);
+    }
+
+    if (ImGui::Button("input"))
+    {
+        ImportFile(OpenFileDialog()().string());
+    }
+    //ImGui::End();
 }
 
 void ShaderMng::RegisterUpdate(const std::wstring& key)
 {
     std::filesystem::path bufferKey = key;
 
-    for (auto& b : constantBufferMap_[key])
+    for (auto& b : constantBufferMap_[key].registerMap)
     {
-        //if (ImGui::CollapsingHeader(b.first.c_str()))
+        // シェーダー用定数バッファハンドルの定数バッファのアドレスを取得する
+        auto* cbBuf = (float*)GetBufferShaderConstantBuffer(b.second.bufferHandle);
+        for (auto& var : b.second.bufferData)
         {
-            auto* cbBuf = (float*)GetBufferShaderConstantBuffer(b.second.bufferHandle);
-            for (auto& var : b.second.bufferData)
+            if (var.second.typeName == "float4")
             {
-                if (var.second.typeName == "float4")
-                {
-                    cbBuf[0] = var.second.data.x;
-                    cbBuf[1] = var.second.data.y;
-                    cbBuf[2] = var.second.data.z;
-                    cbBuf[3] = var.second.data.w;
-                    cbBuf += 4;
-                }
-                if (var.second.typeName == "float3")
-                {
-                    cbBuf[0] = var.second.data.x;
-                    cbBuf[1] = var.second.data.y;
-                    cbBuf[2] = var.second.data.z;
-                    cbBuf[3] = var.second.data.w;
-                    cbBuf += 4;
-                }
-                if (var.second.typeName == "float2")
-                {
-                    cbBuf[0] = var.second.data.x;
-                    cbBuf[1] = var.second.data.y;
-                    cbBuf += 2;
-                }
-                if (var.second.typeName == "float")
-                {
-                    cbBuf[0] = var.second.data.x;
-                    cbBuf += 1;
-                }
-                UpdateShaderConstantBuffer(b.second.bufferHandle);
-                SetShaderConstantBuffer(b.second.bufferHandle, DX_SHADERTYPE_PIXEL, b.second.registerNumber);
+                cbBuf[0] = var.second.data.x;
+                cbBuf[1] = var.second.data.y;
+                cbBuf[2] = var.second.data.z;
+                cbBuf[3] = var.second.data.w;
+                cbBuf += 4;
             }
+            if (var.second.typeName == "float3")
+            {
+                cbBuf[0] = var.second.data.x;
+                cbBuf[1] = var.second.data.y;
+                cbBuf[2] = var.second.data.z;
+                cbBuf[3] = var.second.data.w;
+                cbBuf += 4;
+            }
+            if (var.second.typeName == "float2")
+            {
+                cbBuf[0] = var.second.data.x;
+                cbBuf[1] = var.second.data.y;
+                cbBuf += 2;
+            }
+            if (var.second.typeName == "float")
+            {
+                cbBuf[0] = var.second.data.x;
+                cbBuf += 1;
+            }
+            // シェーダー用定数バッファハンドルの定数バッファへの変更を適用する
+            UpdateShaderConstantBuffer(b.second.bufferHandle);
+            // シェーダー用定数バッファハンドルの定数バッファを指定のシェーダーの指定のスロットにセットする
+            SetShaderConstantBuffer(b.second.bufferHandle, DX_SHADERTYPE_PIXEL, b.second.registerNumber);
         }
-
     }
 }
 
@@ -487,11 +497,12 @@ void ShaderMng::CreateRegisterData(const std::wstring& key, const std::string& p
     Microsoft::WRL::ComPtr<ID3D12ShaderReflection> shaderRef;
     D3DReflect(data.data(), data.size(), IID_PPV_ARGS(&shaderRef));
 
-    std::stringstream ss;
     D3D12_SHADER_DESC desc{};
     shaderRef->GetDesc(&desc);
 
-    std::map<std::string, RegisterData> registerMap;
+    std::unordered_map<std::string, RegisterData> registerMap;
+    ShaderDatas shaderData;
+
     const auto cbCount = desc.ConstantBuffers;
     for (auto i = registerNumberLoss; i < cbCount; ++i)
     {
@@ -499,7 +510,7 @@ void ShaderMng::CreateRegisterData(const std::wstring& key, const std::string& p
         auto cbuffer = shaderRef->GetConstantBufferByIndex(i);
         cbuffer->GetDesc(&shaderBuffer);
 
-        std::map<std::string, BufferData> bufferData;
+        std::unordered_map<std::string, BufferData> bufferData;
         RegisterData registerData;
         auto constantHandle = CreateShaderConstantBuffer(shaderBuffer.Size);
         // コンスタントバッファ内
@@ -513,24 +524,180 @@ void ShaderMng::CreateRegisterData(const std::wstring& key, const std::string& p
             shaderReflection->GetDesc(&varDesc);
             varTypeRefl->GetDesc(&typeDesc);
 
+            // データ取得
             std::string varName = varDesc.Name;
             std::string var = typeDesc.Name;
             size_t varSize = varDesc.Size;
             std::string Name = varDesc.Name;
 
-            FLOAT4 forfloat = {1,1,1,1};
-            bufferData.emplace(varName.c_str(),BufferData(var,varName,varSize, forfloat));
+            // バッファデータの格納
+            bufferData.emplace(varName.c_str(), BufferData(var, varName, varSize, {1,1,1,1}));
 
+            // registerデータの格納
             registerData = RegisterData(constantHandle, i + registerNumber, bufferData);
         }
 
-        registerMap.emplace((std::string)shaderBuffer.Name, registerData);
+        // シェーダーデータの格納
+        shaderData.registerMap.emplace(shaderBuffer.Name, registerData);
     }
+    shaderData.filePath = psPath;
 
-        constantBufferMap_[key].swap(registerMap);
+    // コンスタントバッファのごとの格納
+    constantBufferMap_.emplace(key, shaderData);
 }
 
 void ShaderMng::CreateRegisterData(const std::wstring& key, const std::string& psPath)
 {
     CreateRegisterData(key, psPath, 0, 0);
+}
+
+void ShaderMng::ExportFile(const std::wstring& key)
+{
+    std::ofstream writing_file;
+    std::string filename = "outputfile.json";
+    auto file = ExpoterFileDialog()(nullptr, &filename);
+    writing_file.open(file.string().c_str(), std::ios::out);
+
+    nlohmann::json j;
+
+    std::filesystem::path fileKey = key;
+
+    for (auto& b : constantBufferMap_[key].registerMap)
+    {
+        j[fileKey.string().c_str()]["path"] = constantBufferMap_[key].filePath;
+        j[fileKey.string().c_str()]["registerNumber"] = b.second.registerNumber;
+        for (auto& var : b.second.bufferData)
+        {
+            j[fileKey.string().c_str()][b.first.c_str()][var.second.varName.c_str()]["typeName"]
+                = var.second.typeName;
+            j[fileKey.string().c_str()][b.first.c_str()][var.second.varName.c_str()]["varName"]
+                = var.second.varName;
+            j[fileKey.string().c_str()][b.first.c_str()][var.second.varName.c_str()]["varSize"]
+                = var.second.varSize;
+            j[fileKey.string().c_str()][b.first.c_str()][var.second.varName.c_str()]["data"]
+                = {
+                var.second.data.x ,
+                var.second.data.y ,
+                var.second.data.z ,
+                var.second.data.w
+            };
+        }
+    }
+
+    writing_file << std::setw(4) << j << std::endl;
+
+    writing_file.close();
+}
+
+void ShaderMng::ImportFile(const std::string& filePath)
+{
+    std::ifstream reading(filePath, std::ios::in);
+    if (reading.is_open())
+    {
+        nlohmann::json j;
+        reading >> j;
+
+        GetContents(j);
+    }
+}
+
+void ShaderMng::GetContents(nlohmann::json json)
+{
+    std::string shaderPSpath;
+    int registerNumber = 0;
+    std::string typeName;
+    FLOAT4 data = { 0,0,0,0 };
+    std::string varName;
+    size_t varSize = 0;
+    std::unordered_map<std::string, BufferData> bufferDataMap;
+    std::map<std::string, RegisterData> registerDataMap;
+    ShaderDatas shaderData;
+    std::string shaderAcessKey;
+    std::string jsonSecondLevelName;
+    std::string jsonThirdLevelName;
+    std::string jsonForceLevelName;
+
+    std::string cbufferName;
+
+    /// json1階層目{}
+    for (nlohmann::json::iterator firstMap = json.begin(); firstMap != json.end(); ++firstMap)
+    {
+        shaderAcessKey = firstMap.key();
+        /// json2階層目{}
+        for (nlohmann::json::iterator secondMap = (*firstMap).begin(); secondMap != (*firstMap).end(); ++secondMap)
+        {
+            jsonSecondLevelName = secondMap.key();
+            if (cbufferName.empty())
+            {
+                cbufferName = jsonSecondLevelName;
+            }
+
+            if (jsonSecondLevelName == "path")
+            {
+                shaderPSpath = secondMap.value().get<std::string>();
+            }
+            else if (jsonSecondLevelName == "registerNumber")
+            {
+                registerNumber = secondMap.value().get<int>();
+            }
+            else
+            {
+                /// json3階層目{}
+                for (nlohmann::json::iterator tihrdMap = (*secondMap).begin(); tihrdMap != (*secondMap).end(); ++tihrdMap)
+                {
+                    jsonThirdLevelName = tihrdMap.key();
+                    /// json4階層目{}
+                    for (nlohmann::json::iterator forceMap = (*tihrdMap).begin(); forceMap != (*tihrdMap).end(); ++forceMap)
+                    {
+                        jsonForceLevelName = forceMap.key();
+                        if (jsonForceLevelName == "data")
+                        {
+                            data.x = forceMap.value()[0].get<float>();
+                            data.y = forceMap.value()[1].get<float>();
+                            data.z = forceMap.value()[2].get<float>();
+                            data.w = forceMap.value()[3].get<float>();
+                        }
+                        else if (jsonForceLevelName == "typeName")
+                        {
+                            typeName = forceMap.value().get<std::string>();
+                        }
+                        else if (jsonForceLevelName == "varName")
+                        {
+                            varName = forceMap.value().get<std::string>();
+                        }
+                        else if (jsonForceLevelName == "varSize")
+                        {
+                            varSize = forceMap.value().get<int>();
+                        }
+                    }
+                    BufferData bufferData = { typeName,varName,varSize,data };
+                    bufferDataMap.emplace(jsonThirdLevelName, bufferData);
+                }
+            }
+
+        }
+        RegisterData registerData
+            = { LoadPixelShader(shaderPSpath.c_str()),registerNumber, bufferDataMap };
+        registerDataMap.emplace(cbufferName, registerData);
+    }
+    shaderData = { shaderPSpath,registerDataMap };
+
+    std::filesystem::path mapkey = shaderAcessKey;
+
+    // データが入ってる？
+    auto it = constantBufferMap_.find(mapkey.wstring());
+    if (it != constantBufferMap_.end())
+    {
+        // 入っている
+        for (auto& buff : bufferDataMap)
+        {
+            // 入っているデータを変更
+            constantBufferMap_[mapkey.wstring()].registerMap[cbufferName].bufferData[buff.first].data = buff.second.data;
+        }
+    }
+    else
+    {
+        // 入っていない
+        constantBufferMap_.emplace(mapkey.wstring(), shaderData);
+    }
 }

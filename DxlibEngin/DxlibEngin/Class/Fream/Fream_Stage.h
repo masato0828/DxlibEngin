@@ -13,16 +13,40 @@ public:
     Fream_Stage();
     ~Fream_Stage();
 
+    /// <summary>
+    /// 初期化
+    /// </summary>
     void Init();
+
+    /// <summary>
+    /// 更新
+    /// </summary>
     void Update();
+
+    /// <summary>
+    /// 描画
+    /// </summary>
     void Draw();
 
+    /// <summary>
+    /// パラメータの更新
+    /// </summary>
     void Custom();
 
+    /// <summary>
+    /// 上から見た画像の作成
+    /// </summary>
     void PreviewMake();
 
+    /// <summary>
+    /// プレビュータイプの変更
+    /// </summary>
     void PreviewTypeChange();
 private:
+
+    /// <summary>
+    /// 
+    /// </summary>
     struct  stageGrid
     {
         float lineNum;
@@ -38,7 +62,6 @@ private:
     int buffer_;
     float lineNum_;
     float lineSize_;
-    float color_[3];
     float scale_;
     int screen_;
 

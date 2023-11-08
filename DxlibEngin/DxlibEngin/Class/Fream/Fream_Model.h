@@ -75,9 +75,9 @@ private:
     /// </summary>
     struct ModelFream
     {
-        Vector3 ferampos;// 位置
-        Vector3 feramrot;// 回転
-        Vector3 feramscl;// 大きさ
+        Vector3 ferampos;   // 位置
+        Vector3 feramrot;   // 回転
+        Vector3 feramscl;   // 大きさ
     };
 
     /// <summary>
@@ -85,12 +85,12 @@ private:
     /// </summary>
     struct Material
     {
-        std::wstring materialName;// マテリアルの名前
-        std::map<COLOR_TYPE,COLOR_F> color;// 色
-        float spcPower;// スペキュラーの強さ
-        int difMapTex;// デフュースマップのテクスチャ
-        int spcMapTex;// スペキュラーマップのテクスチャ
-        int normalMapTex;// ノーマルマップのテクスチャ
+        std::wstring materialName;          // マテリアルの名前
+        std::map<COLOR_TYPE,COLOR_F> color; // 色
+        float spcPower;     // スペキュラーの強さ
+        int difMapTex;      // デフュースマップのテクスチャ
+        int spcMapTex;      // スペキュラーマップのテクスチャ
+        int normalMapTex;   // ノーマルマップのテクスチャ
     };
 
     /// <summary>
@@ -98,17 +98,17 @@ private:
     /// </summary>
     struct Model
     {
-        std::wstring name;// モデルの名前
-        int handle;// ハンドル
-        Vector3 pos;// 位置
-        Vector3 rot;// 回転
-        Vector3 scl;// 大きさ
-        std::vector<ModelFream>fream;// フレーム情報
-        bool isRotation;// 自動回転フラグ
-        std::vector<Material> material;// マテリアル情報
-        std::map<COLOR_TYPE, bool> allChangeColor;// 色情報
-        std::map < SLOT_TYPE, std::pair<std::string, int>> textureHnadle;// 画像のハンドル情報
-        bool isShader;
+        std::wstring name;  // モデルの名前
+        int handle;         // ハンドル
+        Vector3 pos;        // 位置
+        Vector3 rot;        // 回転
+        Vector3 scl;        // 大きさ
+        std::vector<ModelFream>fream;   // フレーム情報
+        bool isRotation;    // 自動回転フラグ
+        std::vector<Material> material; // マテリアル情報
+        std::map<COLOR_TYPE, bool> allChangeColor;  // 色情報
+        std::map < SLOT_TYPE, std::pair<std::string, int>> textureHnadle;   // 画像のハンドル情報
+        bool isShader;      // シェーダーを使うかどうか
     };
 
     // モデル管理

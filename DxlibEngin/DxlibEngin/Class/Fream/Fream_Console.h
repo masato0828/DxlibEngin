@@ -15,11 +15,19 @@ public:
     Fream_Console();
     ~Fream_Console();
 
+    /// <summary>
+    /// 更新
+    /// </summary>
     void Update() override;
 private:
+    /// <summary>
+    /// 初期化
+    /// </summary>
     void Init() override;
     
-
+    /// <summary>
+    /// コンソールウィンドウの作成
+    /// </summary>
     void ConsoleWindow();
     
     

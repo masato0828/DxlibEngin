@@ -11,6 +11,7 @@
 #include "../Common/ImGuiMyCustom.h"
 #include "../Common/PostMyGraph.h"
 #include "../Common/Utility.h"
+#include "../../imGui/guizmo/ImGuizmo.h"
 
 FreamMng::FreamMng()
 {
@@ -72,6 +73,7 @@ void FreamMng::Init()
 
 void FreamMng::Update(bool window_open_flg)
 {
+
     //models_->SetModelHandle(sceneView_->GetModelMap());
     models_->SetModelPath(sceneView_->GetDropModelPath());
     postEffect_->Update();
@@ -307,15 +309,19 @@ void FreamMng::SysNewFream()
 {
     ImGui_ImplWin32_NewFrame();
 	ImGui_ImplDX11_NewFrame();
-	
+   
     
 	ImGui::NewFrame();
+    
 
     ImGuiIO& io = ImGui::GetIO();
     io.NavInputs[ImGuiNavInput_DpadUp] = 0.0f;
     io.NavInputs[ImGuiNavInput_DpadDown] = 0.0f;
     io.NavInputs[ImGuiNavInput_DpadLeft] = 0.0f;
     io.NavInputs[ImGuiNavInput_DpadRight] = 0.0f;
+
+
+   
 }
 
 void FreamMng::Style()

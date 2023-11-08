@@ -29,6 +29,8 @@ void PostEffect_Noise::Init()
 void PostEffect_Noise::Update()
 {
 	pram_.time += 0.1f;
+
+    lpShaderMng.RegisterUpdate(L"noise");
 }
 
 void PostEffect_Noise::Draw(std::wstring name, const int imageHnadle)

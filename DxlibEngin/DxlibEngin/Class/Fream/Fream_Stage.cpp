@@ -28,16 +28,26 @@ void Fream_Stage::Init()
 
     modelH_ = MV1LoadModel("data/modelData/plane.mv1");
 
-    lpShaderMng.LoadShader(
+   /* lpShaderMng.LoadShader(
         L"plane",
         "data/ShaderBinary/Vertex/planeVertexShader.vs",
         "data/ShaderBinary/Pixel/planePixelShader.ps",
-        sizeof(stageGrid) * 8);
+        sizeof(stageGrid) * 8);*/
+
+    lpShaderMng.LoadShader(L"plane",
+        "data/ShaderBinary/Vertex/planeVertexShader.vs",
+        "data/ShaderBinary/Pixel/planePixelShader.ps",5,0);
+
+    
 
     lineNum_ = 79.8f;
     lineSize_ = 4.0f;
-    color_[2] = color_[1] = color_[0] = 0.5f;
     scale_ = 8.0f;
+
+    auto &plane = lpShaderMng.DataAcsess(L"plane", "GetLineVal");
+    plane["lineNum"].data = { lineNum_,0,0,0 };
+    plane["cnterLineSize"].data = { lineSize_,0,0,0 };
+    plane["lineColor"].data = { 0.5f,0.5f,0.5f,0 };
 
     int x, y;
     GetWindowSize(&x, &y);
@@ -51,20 +61,22 @@ void Fream_Stage::Init()
 
 void Fream_Stage::Update()
 {
-    //stageGrid* cbBuf = (stageGrid*)GetBufferShaderConstantBuffer(buffer_);
-    stageGrid* cbBuf = (stageGrid*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(L"plane"));
-    cbBuf[0].lineNum = lineNum_;
-    cbBuf[0].lineSize = lineSize_;
-    cbBuf[0].lineColorR = color_[0];
-    cbBuf[0].lineColorG = color_[1];
-    cbBuf[0].lineColorB = color_[2];
+    ////stageGrid* cbBuf = (stageGrid*)GetBufferShaderConstantBuffer(buffer_);
+    //stageGrid* cbBuf = (stageGrid*)GetBufferShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(L"plane"));
+    //cbBuf[0].lineNum = lineNum_;
+    //cbBuf[0].lineSize = lineSize_;
+    //cbBuf[0].lineColorR = color_[0];
+    //cbBuf[0].lineColorG = color_[1];
+    //cbBuf[0].lineColorB = color_[2];
 
-    //// ピクセルシェーダー用の定数バッファを更新して書き込んだ内容を反映する
-    UpdateShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(L"plane"));
+    ////// ピクセルシェーダー用の定数バッファを更新して書き込んだ内容を反映する
+    //UpdateShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(L"plane"));
 
-    //// ピクセルシェーダー用の定数バッファを定数バッファレジスタにセット
-    //// 引数の三番目はレジスタに設定している番号
-    SetShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(L"plane"), DX_SHADERTYPE_PIXEL, 5);
+    ////// ピクセルシェーダー用の定数バッファを定数バッファレジスタにセット
+    ////// 引数の三番目はレジスタに設定している番号
+    //SetShaderConstantBuffer(lpShaderMng.GetConstansBufferHnadle(L"plane"), DX_SHADERTYPE_PIXEL, 5);
+
+    lpShaderMng.RegisterUpdate(L"plane");
 }
 
 void Fream_Stage::Draw()
@@ -96,12 +108,18 @@ void Fream_Stage::Draw()
 
 void Fream_Stage::Custom()
 {
+    lpShaderMng.RegisterCustom(L"plane");
     ImGui::DragFloat("scale", &scale_);
-    ImGui::DragFloat("lineNum", &lineNum_);
-    ImGui::DragFloat("lineSize", &lineSize_);
-    ImGui::ColorEdit3("lineColor", color_);
+    //ImGui::DragFloat("lineNum", &lineNum_);
+    //ImGui::DragFloat("lineSize", &lineSize_);
+    //ImGui::ColorEdit3("lineColor", color_);
     ImGui::Checkbox("previewType", &previewData.previewTypeChange_);
     
+    auto& plane = lpShaderMng.DataAcsess(L"plane", "GetLineVal");
+    plane["lineNum"].data = { lineNum_,0,0,0 };
+    plane["cnterLineSize"].data = { lineSize_,0,0,0 };
+    plane["lineColor"].data = { 0.5f,0.5f,0.5f,0 };
+
     // ラインのサイズはラインの数まで
     // もし超えてしまった場合は、ラインの数に合わせる
     lineSize_ = (std::min)(lineSize_, lineNum_);
@@ -109,7 +127,7 @@ void Fream_Stage::Custom()
     // ラインの数と大きさの最小値
     lineNum_ = (std::max)(lineNum_, 0.1f);
     lineSize_ = (std::max)(lineSize_, 0.1f);
-    scale_ = (std::max)(scale_, 1.0f);
+    scale_ = (std::max)(scale_, 1.0f); 
 
     LoadTextureFromFile(screen_, &my_shaderData, &imageSize_.x_, &imageSize_.y_);
     

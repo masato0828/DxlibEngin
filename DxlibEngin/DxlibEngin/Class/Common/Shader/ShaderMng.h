@@ -4,6 +4,7 @@
 #include <DxLib.h>
 #include <unordered_map>
 #include "ConstantBuffer.h"
+#include "../../../nlohmann/json.hpp"
 #include <wrl/client.h>
 #include <assert.h>
 #include <vector>
@@ -144,6 +145,24 @@ public:
 
     void CreateRegisterData(const std::wstring& key, const std::string& psPath, const int registerNumber, const int registerNumberLoss);
     void CreateRegisterData(const std::wstring& key, const std::string& psPath);
+
+    /// <summary>
+    /// registerデータファイルの出力
+    /// </summary>
+    /// <param name="key">キー値</param>
+    void ExportFile(const std::wstring& key);
+
+    /// <summary>
+    /// registerデータファイルの読み込み
+    /// </summary>
+    /// <param name="filePath">ファイルパス</param>
+    void ImportFile(const std::string& filePath);
+
+    /// <summary>
+    /// jsonファイルからのデータ取得
+    /// </summary>
+    /// <param name="json"></param>
+    void GetContents(nlohmann::json json);
 private:
 
     // シェーダーの管理(key値,頂点シェーダハンドル,ピクセルシェーダハンドル)
@@ -159,40 +178,63 @@ private:
     ShaderMng() = default;
     ~ShaderMng();
 
+    /// <summary>
+    /// バッファデータ構造体
+    /// </summary>
     struct BufferData
     {
-        std::string typeName;
-        std::string varName;
-        size_t varSize;
-        FLOAT4 data;
+        std::string typeName;   // 変数の名前
+        std::string varName;    // 変数のタイプ(float等)
+        size_t varSize;         // 変数のサイズ
+        FLOAT4 data;            // データ
         BufferData() {};
-        BufferData(std::string t, std::string v, size_t s, FLOAT4 d)
+        BufferData(std::string t, std::string v, size_t vs, FLOAT4 d)
         {
             typeName = t;
-            varName =  v;
-            varSize = s;
+            varName = v;
+            varSize = vs;
             data = d;
         }
     };
 
+    /// <summary>
+    /// registerデータ構造体
+    /// </summary>
     struct RegisterData
     {
-        int bufferHandle;
-        int registerNumber;
-        std::map<std::string, BufferData> bufferData;
+        int bufferHandle;   //バッファハンドル
+        int registerNumber; // registerに割り当てた番号
+        std::unordered_map<std::string, BufferData> bufferData;  // バッファデータ
         RegisterData() {};
-        RegisterData(int b, int r, std::map<std::string, BufferData> bm) {
+        RegisterData(int b, int r, std::unordered_map<std::string, BufferData> bd)
+        {
             bufferHandle = b;
             registerNumber = r;
-            bufferData = bm;
-        };
+            bufferData = bd;
+        }
+
     };
 
-    std::map < std::wstring, std::map<std::string, RegisterData>> constantBufferMap_;
+    /// <summary>
+    /// シェーダデータ構造体
+    /// </summary>
+    struct ShaderDatas
+    {
+        std::string filePath;  //pixelshaderのファイルパス
+        std::map<std::string, RegisterData> registerMap; // registerのデータ
+    };
+
+    /// <summary>
+    /// コンスタントバッファ管理
+    /// </summary>
+    std::map<std::wstring, ShaderDatas> constantBufferMap_;
+
     std::vector<std::string> registerName_;
 
     void CmdPronpt(std::string fileName, std::string outPutFile);
 
+
+
 public:
-    std::map<std::string, ShaderMng::BufferData>& DataAcsess(const std::wstring& key, const std::string& registerMapKey);
+    std::unordered_map<std::string, ShaderMng::BufferData>& DataAcsess(const std::wstring& key, const std::string& registerMapKey);
 };

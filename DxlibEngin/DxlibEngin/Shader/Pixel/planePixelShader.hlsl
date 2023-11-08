@@ -48,11 +48,9 @@ Texture2D g_DiffuseMapTexture : register(t0); // ディフューズマップテクスチャ
 
 cbuffer GetLineVal : register(b5)
 {
+    float4 lineColor;
     float lineNum;
     float cnterLineSize;
-    float lineColorR;
-    float lineColorG;
-    float lineColorB;
 };
 
 
@@ -90,9 +88,9 @@ PS_OUTPUT main(PS_INPUT PSInput)
     //1.0f);
     
     PSOutput.Color0 = float4(
-    lineColorR,
-    lineColorG,
-    lineColorB,
+    lineColor.r,
+    lineColor.g,
+    lineColor.b,
     1.0f);
     
 	// 出力パラメータを返す

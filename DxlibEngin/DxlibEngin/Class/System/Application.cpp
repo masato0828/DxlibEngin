@@ -5,6 +5,7 @@
 #include "../../imGui/imgui_impl_win32.h"
 #include "../Fream/Fream_Console.h"
 #include "../Common/Utility.h"
+#include "../../imGui/guizmo/ImGuizmo.h"
 
 
 
@@ -89,8 +90,8 @@ bool Application::Run()
 	while (!ProcessMessage()&& freamMng_->GetShowWindow())
 	//while (!ProcessMessage()&& CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 	{
-
 		freamMng_->SysNewFream();
+
 		// XV
 		freamMng_->Update(true);
 

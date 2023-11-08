@@ -46,6 +46,7 @@ public:
 private:
     // ダイアログの表示フラグ
     bool fileDialogFlg_;
+
     // ファイルデータ
     FileData fileData_;
     // 選択中ファイルデータ
