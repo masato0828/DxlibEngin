@@ -11,7 +11,6 @@
 #include "../Common/ImGuiMyCustom.h"
 #include "../Common/PostMyGraph.h"
 #include "../Common/Utility.h"
-#include "../../imGui/guizmo/ImGuizmo.h"
 
 FreamMng::FreamMng()
 {
@@ -271,6 +270,7 @@ void FreamMng::Draw()
     postEffect_->Draw(screen_);
 
     camera_->Set();
+    
 }
 
 void FreamMng::Render()
@@ -312,7 +312,6 @@ void FreamMng::SysNewFream()
    
     
 	ImGui::NewFrame();
-    
 
     ImGuiIO& io = ImGui::GetIO();
     io.NavInputs[ImGuiNavInput_DpadUp] = 0.0f;
@@ -559,6 +558,12 @@ void FreamMng::OptionWindow()
             if (ImGui::BeginTabItem("PostEffect"))
             {
                 postEffect_->Custom();
+
+                ImGui::EndTabItem();
+            }
+            if (ImGui::BeginTabItem("skyDome"))
+            {
+                models_->CustomSkyDome();
 
                 ImGui::EndTabItem();
             }

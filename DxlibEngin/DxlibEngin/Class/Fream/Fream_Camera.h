@@ -70,6 +70,7 @@ public:
 	/// </summary>
 	/// <returns>ƒJƒƒ‰‚ÌˆÊ’u</returns>
 	Vector3 GetCameraPos();
+
 private:
 	// ˆÊ’u
 	Vector3 pos_;

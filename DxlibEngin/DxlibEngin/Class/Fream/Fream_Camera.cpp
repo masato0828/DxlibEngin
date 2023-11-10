@@ -16,8 +16,8 @@ Fream_Camera::~Fream_Camera()
 
 void Fream_Camera::Init()
 {
-	//pos_ = { 0,180, -300 };
-	//rot_ = { Deg2Rad(15.0f),0.0f,0.0f };
+	//pos_ = { 0,0, -0 };
+	//rot_ = { 0,0.0f,0.0f };
 	
 	
 	pos_ = { -243,185, -231 };

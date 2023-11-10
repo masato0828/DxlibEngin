@@ -47,6 +47,9 @@ void Fream_Model::Init()
 
 	skyDomeHnadle_ = MV1LoadModel("data/modelData/SkyDome/Skydome.mv1");
 	//SetModelPath("data/modelData/SkyDome/Skydome.mv1");
+
+	skyDomeImageHnadle_ = LoadGraph("data/modelData/SkyDome/Skydome.png");
+	showSkyDome_ = true;
 }
 
 void Fream_Model::Update()
@@ -511,10 +514,27 @@ Vector3& Fream_Model::GetModelPos()
 
 void Fream_Model::DrawSkyDome()
 {
-	static float rotationPos = 0;
-	MV1SetRotationXYZ(skyDomeHnadle_,VGet(0,rotationPos += Utility::Deg2Rad(0.01f), 0));
-	MV1SetScale(skyDomeHnadle_,VGet(100,100,100));
-	MV1DrawModel(skyDomeHnadle_);
+	if (showSkyDome_)
+	{
+		
+		static float rotationPos = 0;
+		MV1SetRotationXYZ(skyDomeHnadle_, VGet(0, rotationPos += Utility::Deg2Rad(0.01f), 0));
+		MV1SetScale(skyDomeHnadle_, VGet(100, 100, 100));
+
+		MV1DrawModel(skyDomeHnadle_);
+		MV1SetTextureGraphHandle(skyDomeHnadle_, 0, skyDomeImageHnadle_,false);
+	}
+}
+
+void Fream_Model::CustomSkyDome()
+{
+	if (ImGui::Button("textuerChange"))
+	{
+		auto path = OpenFileDialog()().string();
+		auto p = path.c_str();
+		skyDomeImageHnadle_ = LoadGraph(p);
+	} 
+	//ImGui::Text();
 }
 
 bool Fream_Model::IsModelSelect()

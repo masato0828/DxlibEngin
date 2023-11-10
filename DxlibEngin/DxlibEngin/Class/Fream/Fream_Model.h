@@ -68,6 +68,11 @@ public:
     /// </summary>
     void DrawSkyDome();
 
+    /// <summary>
+    /// スカイドームのカスタム
+    /// </summary>
+    void CustomSkyDome();
+
 private:
     
     /// <summary>
@@ -219,6 +224,8 @@ private:
 
     // スカイドームモデルのハンドル
     int skyDomeHnadle_;
+    int skyDomeImageHnadle_;
+    bool showSkyDome_;
     
 };
 
