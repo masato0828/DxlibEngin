@@ -68,6 +68,13 @@ void FreamMng::Init()
         {L"console",false},
         {L"codeEditer",false},
     };
+
+    lightPos_ = Vector3(0,0,0);
+    Range_ = 1000;
+    Atten0_ = 0.01f;
+    Atten1_ = 0.001f;
+    Atten2_ = 0.0001f;
+    //customLightHandle_ = CreatePointLightHandle(lightPos_.toVECTOR(), 2000, 0.001f, 0.00001f, 0.0000001f);
 }
 
 void FreamMng::Update(bool window_open_flg)
@@ -240,11 +247,30 @@ void FreamMng::Draw()
         ClearDrawScreen();
         camera_->Set();
 
+
+        
+
+
+
         int ww, wh;
         GetWindowSize(&ww, &wh);
         // 背景
         DrawBox(0, 0, ww, wh, GetColor(60, 60, 60), true);
         stage_->Draw();
+
+        SetMaterialUseVertDifColor(false);
+        ChangeLightTypePoint(lightPos_.toVECTOR(),  Range_,
+         Atten0_,
+         Atten1_,
+         Atten2_);
+
+        ImGui::InputFloat("range",&Range_,1.0f,1.0f);
+        ImGui::InputFloat("Atten0_",&Atten0_, 0.001f, 0.001f,"%.3f");
+        ImGui::InputFloat("Atten1_",&Atten1_, 0.00001f, 0.00001f,"%.5f");
+        ImGui::InputFloat("Atten2_",&Atten2_, 0.0000001f, 0.0000001f, "%.7f");
+
+        DrawSphere3D(lightPos_.toVECTOR(),10,10,0xfffff,0xffffff,true);
+        DrawSphere3D(lightPos_.toVECTOR(), 10, 10, 0xfffff, 0xffffff, true);
 
         ObjectDrawField();
         if (models_->IsModelSelect())

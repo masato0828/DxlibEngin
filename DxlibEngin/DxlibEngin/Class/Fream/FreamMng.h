@@ -98,5 +98,12 @@ private:
 	Vector3 scl = { 1.f,1.f,1.f };
 
 	bool is_close_;
+
+	int customLightHandle_;
+	Vector3 lightPos_;
+	float Range_;
+	float Atten0_;
+	float Atten1_;
+	float Atten2_;
 };
 
