@@ -52,6 +52,12 @@ namespace ImGuiCustom
     IMGUI_API bool  ColorEdit4(const char* label, COLOR_F* col, ImGuiColorEditFlags flags = 0);
     IMGUI_API bool  ColorEdit4(const char* label, FLOAT4* col, ImGuiColorEditFlags flags = 0);
 
+    IMGUI_API bool InputFloat3(const char* label, Vector3* vec3, float step = 0.0f, float step_fast = 0.0f, const char* format = "%.3f", ImGuiInputTextFlags flags = 0);
+    IMGUI_API bool InputFloat3InText(const char* label, Vector3* vec3, float step = 0.0f, float step_fast = 0.0f, const char* format = "%.3f", ImGuiInputTextFlags flags = 0);
+    IMGUI_API bool InputFloat3CameraMove(const char* label, Vector3* angle, Vector3* vec3, float step = 0.0f, float step_fast = 0.0f, const char* format = "%.3f", ImGuiInputTextFlags flags = 0);
+
+    IMGUI_API bool InputScalar(const char* label, ImGuiDataType data_type, void* p_dataX, void* p_dataZ, float angleData, const void* p_step = NULL, const void* p_step_fast = NULL, const char* format = NULL, ImGuiInputTextFlags flags = 0);
+
     /// <summary>
    /// ウィンドウを真ん中へのドッキングを無効にする
    /// </summary>

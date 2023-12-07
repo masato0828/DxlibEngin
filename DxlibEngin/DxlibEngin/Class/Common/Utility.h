@@ -16,6 +16,14 @@ namespace Utility
 	float Deg2Rad(float deg);
 
 	/// <summary>
+	/// ラジアン(rad)から度(deg)に変換 
+	/// </summary>
+	/// <param name="rad">ラジアン角度</param>
+	/// <returns>デグリー角度</returns>
+	float Rad2DegF(float rad);
+
+
+	/// <summary>
 	/// 最大公約数を求める
 	/// </summary>
 	/// <param name="x">数値１</param>

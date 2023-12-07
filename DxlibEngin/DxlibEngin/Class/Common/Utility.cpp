@@ -12,6 +12,11 @@ float Utility::Deg2Rad(float deg)
     return (deg * (DX_PI_F / 180.0f));
 }
 
+float Utility::Rad2DegF(float rad)
+{
+	return rad * (180.0f / DX_PI_F);
+}
+
 // Å‘åŒö–ñ”‚ğ‹‚ß‚é
 int Utility::Gcd(int x, int y)
 {

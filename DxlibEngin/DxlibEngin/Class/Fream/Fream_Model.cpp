@@ -522,7 +522,7 @@ void Fream_Model::DrawSkyDome()
 		MV1SetScale(skyDomeHnadle_, VGet(100, 100, 100));
 
 		MV1DrawModel(skyDomeHnadle_);
-		MV1SetTextureGraphHandle(skyDomeHnadle_, 0, skyDomeImageHnadle_,false);
+		MV1SetTextureGraphHandle(skyDomeHnadle_, 0, skyDomeImageHnadle_,true);
 	}
 }
 
