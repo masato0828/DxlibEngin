@@ -105,5 +105,9 @@ private:
 	float Atten0_;
 	float Atten1_;
 	float Atten2_;
+	COLOR_F dcolor_;
+	COLOR_F scolor_;
+	COLOR_F acolor_;
+	bool alive_;
 };
 

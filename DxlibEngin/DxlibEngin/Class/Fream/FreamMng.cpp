@@ -75,6 +75,13 @@ void FreamMng::Init()
     Atten1_ = 0.001f;
     Atten2_ = 0.0001f;
     customLightHandle_ = CreatePointLightHandle(lightPos_.toVECTOR(), 2000, 0.001f, 0.00001f, 0.0000001f);
+    acolor_ = { 1.f,1.f,1.f,1.f };
+    dcolor_ = { 1.f,1.f,1.f,1.f };
+    scolor_ = { 1.f,1.f,1.f,1.f };
+    alive_ = true;
+
+
+
 }
 
 void FreamMng::Update(bool window_open_flg)
@@ -259,9 +266,15 @@ void FreamMng::Draw()
         stage_->Draw();
 
         SetLightEnable(true);
-        SetLightPositionHandle(customLightHandle_,lightPos_.toVECTOR());
-        SetLightRangeAttenHandle(customLightHandle_,Range_,Atten0_,Atten1_,Atten2_);
-
+        SetLightEnableHandle(customLightHandle_, alive_);
+        if (alive_)
+        {
+            SetLightPositionHandle(customLightHandle_, lightPos_.toVECTOR());
+            SetLightRangeAttenHandle(customLightHandle_, Range_, Atten0_, Atten1_, Atten2_);
+            SetLightDifColorHandle(customLightHandle_, dcolor_);
+            SetLightSpcColorHandle(customLightHandle_, scolor_);
+            SetLightAmbColorHandle(customLightHandle_, acolor_);
+        }
         
 
         ImGui::InputFloat("range",&Range_,1.0f,1.0f);
@@ -269,6 +282,10 @@ void FreamMng::Draw()
         ImGui::InputFloat("Atten1_",&Atten1_, 0.00001f, 0.00001f,"%.5f");
         ImGui::InputFloat("Atten2_",&Atten2_, 0.0000001f, 0.0000001f, "%.7f");
         ImGuiCustom::InputFloat3("cpos",&lightPos_,100,100);
+        ImGuiCustom::ColorEdit3("dcolor",&dcolor_);
+        ImGuiCustom::ColorEdit3("scolor",&scolor_);
+        ImGuiCustom::ColorEdit3("acolor",&acolor_);
+        ImGui::Checkbox("alive",&alive_);
 
         DrawSphere3D(lightPos_.toVECTOR(), 10, 10, 0xffff00, 0xffff00, true);
 
