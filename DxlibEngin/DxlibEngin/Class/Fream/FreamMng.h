@@ -99,15 +99,22 @@ private:
 
 	bool is_close_;
 
-	int customLightHandle_;
-	Vector3 lightPos_;
-	float Range_;
-	float Atten0_;
-	float Atten1_;
-	float Atten2_;
-	COLOR_F dcolor_;
-	COLOR_F scolor_;
-	COLOR_F acolor_;
-	bool alive_;
+	struct Light
+	{
+		int customLightHandle_;
+		Vector3 lightPos_;
+		float Range_;
+		float Atten0_;
+		float Atten1_;
+		float Atten2_;
+		COLOR_F dcolor_;
+		COLOR_F scolor_;
+		COLOR_F acolor_;
+		bool alive_;
+	};
+
+	Light light;
+	Light defLight;
+	
 };
 

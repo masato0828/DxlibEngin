@@ -69,16 +69,19 @@ void FreamMng::Init()
         {L"codeEditer",false},
     };
 
-    lightPos_ = Vector3(0,0,0);
-    Range_ = 1000;
-    Atten0_ = 0.01f;
-    Atten1_ = 0.001f;
-    Atten2_ = 0.0001f;
-    customLightHandle_ = CreatePointLightHandle(lightPos_.toVECTOR(), 2000, 0.001f, 0.00001f, 0.0000001f);
-    acolor_ = { 1.f,1.f,1.f,1.f };
-    dcolor_ = { 1.f,1.f,1.f,1.f };
-    scolor_ = { 1.f,1.f,1.f,1.f };
-    alive_ = true;
+    light.lightPos_ = Vector3(0,0,0);
+    light.Range_ = 1000;
+    light.Atten0_ = 0.01f;
+    light.Atten1_ = 0.001f;
+    light.Atten2_ = 0.0001f;
+    light.customLightHandle_ = CreatePointLightHandle(
+        light.lightPos_.toVECTOR(), light.Range_, light.Atten0_, light.Atten1_, light.Atten2_);
+    light.acolor_ = { 1.f,1.f,1.f,1.f };
+    light.dcolor_ = { 1.f,1.f,1.f,1.f };
+    light.scolor_ = { 1.f,1.f,1.f,1.f };
+    light.alive_ = true;
+
+    defLight = light;
 
 
 
@@ -265,29 +268,51 @@ void FreamMng::Draw()
         DrawBox(0, 0, ww, wh, GetColor(60, 60, 60), true);
         stage_->Draw();
 
-        SetLightEnable(true);
-        SetLightEnableHandle(customLightHandle_, alive_);
-        if (alive_)
-        {
-            SetLightPositionHandle(customLightHandle_, lightPos_.toVECTOR());
-            SetLightRangeAttenHandle(customLightHandle_, Range_, Atten0_, Atten1_, Atten2_);
-            SetLightDifColorHandle(customLightHandle_, dcolor_);
-            SetLightSpcColorHandle(customLightHandle_, scolor_);
-            SetLightAmbColorHandle(customLightHandle_, acolor_);
+        //SetLightEnable(true);
+        if (light.alive_)
+        { 
+            SetLightPositionHandle(light.customLightHandle_, light.lightPos_.toVECTOR());
+            SetLightRangeAttenHandle(light.customLightHandle_, light.Range_, light.Atten0_, light.Atten1_, light.Atten2_);
         }
+        SetLightDifColorHandle(light.customLightHandle_, light.dcolor_);
+        SetLightSpcColorHandle(light.customLightHandle_, light.scolor_);
+        SetLightAmbColorHandle(light.customLightHandle_, light.acolor_);
         
 
-        ImGui::InputFloat("range",&Range_,1.0f,1.0f);
-        ImGui::InputFloat("Atten0_",&Atten0_, 0.001f, 0.001f,"%.3f");
-        ImGui::InputFloat("Atten1_",&Atten1_, 0.00001f, 0.00001f,"%.5f");
-        ImGui::InputFloat("Atten2_",&Atten2_, 0.0000001f, 0.0000001f, "%.7f");
-        ImGuiCustom::InputFloat3("cpos",&lightPos_,100,100);
-        ImGuiCustom::ColorEdit3("dcolor",&dcolor_);
-        ImGuiCustom::ColorEdit3("scolor",&scolor_);
-        ImGuiCustom::ColorEdit3("acolor",&acolor_);
-        ImGui::Checkbox("alive",&alive_);
+        ImGui::InputFloat("range",&light.Range_,1.0f,1.0f);
+        ImGui::InputFloat("Atten0_",&light.Atten0_, 0.001f, 0.001f,"%.3f");
+        ImGui::InputFloat("Atten1_",&light.Atten1_, 0.00001f, 0.00001f,"%.5f");
+        ImGui::InputFloat("Atten2_",&light.Atten2_, 0.0000001f, 0.0000001f, "%.7f");
+        ImGuiCustom::InputFloat3("cpos",&light.lightPos_,100,100);
+        ImGuiCustom::ColorEdit3("dcolor",&light.dcolor_);
+        ImGuiCustom::ColorEdit3("scolor",&light.scolor_);
+        ImGuiCustom::ColorEdit3("acolor",&light.acolor_);
+        if (ImGui::Checkbox("alive", &light.alive_))
+        {
+            if (light.alive_)
+            {
+                //ライトをつける
+                // デフォルトのaliveをtrueに変更
+                // (aliveがfalseだとずっとlight.aliveがfalseになってしまうため)
+                defLight.alive_ = true;
+                // デフォルトのデータを入れる
+                light = defLight;
+            }
+            else
+            { 
+                //ライトを消す
+                // デフォルトを取得
+                defLight = light;
+                // ライトの色を黒に変更
+                light.dcolor_ = GetColorF(0.0f, 0.0f, 0.0f, 0.0f);
+                light.scolor_ = GetColorF(0.0f, 0.0f, 0.0f, 0.0f);
+                light.acolor_ = GetColorF(0.0f, 0.0f, 0.0f, 0.0f);
+            }
+        }
 
-        DrawSphere3D(lightPos_.toVECTOR(), 10, 10, 0xffff00, 0xffff00, true);
+        DrawSphere3D(light.lightPos_.toVECTOR(), 10, 10, 
+            GetColor(light.dcolor_.r, light.dcolor_.g, light.dcolor_.b),
+            GetColor(light.scolor_.r, light.scolor_.g, light.scolor_.b), true);
 
         ObjectDrawField();
         if (models_->IsModelSelect())
