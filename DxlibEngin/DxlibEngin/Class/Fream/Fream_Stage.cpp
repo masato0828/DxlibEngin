@@ -115,10 +115,6 @@ void Fream_Stage::Custom()
     //ImGui::ColorEdit3("lineColor", color_);
     ImGui::Checkbox("previewType", &previewData.previewTypeChange_);
     
-    auto& plane = lpShaderMng.DataAcsess(L"plane", "GetLineVal");
-    plane["lineNum"].data = { lineNum_,0,0,0 };
-    plane["cnterLineSize"].data = { lineSize_,0,0,0 };
-    plane["lineColor"].data = { 0.5f,0.5f,0.5f,0 };
 
     // ラインのサイズはラインの数まで
     // もし超えてしまった場合は、ラインの数に合わせる
