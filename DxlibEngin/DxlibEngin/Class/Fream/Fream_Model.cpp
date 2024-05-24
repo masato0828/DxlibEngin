@@ -46,6 +46,7 @@ void Fream_Model::Init()
 	handleCnt_ = 0;
 
 	skyDomeHnadle_ = MV1LoadModel("data/modelData/SkyDome/Skydome.mv1");
+	int test = MV1LoadModel("data/carData/Car/Vehicle_Sports.fbx");
 	//SetModelPath("data/modelData/SkyDome/Skydome.mv1");
 
 	skyDomeImageHnadle_ = LoadGraph("data/modelData/SkyDome/Skydome.png");

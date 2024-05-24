@@ -20,32 +20,6 @@ struct PS_OUTPUT
     float4 Color0 : SV_TARGET0; // 色
 };
 
-
-// 定数バッファピクセルシェーダー基本パラメータ
-struct DX_D3D11_PS_CONST_BUFFER_BASE
-{
-    float4 FactorColor; // アルファ値等
-
-    float MulAlphaColor; // カラーにアルファ値を乗算するかどうか( 0.0f:乗算しない  1.0f:乗算する )
-    float AlphaTestRef; // アルファテストで使用する比較値
-    float2 Padding1;
-
-    int AlphaTestCmpMode; // アルファテスト比較モード( DX_CMP_NEVER など )
-    int3 Padding2;
-
-    float4 IgnoreTextureColor; // テクスチャカラー無視処理用カラー
-};
-
-// 基本パラメータ
-cbuffer cbD3D11_CONST_BUFFER_PS_BASE : register(b1)
-{
-    DX_D3D11_PS_CONST_BUFFER_BASE g_Base;
-};
-
-
-SamplerState g_DiffuseMapSampler : register(s0); // ディフューズマップテクスチャ
-Texture2D g_DiffuseMapTexture : register(t0); // ディフューズマップテクスチャ
-
 cbuffer GetLineVal : register(b5)
 {
     float4 lineColor;
@@ -53,17 +27,16 @@ cbuffer GetLineVal : register(b5)
     float cnterLineSize;
 };
 
-
-
-
 // main関数
 PS_OUTPUT main(PS_INPUT PSInput)
 {
     PS_OUTPUT PSOutput;
     
     float3 abs_ = abs(PSInput.wPos);
-    float3 fmod_ = fmod(abs_, lineNum);
-    float3 step_ = step(fmod_, cnterLineSize);
+    //float3 fmod_ = fmod(abs_, lineNum);
+    //float3 step_ = step(fmod_, cnterLineSize);
+    float3 fmod_ = fmod(abs_, 79.8f);
+    float3 step_ = step(fmod_, 4.0f);
     
     
     step_.y = 0.0f;
@@ -96,4 +69,3 @@ PS_OUTPUT main(PS_INPUT PSInput)
 	// 出力パラメータを返す
     return PSOutput;
 }
-

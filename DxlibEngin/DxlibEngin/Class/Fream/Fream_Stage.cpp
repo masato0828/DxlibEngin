@@ -35,9 +35,10 @@ void Fream_Stage::Init()
         sizeof(stageGrid) * 8);*/
 
     lpShaderMng.LoadShader(L"plane",
+        //"data/ShaderBinary/Vertex/Model1FrameVertexShader.vs",
         "data/ShaderBinary/Vertex/planeVertexShader.vs",
         "data/ShaderBinary/Pixel/planePixelShader.ps",5,0);
-
+    lpShaderMng.SetSkiningVertex(L"plane",modelH_);
     
 
     lineNum_ = 79.8f;
