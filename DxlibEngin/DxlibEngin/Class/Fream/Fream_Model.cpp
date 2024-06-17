@@ -149,7 +149,7 @@ void Fream_Model::SetModelPath(const std::filesystem::path& path)
 	auto ext = filePath.extension().wstring().substr(1);
 	auto fileName = filePath.filename();
 
-	if (ext == L"mv1")
+	if (ext == L"mv1"|| ext == L"fbx")
 	{
 		//ƒ‚ƒfƒ‹‚ª‘¶İ‚µ‚Ä‚¢‚È‚¢
 		if(!model_.count(fileName))

@@ -142,7 +142,7 @@ void CreateIcons::FileAssignments(std::filesystem::path& name, bool& buttonPress
 			}
 			
 		}
-		else if (ext == L"mv1")
+		else if (ext == L"mv1" || ext == L"fbx")
 		{
 			fileImageShaderDatas_.emplace(u8fileName, nullptr);
 			auto IconDataPath = fileFullPath / u8fileName;

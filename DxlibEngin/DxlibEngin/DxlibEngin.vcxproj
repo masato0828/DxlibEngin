@@ -67,6 +67,101 @@
     <ClCompile Include="imGui\imgui_tables.cpp" />
     <ClCompile Include="imGui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxArchive_.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxASyncLoad.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxBaseFunc.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxBaseImage.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxChar.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxCharCodeTable.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxFile.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxFont.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxGateway.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxGraphics.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxGraphicsFilter.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxHandle.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxHeap.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxInput.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxInputString.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxLive2DCubism4.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxLog.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxMask.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxMath.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxMemImg.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxMemImgDrawFunction0.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxMemImgDrawFunction1.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxMemImgDrawFunction2.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxMemImgDrawFunction3.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxMemory.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxModel.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxModelLoader0.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxModelLoader1.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxModelLoader2.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxModelLoader3.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxModelLoader4.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxModelLoaderVMD.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxModelRead.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxMovie.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxNetwork.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxRingBuffer.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxSoftImage.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxSound.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxSoundConvert.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxSystem.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxThread.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxUseCLib.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxUseCLibLive2DCubism4.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxUseCLibOgg.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\DxUseCLibPhysics.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxBaseFuncWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxBaseImageWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxFileWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxFontWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxGraphicsAPIWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxGraphicsD3D11.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxGraphicsD3D9.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxGraphicsFilterD3D11.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxGraphicsFilterD3D9.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxGraphicsFilterWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxGraphicsWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxGuid.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxInputWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxKeyHook.c" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxKeyHookBinary.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxLive2DCubism4Win.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxLogWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxMaskD3D11.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxMaskD3D9.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxMaskWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxMemoryWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxModelD3D11.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxModelD3D9.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxModelWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxMovieWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxNetworkWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShaderCodeBin_Base3D_D3D11.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShaderCodeBin_Base3D_D3D9.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShaderCodeBin_Base_D3D11.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShaderCodeBin_Base_D3D9.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShaderCodeBin_Filter_D3D11.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShaderCodeBin_Filter_D3D9.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShaderCodeBin_Live2D_Cubism4_D3D11.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShaderCodeBin_Live2D_Cubism4_D3D9.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShaderCodeBin_Model_D3D11.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShaderCodeBin_Model_D3D9.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShaderCodeBin_RgbaMix_D3D11.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShaderCodeBin_RgbaMix_D3D9.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShaderCodeTxt_D3D11.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShaderCodeTxt_D3D9.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxSoundConvertWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxSoundWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxSystemWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxThreadWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxUseCLibOggD3D11.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxUseCLibOggD3D9.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxUseCLibOggWin.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxUseCStrmBaseFilter.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxWinAPI.cpp" />
+    <ClCompile Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Class\Common\CodeReader.h" />
@@ -124,6 +219,96 @@
     <ClInclude Include="imGui\imstb_truetype.h" />
     <ClInclude Include="imGui\stb_image.h" />
     <ClInclude Include="strconv\strconv.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxArchive_.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxASyncLoad.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxBaseFunc.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxBaseImage.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxChar.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxCompileConfig.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxDataType.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxDataTypeWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxFile.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxFont.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxFunctionWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxGraphics.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxGraphicsFilter.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxHandle.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxHeap.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxInput.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxInputString.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxLib.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxLive2DCubism4.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxLog.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxMask.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxMath.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxMemImg.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxMemory.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxModel.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxModelFile.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxModelLoader3.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxModelLoader4.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxModelLoaderVMD.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxModelRead.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxMovie.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxNetwork.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxRingBuffer.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxSoftImage.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxSound.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxSoundConvert.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxStatic.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxSystem.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxThread.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxUseCLib.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxUseCLibLive2DCubism4.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\DxUseCLibOgg.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Shader\Windows\Direct3D11\DataType.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Shader\Windows\Direct3D11\PixelShader.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Shader\Windows\Direct3D11\VertexShader.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Shader\Windows\Direct3D9\PixelLighting_PS.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Shader\Windows\Direct3D9\PixelLighting_VS.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Shader\Windows\Direct3D9\VertexLighting_PS.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Shader\Windows\Direct3D9\VertexLighting_VS.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxBaseFuncWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxBaseImageWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxDirectX.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxFileWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxFontWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxGraphicsAPIWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxGraphicsD3D11.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxGraphicsD3D9.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxGraphicsFilterD3D11.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxGraphicsFilterD3D9.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxGraphicsFilterWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxGraphicsWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxGuid.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxInputWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxLive2DCubism4Win.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxLogWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxMaskD3D11.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxMaskD3D9.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxMaskWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxMemoryWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxModelD3D11.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxModelD3D9.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxModelWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxMovieWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxNetworkWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShader_Common_D3D11.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShader_DataType_D3D11.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShader_PS_D3D11.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShader_PS_D3D9.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShader_VS_D3D11.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxShader_VS_D3D9.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxSoundConvertWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxSoundWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxSystemWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxThreadWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxUseCLibOggD3D11.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxUseCLibOggD3D9.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxUseCLibOggWin.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxUseCStrmBaseFilter.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxWinAPI.h" />
+    <ClInclude Include="Thirdparty\Dxlibs\DxLibSource\Windows\DxWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\html\help.css" />
@@ -501,17 +686,19 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(DXLIB_DIR);$(ProjectDir)/ThirdParth/Include/D3Dcompiler.h;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DX_LOAD_FBX_MODEL;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>Default</ConformanceMode>
+      <AdditionalIncludeDirectories>Thirdparty\DxLibs\DxLibSource;Thirdparty\Dxlibs\External\bullet-2.75_rename\src;Thirdparty\Dxlibs\External\jpeg-9a;Thirdparty\Dxlibs\External\liboggSVN\include;Thirdparty\Dxlibs\External\libtheoraSVN\include;Thirdparty\Dxlibs\External\libvorbisSVN\include;Thirdparty\Dxlibs\External\libvorbisSVN\lib;Thirdparty\Dxlibs\External\lpng1637;Thirdparty\Dxlibs\External\zlib-1.2.12;Thirdparty\Dxlibs\External\tiff-4.0.3\libtiff;Thirdparty\Dxlibs\External\opusfile-0.7\include;Thirdparty\Dxlibs\External\opus-1.1.1\include;Thirdparty\Dxlibs\External\opus-1.1.1\celt;Thirdparty\Dxlibs\External\opus-1.1.1\silk;Thirdparty\Dxlibs\External\opus-1.1.1\win32;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;$(ProjectDir)/ThirdParth/Include/D3Dcompiler.h;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DisableSpecificWarnings>4996;4819</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(DXLIB_DIR);C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\lib\x64\debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);d3d11.lib;Shlwapi.lib;d3dcompiler.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Thirdparty\Dxlibs\DxLibLib;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2015\x64\debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);d3d11.lib;Shlwapi.lib;d3dcompiler.lib;libfbxsdk-mt.lib;libxml2-mt.lib</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
